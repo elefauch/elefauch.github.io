@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Opacity of Distributed Systems</title>
+<meta name="description" content="Opacity with several observation sites: decentralized, modular and networked systems, where each observer sees only part of the behavior.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Opacity of Distributed Systems">
+<meta property="og:description" content="Opacity with several observation sites: decentralized, modular and networked systems, where each observer sees only part of the behavior.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* Rules shared by the topic pages and the tag search page. */
+  :root{
+    --paper:#F1EDE4;
+    --card:#E8E1D2;
+    --ink:#2A2620;
+    --ink-soft:#5C5648;
+    --ink-faint:#6A6456;
+    --line:#D2C9B4;
+    --observable:#177A72;
+    --observable-soft:#DCEAE7;
+    --secret:#B04E2D;
+    --secret-soft:#F1DDD3;
+    --display: 'Fraunces', serif;
+    --body: 'Source Serif 4', serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--body);
+    line-height:1.65;
+  }
+  a{color:var(--secret); word-break:break-word;}
+  .wrap{max-width:1100px; margin:0 auto; padding:0 32px;}
+  /* ---------- HEADER / HERO ---------- */
+  header.hero{padding:60px 0 32px;}
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:11.5px;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:20px;
+  }
+  .eyebrow .tick{color:var(--secret); font-weight:600;}
+  .hub-link{
+    font-family:var(--mono); font-size:12px; color:var(--ink-faint);
+    text-decoration:none; display:inline-flex; align-items:center; gap:6px; margin-bottom:16px;
+  }
+  .hub-link:hover{color:var(--secret);}
+  h1.title{
+    font-family:var(--display);
+    font-weight:600;
+    font-size:clamp(38px, 6vw, 62px);
+    line-height:1.02;
+    margin:0 0 20px;
+    letter-spacing:-0.015em;
+  }
+  h1.title .secret-word{color:var(--secret); font-style:italic; font-weight:500;}
+  p.lede{
+    font-size:18px;
+    color:var(--ink-soft);
+    max-width:64ch;
+    margin:0 0 32px;
+  }
+  ul.refs li{border-left:2px solid var(--line); padding:10px 0 10px 16px; margin-bottom:2px; transition:border-color 0.15s ease;}
+  ul.refs li:hover{border-left-color:var(--secret);}
+  .ref-title{font-size:15.5px; color:var(--ink); font-weight:600;}
+  .verify-flag{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    background:#F3E3B8;
+    border:1px solid #B8863B;
+    color:#6B4A1E;
+    font-family:var(--mono);
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:0.03em;
+    text-transform:uppercase;
+    padding:2px 8px 2px 6px;
+    border-radius:3px;
+    margin-right:8px;
+    vertical-align:middle;
+  }
+  .ref-meta{font-family:var(--mono); font-size:11.5px; color:var(--ink-faint); margin-top:4px; line-height:1.5;}
+  .ref-meta a{color:var(--ink-faint);}
+  .ref-meta a:hover{color:var(--secret);}
+  .ref-note{font-size:13.5px; color:var(--ink-soft); margin-top:5px; max-width:100ch;}
+  .ref-caveat{font-size:13px; color:#6B4A1E; margin-top:5px; max-width:100ch; padding-left:8px; border-left:2px solid #B8863B;}
+  .ref-tags{font-family:var(--mono); font-size:11px; color:var(--ink-faint); margin-top:6px; letter-spacing:0.02em;}
+  /* "Show abstract" toggle: a native <details>, so the browser's find-in-page also searches the abstracts */
+  .abstract-toggle{display:inline-block; list-style:none; font-family:var(--mono); font-size:11px; line-height:normal; color:var(--secret); background:none; border:1px solid var(--ink-faint); border-radius:3px; padding:2px 8px; margin-top:6px; cursor:pointer;}
+  .abstract-toggle::-webkit-details-marker{display:none;}
+  .abstract-toggle:hover{border-color:var(--secret);}
+  .abstract-toggle:focus-visible{outline:2px solid var(--secret); outline-offset:2px;}
+  details.ref-abs .abs-hide{display:none;}
+  details.ref-abs[open] .abs-show{display:none;}
+  details.ref-abs[open] .abs-hide{display:inline;}
+  .ref-abstract{font-size:13.5px; color:var(--ink-soft); margin-top:6px; max-width:100ch; padding:8px 10px; background:rgba(0,0,0,0.03); border-radius:4px;}
+  footer p{font-size:12.5px; color:var(--ink-faint); max-width:104ch; margin:0 0 8px; line-height:1.55;}
+  /* Rules shared by the topic pages only (hero diagram, intro, table of contents, categories). */
+  /* ---------- TIMING DIAGRAM ---------- */
+  .diagram-card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:2px;
+    padding:22px 24px 16px;
+  }
+  .diagram-caption{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--ink-faint);
+    margin-top:12px;
+    line-height:1.6;
+  }
+  .diagram-caption b{color:var(--ink-soft); font-weight:600;}
+  /* ---------- DESCRIPTION SECTION ---------- */
+  section.intro{padding:44px 0 6px;}
+  section.intro p{margin:0 0 20px; max-width:72ch; color:var(--ink); font-size:17px;}
+  section.intro p:last-child{margin-bottom:0;}
+  /* ---------- CATEGORY SECTIONS ---------- */
+  section.category{padding:48px 0; border-bottom:1px solid var(--line);}
+  section.category:last-of-type{border-bottom:none;}
+  .cat-head{display:flex; gap:16px; align-items:baseline; margin-bottom:10px;}
+  .cat-letter{
+    font-family:var(--display); font-weight:600; font-size:16px; color:var(--ink-faint);
+    border:1px solid var(--line); border-radius:50%;
+    width:32px; height:32px; min-width:32px;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  h2.cat-title{font-family:var(--display); font-weight:600; font-size:26px; margin:0; letter-spacing:-0.01em;}
+  .cat-blurb{color:var(--ink-soft); font-size:15px; max-width:100ch; margin:0 0 26px; padding-left:48px;}
+  li:has(.verify-flag){border-left-color:#B8863B;}
+  footer{padding:32px 0 60px; border-top:1px solid var(--line); margin-top:12px;}
+  footer p:last-child{margin-bottom:0;}
+  footer strong{color:var(--ink-soft); font-weight:600;}
+  footer a{color:var(--ink-faint); text-decoration:none; border-bottom:1px dotted var(--ink-faint);}
+  footer a:hover{color:var(--secret); border-bottom-color:var(--secret);}
+
+  /* ---------- TOC ---------- */
+  nav.toc{margin:44px 0 0; padding:24px 0; border-top:2px solid var(--ink); border-bottom:1px solid var(--line);}
+  nav.toc ol{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:1fr 1fr; gap:8px 28px;}
+  nav.toc li a{
+    display:flex; justify-content:space-between; gap:10px; text-decoration:none; color:var(--ink);
+    font-family:var(--display); font-size:16px; font-weight:600; padding:6px 0;
+  }
+  nav.toc li a:hover{color:var(--secret);}
+  nav.toc li a .num{font-family:var(--mono); color:var(--ink-faint); font-weight:400; font-size:12.5px;}
+  nav.toc ol{align-items:start;}
+  nav.toc ul.toc-sub{list-style:none; margin:0 0 10px; padding:0 0 0 14px; border-left:1px solid var(--line);}
+  nav.toc ul.toc-sub li a{display:block; font-family:var(--body); font-size:14.5px; font-weight:400; color:var(--ink-soft); padding:2px 0;}
+  nav.toc ul.toc-sub li a:hover{color:var(--secret);}
+  @media (max-width:640px){
+    nav.toc ol{grid-template-columns:1fr;}
+  }
+
+  .scope-box{
+    margin-top:26px;
+    padding:18px 20px;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:2px;
+  }
+  .scope-box .scope-label{
+    font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:0.08em;
+    color:var(--ink-faint); margin-bottom:10px; display:block;
+  }
+  .scope-box ul{margin:0; padding-left:18px; font-size:14px; color:var(--ink-soft);}
+  .scope-box li{margin-bottom:5px;}
+  .scope-box li b{color:var(--ink);}
+  ul.refs{list-style:none; margin:0; padding:0; padding-left:48px;}
+  @media (max-width:640px){
+    .wrap{padding:0 18px;}
+    .cat-blurb, ul.refs{padding-left:0;}
+    .cat-head{gap:10px;}
+  }
+</style>
+<link rel="canonical" href="https://elefauch.github.io/opacity/opacity-distributed-systems.html">
+<meta property="og:url" content="https://elefauch.github.io/opacity/opacity-distributed-systems.html">
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="hero">
+    <a class="hub-link" href="opacity-index.html">← All opacity pages</a>
+    <a class="hub-link" href="opacity-tag-search.html" style="margin-left:16px;">Search by tag →</a>
+    <h1 class="title">Opacity of <span class="secret-word">Distributed</span> Systems</h1>
+
+    <div class="diagram-card">
+      <svg viewBox="0 0 860 160" width="100%" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A single system observed by two separate sites, each with a partial view, feeding a coordinator">
+        <rect x="370" y="60" width="120" height="40" rx="4" fill="#E8E1D2" stroke="#D2C9B4" stroke-width="1.5"/>
+        <text x="430" y="84" font-family="JetBrains Mono" font-size="12" fill="#5C5648" text-anchor="middle">system</text>
+
+        <rect x="500" y="70" width="80" height="16" rx="2" fill="#F1DDD3" stroke="#B5502E" stroke-width="1.2"/>
+        <text x="540" y="82" font-family="JetBrains Mono" font-size="10" fill="#B04E2D" text-anchor="middle">secret</text>
+
+        <line x1="370" y1="70" x2="180" y2="35" stroke="#D2C9B4" stroke-width="1.3"/>
+        <line x1="370" y1="90" x2="180" y2="125" stroke="#D2C9B4" stroke-width="1.3"/>
+
+        <circle cx="150" cy="35" r="26" fill="none" stroke="#177A72" stroke-width="1.5"/>
+        <text x="150" y="39" font-family="JetBrains Mono" font-size="10" fill="#177A72" text-anchor="middle">site 1</text>
+        <circle cx="150" cy="125" r="26" fill="none" stroke="#177A72" stroke-width="1.5"/>
+        <text x="150" y="129" font-family="JetBrains Mono" font-size="10" fill="#177A72" text-anchor="middle">site 2</text>
+
+        <line x1="176" y1="42" x2="255" y2="70" stroke="#D2C9B4" stroke-width="1.3" stroke-dasharray="3 3"/>
+        <line x1="176" y1="118" x2="255" y2="90" stroke="#D2C9B4" stroke-width="1.3" stroke-dasharray="3 3"/>
+
+        <circle cx="270" cy="80" r="22" fill="#DCEAE7" stroke="#177A72" stroke-width="1.5"/>
+        <text x="270" y="76" font-family="JetBrains Mono" font-size="9.5" fill="#177A72" text-anchor="middle">coord-</text>
+        <text x="270" y="87" font-family="JetBrains Mono" font-size="9.5" fill="#177A72" text-anchor="middle">inator</text>
+
+        <text x="700" y="60" font-family="Source Serif 4" font-size="13" fill="#5C5648">Can no single site,</text>
+        <text x="700" y="80" font-family="Source Serif 4" font-size="13" fill="#5C5648">or the coordinator</text>
+        <text x="700" y="100" font-family="Source Serif 4" font-size="13" fill="#5C5648">combining them, learn</text>
+        <text x="700" y="120" font-family="Source Serif 4" font-size="13" fill="#5C5648">the secret?</text>
+      </svg>
+      <div class="diagram-caption">Instead of one observer with one view, the system's behavior is split across several observation sites, which may or may not coordinate, and may communicate over channels with <b style="color:#B04E2D;">delays or losses</b>. Opacity now has to be defined with respect to this whole architecture, not just a single observer.</div>
+    </div>
+
+  </header>
+
+  <section class="intro">
+    <div class="eyebrow"><span class="tick">●</span> Scope of this page</div>
+    <p>Every other page in this index assumes a single observer with one fixed view of the system. This page covers what happens once that assumption is dropped: several observation sites, each seeing only part of the system's behavior, which may or may not coordinate with each other, and whose messages to a coordinator may be delayed, lost, or arrive out of order. The underlying system itself stays finite-state, as in the classical setting; what changes is the observation architecture.</p>
+    <p>This includes decentralized opacity (multiple independent or coordinating intruders), networked opacity (communication delays and losses between the system and its observer), and modular opacity (a large system decomposed into interacting components, verified or enforced component-by-component rather than on the full product). A much smaller literature than the classical single-observer setting, and noticeably newer.</p>
+  </section>
+
+  <nav class="toc" aria-label="Table of contents">
+    <div class="eyebrow"><span class="tick">●</span> Categories</div>
+    <ol>
+      <li><a href="#cat-a"><span>Decentralized Systems</span><span class="num">A</span></a></li>
+      <li><a href="#cat-b"><span>Modular Systems</span><span class="num">B</span></a></li>
+      <li><a href="#cat-c"><span>Networked Systems</span><span class="num">C</span></a></li>
+    </ol>
+  </nav>
+
+  
+  <!-- ===================== A. DECENTRALIZED SYSTEMS ===================== -->
+  <section class="category" id="cat-a">
+    <div class="cat-head"><div class="cat-letter">A</div><h2 class="cat-title">Decentralized Systems</h2></div>
+    <p class="cat-blurb">The system is watched by several independent observers, each with its own partial view, who may or may not be allowed to coordinate or combine what they've each seen. Opacity has to be redefined with respect to the whole observation architecture (can any single observer, or any coalition of them, deduce the secret?), not just a lone intruder.</p>
+
+    <ul class="refs">
+        <li>
+          <div class="ref-title">Concurrent Secrets</div>
+          <div class="ref-meta">Eric Badouel, Marek Bednarczyk, Andrzej Borzyszkowski, Benoît Caillaud, Philippe Darondeau · Discrete Event Dynamic Systems, 17(4), pp. 425–446, 2007 · <a href="https://doi.org/10.1007/s10626-007-0020-5" target="_blank" rel="noopener">doi.org/10.1007/s10626-007-0020-5</a> · research report: <a href="https://inria.hal.science/inria-00070249" target="_blank" rel="noopener">HAL: inria-00070249</a> (INRIA RR-5771, 2005)</div>
+          <div class="ref-tags">distributed · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Given a finite state system with partial observers and for each observer, a regular set of trajectories which we call a secret, we consider the question whether the observers can ever find out that a trajectory of the system belongs to some secret. We search for a regular control on the system, enforcing the specified secrets on the observers, even though they have full knowledge of this control. We show that an optimal control always exists although it is generally not regular. We state sufficient conditions for computing a finite and optimal control of the system enforcing the concurrent secret as desired. We briefly point to applications.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Decentralized Opacity of Discrete Event Systems</div>
+          <div class="ref-meta">Anna Paoli, Feng Lin · 2012 American Control Conference (ACC), pp. 6083–6088 · <a href="https://doi.org/10.1109/ACC.2012.6315028" target="_blank" rel="noopener">doi.org/10.1109/ACC.2012.6315028</a></div>
+          <div class="ref-tags">decentralized · distributed · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">In this paper, we investigate opacity of discrete event systems in a decentralized framework with several agents, each of them performing its observation of the system. We consider two cases, one without coordination among agents and one with coordination. Both cases are useful because many systems used today are distributed over a network, some with agents coordinating among themselves and some without. We introduce general definitions of decentralized opacity for both cases. The definitions are based on languages. Therefore, they are flexible and can include other properties of discrete event systems as special cases. In particular, we show that co-observability used in supervisory control is a special case of decentralized opacity. We illustrate the usefulness of decentralized opacity by applying it in solving an interesting security problem in computer systems.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Current-State Opacity Enforcement in Discrete Event Systems Under Incomparable Observations</div>
+          <div class="ref-meta">Yin Tong, Zhiwu Li, Carla Seatzu, Alessandro Giua · Discrete Event Dynamic Systems, 28(2), pp. 161–182, 2018 · <a href="https://doi.org/10.1007/s10626-017-0264-7" target="_blank" rel="noopener">doi.org/10.1007/s10626-017-0264-7</a></div>
+          <div class="ref-tags">decentralized · distributed · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">In this paper we tackle the opacity enforcement problem in discrete event systems using supervisory control theory. In particular, we consider the case where the intruder and the supervisor may observe different sets of events and neither of these sets needs to be contained in the other one. Moreover, there may be controllable events that cannot be observed by the supervisor. We propose a finite structure, called an augmented I-observer, to characterize the strings that will not leak the secret. Based on such a structure, a locally optimal supervisor enforcing current-state opacity is designed.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Synthesis of Insertion Functions to Enforce Decentralized and Joint Opacity Properties of Discrete-Event Systems</div>
+          <div class="ref-meta">Bo Wu, Jin Dai, Hai Lin · 2018 American Control Conference (ACC), pp. 3026–3031 · <a href="https://arxiv.org/abs/1802.05728" target="_blank" rel="noopener">arXiv:1802.05728</a> · <a href="https://doi.org/10.23919/ACC.2018.8431583" target="_blank" rel="noopener">doi.org/10.23919/ACC.2018.8431583</a></div>
+          <div class="ref-tags">decentralized · distributed · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Opacity is a confidentiality property that characterizes the non-disclosure of specified secret information of a system to an outside observer. In this paper, we consider the enforcement of opacity within the discrete-event system formalism in the presence of multiple intruders. We study two cases, one without coordination among the intruders and the other with coordination. We propose appropriate notions of opacity corresponding to the two cases, respectively, and propose enforcement mechanisms for these opacity properties based on the implementation of insertion functions, which manipulates the output of the system by inserting fictitious observable events whenever necessary. The insertion mechanism is adapted to the decentralized framework to enforce opacity when no coordination exists. Furthermore, we present a coordination and refinement procedure to synthesize appropriate insertion functions to enforce opacity when intruders may coordinate with each other by following an intersection-based coordination protocol. The effectiveness of the proposed opacity-enforcement approaches is validated through illustrative examples.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Notions of Centralized and Decentralized Opacity in Linear Systems</div>
+          <div class="ref-meta">Bhaskar Ramasubramanian, Rance Cleaveland, Steven I. Marcus · IEEE Transactions on Automatic Control, 65(4), pp. 1442–1455, 2020 · <a href="https://doi.org/10.1109/TAC.2019.2920837" target="_blank" rel="noopener">doi.org/10.1109/TAC.2019.2920837</a> · preprint: <a href="https://arxiv.org/abs/1903.06869" target="_blank" rel="noopener">arXiv:1903.06869</a></div>
+          <div class="ref-note">Extends k-ISO opacity of linear systems to multiple adversaries, with notions that vary with the presence of a centralized coordinator and with collusion; a graph-theoretic condition characterizes non-opacity under collusion.</div>
+          <div class="ref-tags">continuous · distributed · linear-systems · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">We formulate notions of opacity for cyberphysical systems modeled as discrete-time linear time-invariant systems. A set of secret states is k-ISO with respect to a set of nonsecret states if, starting from these sets at time 0, the outputs at time k are indistinguishable to an adversarial observer. Necessary and sufficient conditions to ensure that a secret specification is k-ISO are established in terms of sets of reachable states. We also show how to adapt techniques for computing underapproximations and overapproximations of the set of reachable states of dynamical systems in order to soundly approximate k-ISO. Furthermore, we provide a condition for output controllability, if k-ISO holds, and show that the converse holds under an additional assumption. We extend the theory of opacity for single-adversary systems to the case of multiple adversaries and develop several notions of decentralized opacity. We study the following scenarios: first, the presence or lack of a centralized coordinator, and, second, the presence or absence of collusion among adversaries. In the case of colluding adversaries, we derive a condition for nonopacity that depends on the structure of the directed graph representing the communication between adversaries. Finally, we relax the condition that the outputs be indistinguishable and define a notion of ϵ-opacity, and also provide an extension to the case of nonlinear systems.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Online Verification of K-Step Opacity by Petri Nets in Centralized and Decentralized Structures</div>
+          <div class="ref-meta">Guanghui Zhu, Zhiwu Li, Naiqi Wu · Automatica, 145, article 110528, 2022 · <a href="https://doi.org/10.1016/j.automatica.2022.110528" target="_blank" rel="noopener">doi.org/10.1016/j.automatica.2022.110528</a></div>
+          <div class="ref-tags">decentralized · distributed · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">This paper presents an online approach to deal with the problem of state-based K-step opacity of a discrete event system modeled with labeled Petri nets. The secret states can be described by a set of either markings or generalized mutual exclusion constraints (GMECs), which is more general than the existing approaches in which the secret states are characterized by GMECs only. We formulate an integer linear programming (ILP) model to find a marking outside the set of secret states from each of the K-delayed state estimates, avoiding a complete enumeration of reachability set. Based on the ILP model, an online algorithm is developed to verify K-step opacity of an observation (i.e., an observed sequence). As an extension of K-step opacity, we define the notion of joint K-step opacity in a decentralized structure with two local sites and extend the proposed algorithm to verify the joint K-step opacity of an observation. In addition, the relationship between joint K-step opacity and K-step opacity is formally discussed.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Distributed Secret Securing in Discrete-Event Systems</div>
+          <div class="ref-meta">Shoma Matsui, Kai Cai, Karen Rudie · 2024 American Control Conference (ACC), pp. 3202–3207 · <a href="https://doi.org/10.23919/ACC60939.2024.10644775" target="_blank" rel="noopener">doi.org/10.23919/ACC60939.2024.10644775</a> · preprint: <a href="https://arxiv.org/abs/2402.08878" target="_blank" rel="noopener">arXiv:2402.08878</a></div>
+          <div class="ref-tags">decentralized · distributed · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">In this paper, we study a security problem of protecting secrets in distributed systems. Specifically, we employ discrete-event systems to describe the structure and behaviour of distributed systems, in which global secret information is separated into pieces and stored in local component agents. The goal is to prevent such secrets from being exposed to intruders by imposing appropriate protection measures. This problem is formulated as to ensure that at least one piece of every distributed global secret is secured by a required number of protections, while the overall cost to apply protections is minimum. We first characterize the solvability of this security problem by providing a necessary and sufficient condition, and then develop an algorithm to compute a solution based on the supervisory control theory of discrete-event systems. Finally, we illustrate the effectiveness of our solution with an example system comprising distributed databases.</div>
+          </details>
+        </li>
+    </ul>
+  </section>
+
+  <!-- ===================== B. MODULAR SYSTEMS ===================== -->
+  <section class="category" id="cat-b">
+    <div class="cat-head"><div class="cat-letter">B</div><h2 class="cat-title">Modular Systems</h2></div>
+    <p class="cat-blurb">A single system, but built by composing several local components (a product or synchronous composition of automata), and analyzed component-by-component rather than on the fully composed whole. The central question is how to check or enforce opacity without ever constructing that full composition, whose state space can be exponential in the number of components. Results here range from complexity lower bounds (showing the problem is provably harder modularly than centrally) to compositional algorithms, abstraction-based reductions, and GNN-based acceleration.</p>
+
+    <ul class="refs">
+        <li>
+          <div class="ref-title">Reduced-Complexity Verification for Initial-State Opacity in Modular Discrete Event Systems</div>
+          <div class="ref-meta">Anooshiravan Saboori, Christoforos N. Hadjicostis · IFAC Proceedings Volumes, 43(12), pp. 78–83, 2010 · <a href="https://doi.org/10.3182/20100830-3-DE-4013.00015" target="_blank" rel="noopener">doi.org/10.3182/20100830-3-DE-4013.00015</a></div>
+          <div class="ref-tags">distributed · modular · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">In this paper, we propose and analyze <i>reduced-complexity</i> methodologies for verifying <i>initial-state opacity</i> in modular discrete event systems. Initial-state opacity requires that the membership of the system initial state to a given set of <i>secret states</i> <i>S</i> remains opaque (uncertain) to an intruder who has complete knowledge of the system model and observes system activity through some natural projection map. In the modular setting we consider, the given system is modeled as a <i>composition</i> (synchronous product) of <i>M</i> modules [<i>G</i><sub>1</sub>, <i>G</i><sub>2</sub>, &hellip;, <i>G</i><sub><i>M</i></sub>] where each module <i>G</i><sub><i>i</i></sub> is a non-deterministic finite automaton with <i>N</i><sub><i>i</i></sub> states with the set of secret states <i>S</i> is of the form <i>S</i> = [(<i>x</i><sub>1</sub>, <i>x</i><sub>2</sub>, &hellip;, <i>x</i><sub><i>M</i></sub>)|<i>x</i><sub><i>i</i></sub> &isin; <i>S</i><sub><i>i</i></sub>], where <i>S</i><sub><i>i</i></sub> is the set of secret states for module <i>G</i><sub><i>i</i></sub>. Assuming that the pairwise shared events are pairwise observable and that the intruder observes events that are observable in at least one module, we provide a modular algorithm for verifying initial-state opacity with <i>O</i>(<i>MN</i><sup><i>M</i>&minus;1</sup>2<sup><i>N</i><sup>2</sup></sup>) state and time complexity, where <i>N</i> = max<sub><i>i</i></sub> <i>N</i><sub><i>i</i></sub>. This is a considerable reduction compared to the <i>O</i>(2<sup>(<i>N</i><sup><i>M</i></sup>)<sup>2</sup></sup>) state and time complexity of the centralized verification method, which verifies initial-state opacity by considering the composed system as a monolithic system.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Complexity of Detectability, Opacity and A-Diagnosability for Modular Discrete Event Systems</div>
+          <div class="ref-meta">Tomáš Masopust, Xiang Yin · Automatica, 101, pp. 290–295, 2019 · <a href="https://doi.org/10.1016/j.automatica.2018.12.019" target="_blank" rel="noopener">doi.org/10.1016/j.automatica.2018.12.019</a> · preprint: <a href="https://arxiv.org/abs/1710.02877" target="_blank" rel="noopener">arXiv:1710.02877</a></div>
+          <div class="ref-tags">distributed · modular · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Modular discrete event systems are modeled as a parallel composition of finite automata. While deciding weak detectability, opacity, and A-diagnosability for monolithic systems is PSPACE-complete, the complexity for modular systems is unknown. We show that for modular systems the problems are EXPSPACE-complete, and hence there is neither a polynomial-time nor a polynomial-space algorithm solving them. While the upper bound is a natural modification of the PSPACE algorithms for monolithic systems, the lower bound requires a novel and nontrivial construction. We further discuss a case where the complexity drops to PSPACE-complete.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Current-State Opacity Verification in Modular Discrete Event Systems</div>
+          <div class="ref-meta">Yin Tong, Hao Lan · 58th IEEE Conference on Decision and Control (CDC 2019), pp. 7665–7670 · <a href="https://doi.org/10.1109/CDC40024.2019.9029367" target="_blank" rel="noopener">doi.org/10.1109/CDC40024.2019.9029367</a></div>
+          <div class="ref-tags">distributed · modular · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">In this paper we address the opacity verification problem in modular discrete event systems. We assume that the system is composed by several components that are modeled by deterministic finite automata and there is one intruder. The notion of current-state opacity in modular systems is defined. Rather than constructing the modular system through parallel composition and its observer, we show that current-state opacity of modular systems can be locally determined, i.e., determined by opacity of its components.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Enforcing Opacity in Modular Systems</div>
+          <div class="ref-meta">Amelia Zinck, Laurie Ricker, Hervé Marchand, Loïc Hélouët · 21st IFAC World Congress, 2020, pp. 3549–3555 · <a href="https://doi.org/10.1016/j.ifacol.2020.12.2542" target="_blank" rel="noopener">doi.org/10.1016/j.ifacol.2020.12.2542</a> · <a href="https://hal.science/hal-02917644" target="_blank" rel="noopener">hal-02917644</a></div>
+          <div class="ref-tags">distributed · modular · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">In discrete-event systems, the opacity of a secret ensures that some behaviors or states cannot be inferred with certainty from partial observation of the system. Enforcing opacity in a discrete-event system, encoded by a finite labelled transition system (LTS), is a way to avoid information leakage. Checking opacity is decidable but costly (EXPTIME in the worst cases). This paper addresses opacity for modular systems in which every module, represented by an LTS, has to protect its own secret (a set of secret states S) w.r.t. a local attacker. Once the system is composed, we assume a coalition between the attackers that share their local view (called the global attacker). Assuming the global attacker can observe all interactions between modules, we provide a reduced-complexity opacity verification technique and an algorithm for constructing local controllers that enforces opacity for each secret separately.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Current-State Opacity and Initial-State Opacity of Modular Discrete Event Systems</div>
+          <div class="ref-meta">Jingkai Yang, Weilin Deng, Daowen Qiu · International Journal of Control, 95(11), pp. 3037–3049, 2022 · <a href="https://doi.org/10.1080/00207179.2021.1951357" target="_blank" rel="noopener">doi.org/10.1080/00207179.2021.1951357</a></div>
+          <div class="ref-tags">distributed · modular · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">The verifications of current-state opacity (CSO) and initial-state opacity (ISO) in discrete event systems (DESs) both suffer from the curse of dimensionality, as these issues were proved to be PSPACE-complete. Hence, how to reduce the state space is crucial. In this paper, we investigate CSO and ISO in modular DESs, which consist of several individual components. Necessary and sufficient conditions of CSO and ISO for modular DESs are derived under the assumption that all synchronous events are observable by each component of modular DESs. Moreover, we prove that the initial state estimator of modular system is isomorphic to the synchronous composition of initial state estimators for individual components. These results offer us the opportunity to reduce the complexity in verifying the opacity of modular DESs.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">State-Labeled Safety Analysis of Modular Observers for Opacity Verification</div>
+          <div class="ref-meta">Bengt Lennartson, Mona Noori-Hosseini, Christoforos N. Hadjicostis · IEEE Control Systems Letters, 6, pp. 2936–2941, 2022 · <a href="https://doi.org/10.1109/LCSYS.2022.3176531" target="_blank" rel="noopener">doi.org/10.1109/LCSYS.2022.3176531</a></div>
+          <div class="ref-tags">distributed · modular · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Verification of opacity and anonymity for modular systems is in this letter formulated as safety analysis of local observers with state labels. A unified modeling strategy is presented based on a generalized synchronous composition, including both shared and non-shared state labels. The proposed modeling approach is shown to be flexible and general, making it possible to solve both local, global, and arbitrarily joint secret state problems simultaneously. A scalable modular <i>n</i>-floor, <i>m</i>-elevator security benchmark problem is also formulated and evaluated by two powerful safety analysis methods. It is shown that current-state opacity for non-trivial complex systems involving more than 10<sup>25</sup> observer states can be verified in about one second.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Opacity Verification for a Class of Modular Discrete Event Systems</div>
+          <div class="ref-meta">Jingkai Yang, Weilin Deng · IEEE Access, 13, pp. 54080–54089, 2025 · <a href="https://doi.org/10.1109/ACCESS.2025.3554636" target="_blank" rel="noopener">doi.org/10.1109/ACCESS.2025.3554636</a></div>
+          <div class="ref-tags">distributed · modular · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">The verification of opacity of discrete event systems (DESs) is subjected to the curse of dimensionality because this issue has been proven to be EXPSPACE-complete. Therefore, how to improve the efficiency of opacity verification in DESs is crucial. We discuss in this paper the verification of several classes of opacity in modular discrete event systems (modular DESs) formalized as Cartesian composition of deterministic finite state automata. We derive the sufficient and necessary conditions for these opacity notions in modular DESs. Many examples are also used to explain the results obtained in this article. These results greatly reduce the computational complexity of verifying the opacity for modular DESs.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Don't Compose Blindly: Adaptive GNNs for Opacity Verification in Modular Discrete-Event Systems</div>
+          <div class="ref-meta">Sarra Habbachi, Imene ben Hafaiedh, Zhiwu Li · 18th International Conference on Agents and Artificial Intelligence (ICAART 2026), Volume 5, pp. 4372–4379 · <a href="https://doi.org/10.5220/0014418100004052" target="_blank" rel="noopener">doi.org/10.5220/0014418100004052</a></div>
+          <div class="ref-tags">distributed · modular · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Language-based opacity verification in modular discrete-event systems (DESs) is hindered by state-space explosion when constructing a global observer. Iterative compositional methods alleviate this issue but often rely on fixed composition sequences, leading to redundant computations when modules are locally non-opaque. We propose an adaptive framework using Graph Neural Networks (GNNs) to dynamically select optimal composition sequences. The GNN prioritizes compositions based on structural features, including inter-module coupling, transition patterns, and secret state distributions, reducing unnecessary computation. Experiments on synthetic and real-world benchmarks demonstrate an average speedup of 15.7×, a 68% reduction in compositions, and 99.8% verification accuracy. This approach enables scalable opacity verification for systems with up to 30 modules.</div>
+          </details>
+        </li>
+    </ul>
+  </section>
+
+  <!-- ===================== C. NETWORKED SYSTEMS ===================== -->
+  <section class="category" id="cat-c" style="border-bottom:none;">
+    <div class="cat-head"><div class="cat-letter">C</div><h2 class="cat-title">Networked Systems</h2></div>
+    <p class="cat-blurb">A single system whose events are transmitted to the observer over a communication channel that may be insecure, introduce delays, or lose messages. The intruder exploits these channel properties to learn more than a local observer would, and the defender must account for all admissible channel behaviors when checking or enforcing opacity.</p>
+
+    <ul class="refs">
+        <li>
+          <div class="ref-title">Initial-State Estimation of Multi-Channel Networked Discrete Event Systems</div>
+          <div class="ref-meta">Jing Yao, Yin Tong, Hao Lan · IEEE Control Systems Letters, 4(4), pp. 852–857, 2020 · <a href="https://doi.org/10.1109/LCSYS.2020.2998610" target="_blank" rel="noopener">doi.org/10.1109/LCSYS.2020.2998610</a></div>
+          <div class="ref-tags">distributed · networked · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Initial-state estimation consists in determining the initial state of the system based on the observation from the system and the system structure. It is the basis for many problems in security applications, such as opacity, detectability and supervisory control. However, when it comes to cyber-physical systems (CPS) communication delays and losses are inevitable. In this letter, we study the initial-state estimation problem in a CPS that is modeled with a multi-channel networked discrete event system (NDES). In practice, the system is usually distributed over several locations, and the communication between the system and an agent (e.g., intruder, observer, supervisor) is carried out via a shared network, in which communication delays and losses may happen. In multi-channel NDESs, even when the first-in first-out rule is satisfied in each channel, the order of events received by the agent may still be shuffled due to random communication delays in each channel. To address these new challenges, we formalize the initial-state estimation problem in multi-channel NDESs and a networked initial-state estimator is proposed to generate the exact initial-state estimate.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Information Control in Networked Discrete Event Systems and Its Application to Battery Management Systems</div>
+          <div class="ref-meta">Feng Lin, Le Yi Wang, Wen Chen, Weilin Wang, Fei Wang · Discrete Event Dynamic Systems, 30(2), pp. 243–268, 2020 · <a href="https://doi.org/10.1007/s10626-019-00303-y" target="_blank" rel="noopener">doi.org/10.1007/s10626-019-00303-y</a></div>
+          <div class="ref-tags">distributed · networked · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Opacity is an important property in control of information flow among networked agents. In this paper, we investigate information control problems in networked discrete event systems using opacity. In a networked discrete event system, communication among agents is via a shared communication network. Since delays and losses are unavoidable in networked discrete event systems, they must be considered in investigating opacity. We call opacity under communication delays and losses network opacity. We first define three network opacities: strong network opacity, weak network opacity, and network non-opacity. We derive necessary and sufficient conditions for network opacities and develop methods to check network opacities. We then apply network opacity to solve a problem in battery management systems.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Opacity of Networked Supervisory Control Systems Over Insecure Communication Channels</div>
+          <div class="ref-meta">Shuo Yang, Junyao Hou, Xiang Yin, Shaoyuan Li · IEEE Transactions on Control of Network Systems, 8(2), pp. 884–896, 2021 · <a href="https://doi.org/10.1109/TCNS.2021.3050131" target="_blank" rel="noopener">doi.org/10.1109/TCNS.2021.3050131</a> · conference precursor: &ldquo;Opacity of Networked Supervisory Control Systems Over Insecure Multiple Channel Networks&rdquo;, 58th IEEE Conference on Decision and Control (CDC 2019), pp. 7641–7646 · <a href="https://doi.org/10.1109/CDC40024.2019.9030235" target="_blank" rel="noopener">doi.org/10.1109/CDC40024.2019.9030235</a></div>
+          <div class="ref-tags">distributed · networked · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">In this article, we investigate security and privacy issues in networked supervisory control systems over multiple channel networks. We consider a networked discrete-event system controlled by a supervisor that receives information from sensors and sends control decisions to actuators via observation channels and control channels, respectively. The security problem is studied for the scenario where some of the communication channels are insecure in the sense there exists a passive intruder (eavesdropper) that can access the information-flow in those insecure communication channels. We adopt the concept of opacity, an information flow security property, to characterize the security status of the supervisory control system. Specifically, we assume that the system has a secret and the system is said to be opaque if the intruder can never determine the secret of the system unambiguously based on the information-flow in the insecure channels. We consider the notions of current-state opacity, K-step opacity, and infinite-step opacity in the networked control setting. New network observers are proposed to estimate the state of the system with two-side incomparable channel information. We show that the opacity verification problems for the networked setting can be effectively solved using the proposed network observers.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Opacity of Networked Discrete Event Systems</div>
+          <div class="ref-meta">Jingkai Yang, Weilin Deng, Daowen Qiu, Cheng Jiang · Information Sciences, 543, pp. 328–344, 2021 · <a href="https://doi.org/10.1016/j.ins.2020.07.017" target="_blank" rel="noopener">doi.org/10.1016/j.ins.2020.07.017</a> · conference version: Jingkai Yang, Weilin Deng, Cheng Jiang, Daowen Qiu · 2019 IEEE 58th Conference on Decision and Control (CDC), pp. 6736–6741 · <a href="https://doi.org/10.1109/CDC40024.2019.9030250" target="_blank" rel="noopener">doi.org/10.1109/CDC40024.2019.9030250</a></div>
+          <div class="ref-tags">distributed · networked · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Opacity is an important information-flow property, which is used to characterize whether or not the secrets of system have been leaked to the intruders. Over the past ten years, opacity of discrete event systems (DESs) modeled as automata and Petri nets have been well investigated under the assumption that the communication channels between systems and intruders are perfect. However, in networked discrete event systems (NDESs), the DESs run in a shared network, and the communication delays and losses are inevitable usually. In this paper, we investigate the problems of opacity in the framework of NDESs. We formulate four kinds of opacity for NDESs, including current-state opacity, initial-state opacity, initial-final-state opacity, and K-step opacity. We also present the verification algorithms for these notions. We extend the notions of opacity in classical DESs, that is, if the communication delays and losses disappear, then these new notions would reduce to their classical counterparts. A number of examples are provided to illustrate the results obtained.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Networked Opacity for Finite State Machine with Bounded Communication Delays</div>
+          <div class="ref-meta">Zhipeng Zhang, Shaolong Shu, Chengyi Xia · Information Sciences, 572, pp. 57–66, 2021 · <a href="https://doi.org/10.1016/j.ins.2021.04.072" target="_blank" rel="noopener">doi.org/10.1016/j.ins.2021.04.072</a></div>
+          <div class="ref-tags">distributed · networked · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Networked finite state machines consider the delay factor in real-time communication networks, and the security has become an important research topic in cyber-physical systems (CPSs). In this brief paper, we explore the networked opacity of finite state machine with bounded communication delays. Firstly, the networked opacity is proposed from the perspective of security state reachability, and by use of the Boolean matrix semi-tensor product (STP), we introduce the reachability matrix with respect to all feasible events to give the current dynamics with bounded communication delays. Subsequently, based on the algebraic equation, we continue to discuss the corresponding current estimate of possible reachable states, which can be calculated by a matrix approach. Then, a more simple and effective verification criterion of networked opacity is derived by some matrix manipulations. Finally, a typical example is provided to validate the impact of communication delay on the opacity of CPSs, and our results contribute to deeply understanding the information security in the area of CPSs.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Enhancement of Opacity for Distributed State Estimation in Cyber-Physical Systems</div>
+          <div class="ref-meta">Liwei An, Guang-Hong Yang · Automatica, 136, article 110087, 2022 · <a href="https://doi.org/10.1016/j.automatica.2021.110087" target="_blank" rel="noopener">doi.org/10.1016/j.automatica.2021.110087</a></div>
+          <div class="ref-note">The estimation network itself is the attack surface: nodes broadcast their estimates and an intruder eavesdrops on a subset. The enhancement mechanism keeps opacity without degrading estimation accuracy.</div>
+          <div class="ref-tags">continuous · distributed · linear-systems · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Opacity, a confidentiality property that characterizes whether a “secret” of a system can be inferred by an outside intruder, is an increasing concern in cyber–physical systems (CPSs). The existing distributed estimation algorithms allow each node to broadcast its explicit state information to its neighbors, which results in the disclosure of CPS’s secret state. To meet the confidentiality requirement, this paper formulates a new framework for opacity for distributed state estimation. Two opacity-enhancing algorithms are proposed against the intruder models with different eavesdropping capacities for a subset of nodes. Necessary and sufficient conditions to ensure that a secret state is opaque are established in terms of the rank of constructed structural matrices of the eavesdropped nodes. Moreover, it is shown that the use of enhancement mechanism does not compromise the estimation accuracy. The framework of opacity is further extended to the case of measurement noises.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Enforcing Opacity in Discrete Event Systems via Delayed Observations</div>
+          <div class="ref-meta">Jiwei Wang, Simone Baldi, Wenwu Yu, Xiang Yin · IEEE Control Systems Letters, 9, pp. 2411–2416, 2025 · <a href="https://doi.org/10.1109/LCSYS.2025.3623658" target="_blank" rel="noopener">doi.org/10.1109/LCSYS.2025.3623658</a></div>
+          <div class="ref-tags">distributed · networked · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Artificially introducing a delay in the observations of a system can be an effective mechanism to mask the system itself, with the goal to increase its opacity and thus its security. This letter investigates opacity in discrete event systems with delayed observations. We focus on two questions: how to verify opacity under delayed observations, and how to synthesize sensor activation policies that guarantee opacity under such delayed conditions. To address these questions, we first introduce the definition of opacity under delayed observation and develop a corresponding verification method. We then extend such analysis tool into a synthesis tool by proposing an optimization approach for designing sensor activation policies guaranteeing opacity under delayed observations. An example is used to illustrate the analysis and synthesis procedures.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Construction of Decentralized State Estimator Based on Partially Ordered Observation Sequences</div>
+          <div class="ref-meta">Dajiang Sun, Christoforos N. Hadjicostis, Zhiwu Li · IEEE Transactions on Automatic Control, 71(5), pp. 3335–3342, 2026 · <a href="https://doi.org/10.1109/TAC.2025.3633985" target="_blank" rel="noopener">doi.org/10.1109/TAC.2025.3633985</a> · preprint: <a href="https://arxiv.org/abs/2502.10367" target="_blank" rel="noopener">arXiv:2502.10367</a>, "Decentralized State Estimation and Opacity Verification Based on Partially Ordered Observation Sequences"</div>
+          <div class="ref-tags">distributed · networked · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">In this article, we investigate state estimation and estimator construction problems within a decentralized observation architecture. Specifically, we consider a discrete event system whose behavior is recorded by a set of observation sites. These sites transmit their partially ordered sequences of observations to a coordinator whenever a synchronization occurs. To properly analyze the system behavior from the coordinator's viewpoint, we first introduce the notion of a complete synchronizing sequence structure (CSS structure), which concisely captures the state evolution of each system state upon different information provided by the observation sites. Based on the CSS structure, we then construct corresponding current- and initial-state estimators for offline state estimation at the coordinator. In particular, we discuss how to verify initial-state opacity and diagnosability at the coordinator, as well as a novel opacity notion, namely current-state-at-synchronization opacity.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Verification and Enforcement of K-Step Mutual Opacity of Networked Systems</div>
+          <div class="ref-meta">Robia Arif, Gaiyun Liu, Abdulrahman Al-Ahmari, Zhiwu Li · Information Sciences, 748, article 123497, 2026 · <a href="https://doi.org/10.1016/j.ins.2026.123497" target="_blank" rel="noopener">doi.org/10.1016/j.ins.2026.123497</a></div>
+          <div class="ref-tags">distributed · networked · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">We delve into the verification and enforcement problem of K-step mutual opacity of discrete-event systems, which is a crucial aspect of information flow privacy. Specifically, K-step mutual opacity describes a scenario in which the secret states cannot be mutually revealed within K steps of observations by two or more adversaries. For the sake of simplicity, suppose that two agents engage in strategic competition in a system where each aims to reveal the other’s secrets while concealing its own. These agents partially observe system evolution and influence the behavior of the system by enabling or disabling events from their controllable event sets. A separation principle is used to construct state estimates, precisely for a two-way observer, that merge both the past and future information flow into one structure. Furthermore, the two-way observer supports a more efficient verification algorithm for K-step mutual opacity. For the enforcement of K-step mutual opacity, the analyses unfold in distinct scenarios. Primarily, agents are passive, in which the system is connected with a global controller capable of ensuring mutual opacity between the agents within K observations. This controller prevents the leakage of secret information from one adversary to the other. Moreover, we explore the feasibility of synthesizing separate controllers for the agents. The objective is to devise a winning state-dependent control strategy that ensures an agent consistently uncovers the secret of the other while securing its own. This research illuminates the intricate dynamics of information flow privacy in a competitive environment, providing insights that facilitate the development of effective privacy-preserving mechanisms in complex networked systems.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Enforcing Current-State Opacity and Utility of Cyber-Physical Systems Using Multipath Event Routing</div>
+          <div class="ref-meta">Lucas N. R. Reis, Lilian K. Carvalho, Marcos V. Moreira · IEEE Transactions on Automatic Control, 71(6), pp. 4208–4214, 2026 · <a href="https://doi.org/10.1109/TAC.2026.3653255" target="_blank" rel="noopener">doi.org/10.1109/TAC.2026.3653255</a></div>
+          <div class="ref-note">Cross-listed as a networked-systems technique: opacity and utility are enforced over the channel to a remote receiver, using multipath event routing on top of event replacements.</div>
+          <div class="ref-tags">classical · continuous · distributed · enforcement · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Several strategies have been proposed in the literature to ensure data security in cyber-physical systems abstracted as networked discrete-event systems, such as enforcing opacity by using obfuscation policies. In these cases, if it is considered the existence of an intended receiver, the useful information can be hidden from him/her. This problem becomes worse when the confidentiality of the data must be ensured, i.e., when the intended receiver must always know the system current state from the observation of the obfuscated transmitted sequence. In this article, we propose a defense strategy to enforce current-state opacity using an obfuscation policy based on event replacements that also ensures the utility of the transmitted information. The notion of utility used, called current-state utility, is associated with the ability of the intended receiver to be always certain of the system current state. In order to implement the defense strategy, a multipath event routing technique is considered.</div>
+          </details>
+        </li>
+    </ul>
+  </section>
+
+
+  <footer>
+    <p><strong>Maintained by</strong> <a href="https://elefauch.github.io/" target="_blank" rel="noopener">Engel Lefaucheux</a>. This bibliography is almost certainly incomplete. If you know of a relevant paper that's missing, please get in touch so it can be added.</p>
+  </footer>
+</div>
+</body>
+</html>

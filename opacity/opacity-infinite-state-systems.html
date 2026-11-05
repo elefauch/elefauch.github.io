@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Opacity of Infinite-State Systems</title>
+<meta name="description" content="Opacity for infinite-state systems such as pushdown automata and unbounded Petri nets, mostly results on where decidability breaks.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Opacity of Infinite-State Systems">
+<meta property="og:description" content="Opacity for infinite-state systems such as pushdown automata and unbounded Petri nets, mostly results on where decidability breaks.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* Rules shared by the topic pages and the tag search page. */
+  :root{
+    --paper:#F1EDE4;
+    --card:#E8E1D2;
+    --ink:#2A2620;
+    --ink-soft:#5C5648;
+    --ink-faint:#6A6456;
+    --line:#D2C9B4;
+    --observable:#177A72;
+    --observable-soft:#DCEAE7;
+    --secret:#B04E2D;
+    --secret-soft:#F1DDD3;
+    --display: 'Fraunces', serif;
+    --body: 'Source Serif 4', serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--body);
+    line-height:1.65;
+  }
+  a{color:var(--secret); word-break:break-word;}
+  .wrap{max-width:1100px; margin:0 auto; padding:0 32px;}
+  /* ---------- HEADER / HERO ---------- */
+  header.hero{padding:60px 0 32px;}
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:11.5px;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:20px;
+  }
+  .eyebrow .tick{color:var(--secret); font-weight:600;}
+  .hub-link{
+    font-family:var(--mono); font-size:12px; color:var(--ink-faint);
+    text-decoration:none; display:inline-flex; align-items:center; gap:6px; margin-bottom:16px;
+  }
+  .hub-link:hover{color:var(--secret);}
+  h1.title{
+    font-family:var(--display);
+    font-weight:600;
+    font-size:clamp(38px, 6vw, 62px);
+    line-height:1.02;
+    margin:0 0 20px;
+    letter-spacing:-0.015em;
+  }
+  h1.title .secret-word{color:var(--secret); font-style:italic; font-weight:500;}
+  p.lede{
+    font-size:18px;
+    color:var(--ink-soft);
+    max-width:64ch;
+    margin:0 0 32px;
+  }
+  ul.refs li{border-left:2px solid var(--line); padding:10px 0 10px 16px; margin-bottom:2px; transition:border-color 0.15s ease;}
+  ul.refs li:hover{border-left-color:var(--secret);}
+  .ref-title{font-size:15.5px; color:var(--ink); font-weight:600;}
+  .verify-flag{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    background:#F3E3B8;
+    border:1px solid #B8863B;
+    color:#6B4A1E;
+    font-family:var(--mono);
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:0.03em;
+    text-transform:uppercase;
+    padding:2px 8px 2px 6px;
+    border-radius:3px;
+    margin-right:8px;
+    vertical-align:middle;
+  }
+  .ref-meta{font-family:var(--mono); font-size:11.5px; color:var(--ink-faint); margin-top:4px; line-height:1.5;}
+  .ref-meta a{color:var(--ink-faint);}
+  .ref-meta a:hover{color:var(--secret);}
+  .ref-note{font-size:13.5px; color:var(--ink-soft); margin-top:5px; max-width:100ch;}
+  .ref-caveat{font-size:13px; color:#6B4A1E; margin-top:5px; max-width:100ch; padding-left:8px; border-left:2px solid #B8863B;}
+  .ref-tags{font-family:var(--mono); font-size:11px; color:var(--ink-faint); margin-top:6px; letter-spacing:0.02em;}
+  /* "Show abstract" toggle: a native <details>, so the browser's find-in-page also searches the abstracts */
+  .abstract-toggle{display:inline-block; list-style:none; font-family:var(--mono); font-size:11px; line-height:normal; color:var(--secret); background:none; border:1px solid var(--ink-faint); border-radius:3px; padding:2px 8px; margin-top:6px; cursor:pointer;}
+  .abstract-toggle::-webkit-details-marker{display:none;}
+  .abstract-toggle:hover{border-color:var(--secret);}
+  .abstract-toggle:focus-visible{outline:2px solid var(--secret); outline-offset:2px;}
+  details.ref-abs .abs-hide{display:none;}
+  details.ref-abs[open] .abs-show{display:none;}
+  details.ref-abs[open] .abs-hide{display:inline;}
+  .ref-abstract{font-size:13.5px; color:var(--ink-soft); margin-top:6px; max-width:100ch; padding:8px 10px; background:rgba(0,0,0,0.03); border-radius:4px;}
+  footer p{font-size:12.5px; color:var(--ink-faint); max-width:104ch; margin:0 0 8px; line-height:1.55;}
+  /* Rules shared by the topic pages only (hero diagram, intro, table of contents, categories). */
+  /* ---------- TIMING DIAGRAM ---------- */
+  .diagram-card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:2px;
+    padding:22px 24px 16px;
+  }
+  .diagram-caption{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--ink-faint);
+    margin-top:12px;
+    line-height:1.6;
+  }
+  .diagram-caption b{color:var(--ink-soft); font-weight:600;}
+  /* ---------- DESCRIPTION SECTION ---------- */
+  section.intro{padding:44px 0 6px;}
+  section.intro p{margin:0 0 20px; max-width:72ch; color:var(--ink); font-size:17px;}
+  section.intro p:last-child{margin-bottom:0;}
+  /* ---------- CATEGORY SECTIONS ---------- */
+  section.category{padding:48px 0; border-bottom:1px solid var(--line);}
+  section.category:last-of-type{border-bottom:none;}
+  .cat-head{display:flex; gap:16px; align-items:baseline; margin-bottom:10px;}
+  .cat-letter{
+    font-family:var(--display); font-weight:600; font-size:16px; color:var(--ink-faint);
+    border:1px solid var(--line); border-radius:50%;
+    width:32px; height:32px; min-width:32px;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  h2.cat-title{font-family:var(--display); font-weight:600; font-size:26px; margin:0; letter-spacing:-0.01em;}
+  .cat-blurb{color:var(--ink-soft); font-size:15px; max-width:100ch; margin:0 0 26px; padding-left:48px;}
+  li:has(.verify-flag){border-left-color:#B8863B;}
+  footer{padding:32px 0 60px; border-top:1px solid var(--line); margin-top:12px;}
+  footer p:last-child{margin-bottom:0;}
+  footer strong{color:var(--ink-soft); font-weight:600;}
+  footer a{color:var(--ink-faint); text-decoration:none; border-bottom:1px dotted var(--ink-faint);}
+  footer a:hover{color:var(--secret); border-bottom-color:var(--secret);}
+
+  /* ---------- TOC ---------- */
+  nav.toc{margin:44px 0 0; padding:24px 0; border-top:2px solid var(--ink); border-bottom:1px solid var(--line);}
+  nav.toc ol{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:1fr 1fr; gap:8px 28px;}
+  nav.toc li a{
+    display:flex; justify-content:space-between; gap:10px; text-decoration:none; color:var(--ink);
+    font-family:var(--display); font-size:16px; font-weight:600; padding:6px 0;
+  }
+  nav.toc li a:hover{color:var(--secret);}
+  nav.toc li a .num{font-family:var(--mono); color:var(--ink-faint); font-weight:400; font-size:12.5px;}
+  nav.toc ol{align-items:start;}
+  nav.toc ul.toc-sub{list-style:none; margin:0 0 10px; padding:0 0 0 14px; border-left:1px solid var(--line);}
+  nav.toc ul.toc-sub li a{display:block; font-family:var(--body); font-size:14.5px; font-weight:400; color:var(--ink-soft); padding:2px 0;}
+  nav.toc ul.toc-sub li a:hover{color:var(--secret);}
+  @media (max-width:640px){
+    nav.toc ol{grid-template-columns:1fr;}
+  }
+
+  .scope-box{
+    margin-top:26px;
+    padding:18px 20px;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:2px;
+  }
+  .scope-box .scope-label{
+    font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:0.08em;
+    color:var(--ink-faint); margin-bottom:10px; display:block;
+  }
+  .scope-box ul{margin:0; padding-left:18px; font-size:14px; color:var(--ink-soft);}
+  .scope-box li{margin-bottom:5px;}
+  .scope-box li b{color:var(--ink);}
+  ul.refs{list-style:none; margin:0; padding:0; padding-left:48px;}
+  @media (max-width:640px){
+    .wrap{padding:0 18px;}
+    .cat-blurb, ul.refs{padding-left:0;}
+    .cat-head{gap:10px;}
+  }
+</style>
+<link rel="canonical" href="https://elefauch.github.io/opacity/opacity-infinite-state-systems.html">
+<meta property="og:url" content="https://elefauch.github.io/opacity/opacity-infinite-state-systems.html">
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="hero">
+    <a class="hub-link" href="opacity-index.html">← All opacity pages</a>
+    <a class="hub-link" href="opacity-tag-search.html" style="margin-left:16px;">Search by tag →</a>
+    <h1 class="title">Opacity of <span class="secret-word">Infinite-State</span> Systems</h1>
+
+
+    <div class="diagram-card">
+      <svg viewBox="0 0 860 170" width="100%" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A stack growing without bound behind an automaton, illustrating an unbounded state space">
+        <rect x="60" y="30" width="90" height="110" fill="none" stroke="#D2C9B4" stroke-width="1.5"/>
+        <rect x="66" y="106" width="78" height="28" fill="#DCEAE7" stroke="#177A72" stroke-width="1"/>
+        <rect x="66" y="76" width="78" height="28" fill="#DCEAE7" stroke="#177A72" stroke-width="1"/>
+        <rect x="66" y="46" width="78" height="28" fill="#DCEAE7" stroke="#177A72" stroke-width="1"/>
+        <text x="105" y="123" font-family="JetBrains Mono" font-size="11" fill="#177A72" text-anchor="middle">a</text>
+        <text x="105" y="93" font-family="JetBrains Mono" font-size="11" fill="#177A72" text-anchor="middle">a</text>
+        <text x="105" y="63" font-family="JetBrains Mono" font-size="11" fill="#177A72" text-anchor="middle">a</text>
+        <text x="105" y="20" font-family="JetBrains Mono" font-size="11" fill="#6A6456" text-anchor="middle">⋮ unbounded</text>
+
+        <circle cx="105" cy="150" r="4" fill="#2A2620"/>
+        <line x1="150" y1="85" x2="270" y2="85" stroke="#D2C9B4" stroke-width="1.5" marker-end="url(#arrow)"/>
+        <defs>
+          <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6 Z" fill="#D2C9B4"/>
+          </marker>
+        </defs>
+
+        <rect x="280" y="55" width="150" height="60" rx="6" fill="#E8E1D2" stroke="#D2C9B4" stroke-width="1.5"/>
+        <text x="355" y="90" font-family="JetBrains Mono" font-size="12" fill="#5C5648" text-anchor="middle">control state</text>
+
+        <rect x="500" y="55" width="90" height="16" rx="2" fill="#F1DDD3" stroke="#B5502E" stroke-width="1.2"/>
+        <text x="545" y="67" font-family="JetBrains Mono" font-size="10.5" fill="#B04E2D" text-anchor="middle">secret</text>
+        <text x="545" y="95" font-family="JetBrains Mono" font-size="10.5" fill="#6A6456" text-anchor="middle">reachable?</text>
+
+        <text x="700" y="70" font-family="Source Serif 4" font-size="13" fill="#5C5648">Is the secret</text>
+        <text x="700" y="90" font-family="Source Serif 4" font-size="13" fill="#5C5648">still decidable</text>
+        <text x="700" y="110" font-family="Source Serif 4" font-size="13" fill="#5C5648">to hide, or reach?</text>
+      </svg>
+      <div class="diagram-caption">A stack (or an unbounded marking) means the reachable state space is no longer finite. Some opacity questions that are decidable for finite automata become <b style="color:#B04E2D;">undecidable</b> once the state space can grow without bound.</div>
+    </div>
+
+  </header>
+
+  <section class="intro">
+    <div class="eyebrow"><span class="tick">●</span> Scope of this page</div>
+    <p>Almost all of the field assumes a finite state space: finite automata, bounded Petri nets, and similar models. This page covers what happens once that assumption is dropped: pushdown automata, unbounded (general) Petri nets, and other models whose reachable state space is infinite.</p>
+    <p>This is a much smaller corner of the literature than the finite/classical setting, and the results here tend to run in the opposite direction: rather than proposing new notions or enforcement mechanisms, most papers are pinning down exactly where decidability breaks. Several opacity questions that are routine for finite automata turn out to be undecidable once the state space is allowed to grow without bound.</p>
+  </section>
+
+  
+
+  <!-- ===================== —.  ===================== -->
+  <section class="category" style="border-bottom:none;">
+    <ul class="refs">
+        <li>
+          <div class="ref-title">Verification of Opacity and Diagnosability for Pushdown Systems</div>
+          <div class="ref-meta">Koichi Kobayashi, Kunihiko Hiraishi · Journal of Applied Mathematics, 2013, article 654059 · <a href="https://doi.org/10.1155/2013/654059" target="_blank" rel="noopener">doi.org/10.1155/2013/654059</a></div>
+          <div class="ref-tags">infinite-state · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">In control theory of discrete event systems (DESs), one of the challenging topics is the extension of theory of finite-state DESs to that of infinite-state DESs. In this paper, we discuss verification of opacity and diagnosability for infinite-state DESs modeled by pushdown automata (called here pushdown systems). First, we discuss opacity of pushdown systems and prove that opacity of pushdown systems is in general undecidable. In addition, a decidable class is clarified. Next, in diagnosability, we prove that under a certain assumption, which is different from the assumption in the existing result, diagnosability of pushdown systems is decidable. Furthermore, a necessary condition and a sufficient condition using finite-state approximations are derived. Finally, as one of the applications, we consider data integration using XML (Extensible Markup Language). The obtained result is useful for developing control theory of infinite-state DESs.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Diagnosis and Opacity Problems for Infinite State Systems Modeled by Recursive Tile Systems</div>
+          <div class="ref-meta">Sébastien Chédor, Christophe Morvan, Sophie Pinchinat, Hervé Marchand · Discrete Event Dynamic Systems, 25(1–2), pp. 271–294, 2015 · <a href="https://doi.org/10.1007/s10626-014-0197-3" target="_blank" rel="noopener">doi.org/10.1007/s10626-014-0197-3</a> · <a href="https://hal.science/hal-00994970" target="_blank" rel="noopener">hal-00994970</a></div>
+          <div class="ref-tags">infinite-state · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">The analysis of discrete event systems under partial observation is an important topic, with major applications such as the detection of information flow and the diagnosis of faulty behaviors. These questions have, mostly, not been addressed for classical models of recursive systems, such as pushdown systems and recursive state machines. In this paper, we consider recursive tile systems, which are recursive infinite systems generated by a finite collection of finite tiles, a simplified variant of deterministic graph grammars (slightly more general than pushdown systems). Since these systems are infinite-state in general powerset constructions for monitoring do not always apply. We exhibit computable conditions on recursive tile systems and present non-trivial constructions that yield effective computation of the monitors. We apply these results to the classic problems of state-based opacity and diagnosability (off-line verification of opacity and diagnosability, and also run-time monitoring of these properties). For a decidable subclass of recursive tile systems, we also establish the decidability of the problems of state-based opacity and diagnosability.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Decidability of Opacity Verification Problems in Labeled Petri Net Systems</div>
+          <div class="ref-meta">Yin Tong, Zhiwu Li, Carla Seatzu, Alessandro Giua · Automatica, 80, pp. 48–53, 2017 · <a href="https://doi.org/10.1016/j.automatica.2017.01.013" target="_blank" rel="noopener">doi.org/10.1016/j.automatica.2017.01.013</a></div>
+          <div class="ref-tags">infinite-state · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">A system is said to be opaque if an intruder that observes its evolution through a mask cannot infer that the system’s evolution belongs to a given secret behavior. Opacity verification is the problem of determining whether the system is opaque with respect to a given secret or not. In this paper we address the decidability of the opacity verification problem. Using reduction approaches, we show that verification of initial-state, current-state, and language opacity is undecidable in labeled Petri nets.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">The Complexity of Diagnosability and Opacity Verification for Petri Nets</div>
+          <div class="ref-meta">Béatrice Bérard, Stefan Haar, Sylvain Schmitz, Stefan Schwoon · Fundamenta Informaticae, 161(4), pp. 317–349, 2018 · <a href="https://doi.org/10.3233/FI-2018-1706" target="_blank" rel="noopener">doi.org/10.3233/FI-2018-1706</a> (journal version; conference precursor: 38th International Conference on Application and Theory of Petri Nets and Concurrency (Petri Nets 2017), LNCS vol. 10258, pp. 200–220, Springer · <a href="https://doi.org/10.1007/978-3-319-57861-3_13" target="_blank" rel="noopener">doi.org/10.1007/978-3-319-57861-3_13</a>)</div>
+          <div class="ref-note">Opacity is undecidable on general Petri nets even with no fairness assumption, an independent confirmation of the boundary established by Tong et al.</div>
+          <div class="ref-tags">classical · diagnosability · infinite-state · opacity · petri-nets</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Diagnosability and opacity are two well-studied problems in discrete-event systems. We revisit these two problems with respect to expressiveness and complexity issues. We first relate different notions of diagnosability and opacity. We consider in particular fairness issues and extend the definition of Germanos et al. [ACM TECS, 2015] of weakly fair diagnosability for safe Petri nets to general Petri nets and to opacity questions. Second, we provide a global picture of complexity results for the verification of diagnosability and opacity. We show that diagnosability is NL-complete for finite state systems, PSPACE-complete for safe convergent Petri nets (even with fairness), and EXPSPACE-complete for general Petri nets without fairness, while non diagnosability is inter-reducible with reachability when fault events are not weakly fair. Opacity is EXPSPACE-complete for safe Petri nets (even with fairness) and undecidable for general Petri nets already without fairness.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Opacity of Nondeterministic Transition Systems: A (Bi)simulation Relation Approach</div>
+          <div class="ref-meta">Kuize Zhang, Xiang Yin, Majid Zamani · IEEE Transactions on Automatic Control, 64(12), pp. 5116–5123, 2019 · <a href="https://doi.org/10.1109/TAC.2019.2908726" target="_blank" rel="noopener">doi.org/10.1109/TAC.2019.2908726</a> · preprint: <a href="https://arxiv.org/abs/1802.03321" target="_blank" rel="noopener">arXiv:1802.03321</a> · conference precursor: &ldquo;Infinite-Step Opacity of Nondeterministic Finite Transition Systems: A Bisimulation Relation Approach&rdquo;, 56th IEEE Conference on Decision and Control (CDC 2017), pp. 5615–5619 · <a href="https://doi.org/10.1109/CDC.2017.8264506" target="_blank" rel="noopener">doi.org/10.1109/CDC.2017.8264506</a></div>
+          <div class="ref-tags">continuous · infinite-state · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">In this paper, we propose several opacity-preserving (bi)simulation relations for general nondeterministic transition systems (NTS) in terms of initial-state opacity, current-state opacity, K-step opacity, and infinite-step opacity. We also show how one can leverage quotient construction to compute such relations. In addition, we use a two-way observer method to verify opacity of nondeterministic finite transition systems (NFTSs). As a result, although the verification of opacity for infinite NTSs is generally undecidable, if one can find such an opacity-preserving relation from an infinite NTS to an NFTS, the (lack of) opacity of the NTS can be easily verified over the NFTS which is decidable.</div>
+          </details>
+        </li>
+    </ul>
+  </section>
+
+
+  <footer>
+    <p><strong>Maintained by</strong> <a href="https://elefauch.github.io/" target="_blank" rel="noopener">Engel Lefaucheux</a>. This bibliography is almost certainly incomplete. If you know of a relevant paper that's missing, please get in touch so it can be added.</p>
+  </footer>
+</div>
+</body>
+</html>

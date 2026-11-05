@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Opacity: Bibliography</title>
+<meta name="description" content="A bibliography of research on opacity, a confidentiality property for partially observed systems, organized by the kind of system studied.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Opacity: Bibliography">
+<meta property="og:description" content="A bibliography of research on opacity, a confidentiality property for partially observed systems, organized by the kind of system studied.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F1EDE4; --paper2:#E8E1D2; --ink:#2A2620; --ink-soft:#5C5648; --ink-faint:#6A6456;
+    --line:#D2C9B4; --rust:#B04E2D; --rust-soft:#F1DDD3; --olive:#5C6B4A; --teal:#177A72; --teal-soft:#DCEAE7;
+    --display:'Fraunces',serif; --body:'Source Serif 4',serif; --mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--paper); color:var(--ink); font-family:var(--body); line-height:1.65;}
+  a{color:var(--rust);}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 32px;}
+
+  header{padding:60px 0 20px;}
+  .eyebrow{font-family:var(--mono); font-size:11.5px; letter-spacing:0.16em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:20px; display:flex; align-items:center; gap:10px;}
+  .eyebrow .tick{color:var(--rust);}
+  h1{font-family:var(--display); font-weight:600; font-size:clamp(42px,7vw,76px); line-height:0.98; margin:0 0 20px; letter-spacing:-0.02em;}
+  h1 em{font-style:italic; color:var(--rust); font-weight:500;}
+  p.lede{font-family:var(--body); font-size:18px; color:var(--ink-soft); max-width:62ch; margin:0 0 34px;}
+
+  /* ---- diagram ---- */
+  .diagram-card{
+    background:var(--paper2); border:1px solid var(--line); border-radius:2px; padding:26px 28px 20px;
+  }
+  .diagram-caption{font-family:var(--mono); font-size:12px; color:var(--ink-faint); margin-top:14px; line-height:1.6;}
+  .diagram-caption b{color:var(--ink-soft); font-weight:600;}
+
+  /* ---- explanation ---- */
+  section.intro{padding:46px 0 10px;}
+  section.intro p{font-size:17px; color:var(--ink); max-width:70ch; margin:0 0 20px;}
+  section.intro p:last-child{margin-bottom:0;}
+
+  /* ---- pages grid ---- */
+  section.pages{padding:46px 0 10px; border-top:2px solid var(--ink);}
+  .pages-head{font-family:var(--display); font-size:15px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:var(--ink-faint); margin:26px 0 6px;}
+  .pages-note{font-size:14px; color:var(--ink-faint); max-width:64ch; margin:0 0 20px;}
+
+  .grid{display:grid; grid-template-columns:1fr 1fr; gap:0;}
+  .entry{padding:28px 28px 28px 0; border-bottom:1px solid var(--line); text-decoration:none; color:inherit; display:block;}
+  .entry:nth-child(odd){border-right:1px solid var(--line); padding-right:28px;}
+  .entry:nth-child(even){padding-left:28px;}
+  .entry-num{font-family:var(--mono); font-size:11px; color:var(--ink-faint); display:block; margin-bottom:8px;}
+  .entry h3{font-family:var(--display); font-size:23px; font-weight:600; margin:0 0 10px; letter-spacing:-0.01em; color:var(--ink);}
+  .entry:hover h3{color:var(--rust);}
+  .entry p{font-size:14px; color:var(--ink-soft); margin:0 0 12px; max-width:46ch;}
+  .entry .status{font-family:var(--mono); font-size:10.5px; text-transform:uppercase; letter-spacing:0.05em; color:var(--olive);}
+  .entry .status.stub{color:var(--rust);}
+  .entry .status.sampler{color:var(--ink-faint);}
+
+  /* ---- theses ---- */
+  section.theses{padding:44px 0; border-top:2px solid var(--ink);}
+  section.theses h2{font-family:var(--display); font-size:26px; font-weight:600; margin:26px 0 8px;}
+  .theses-note{font-size:14px; color:var(--ink-faint); max-width:64ch; margin:0 0 20px;}
+  .thesis{padding:14px 0; border-bottom:1px solid var(--line); font-size:14.5px;}
+  .thesis b{font-family:var(--body); font-weight:600; color:var(--ink);}
+  .thesis span{color:var(--ink-faint); font-family:var(--mono); font-size:11.5px; display:block; margin-top:3px;}
+  .thesis .note{font-family:var(--body); color:var(--ink-soft); font-size:13.5px; display:block; margin-top:5px; max-width:100ch;}
+  .ref-tags{font-family:var(--mono); font-size:11px; color:var(--ink-faint); margin-top:6px; letter-spacing:0.02em;}
+  /* "Show abstract" toggle: a native <details>, so the browser's find-in-page also searches the abstracts */
+  .abstract-toggle{display:inline-block; list-style:none; font-family:var(--mono); font-size:11px; line-height:normal; color:var(--rust); background:none; border:1px solid var(--ink-faint); border-radius:3px; padding:2px 8px; margin-top:6px; cursor:pointer;}
+  .abstract-toggle::-webkit-details-marker{display:none;}
+  .abstract-toggle:hover{border-color:var(--rust);}
+  .abstract-toggle:focus-visible{outline:2px solid var(--rust); outline-offset:2px;}
+  details.ref-abs .abs-hide{display:none;}
+  details.ref-abs[open] .abs-show{display:none;}
+  details.ref-abs[open] .abs-hide{display:inline;}
+  .ref-abstract{font-size:13.5px; color:var(--ink-soft); margin-top:6px; max-width:100ch; padding:8px 10px; background:rgba(0,0,0,0.03); border-radius:4px;}
+
+  /* ---- footer ---- */
+  footer{padding:28px 0 56px; border-top:1px solid var(--line); margin-top:8px;}
+  footer p{font-size:12.5px; color:var(--ink-faint); max-width:104ch; margin:0 0 8px; line-height:1.55;}
+  footer p:last-child{margin-bottom:0;}
+  footer strong{color:var(--ink-soft); font-weight:600;}
+  footer a{color:var(--ink-faint); text-decoration:none; border-bottom:1px dotted var(--ink-faint);}
+  footer a:hover{color:var(--rust); border-bottom-color:var(--rust);}
+
+  @media (max-width:680px){
+    .wrap{padding:0 18px;}
+    .grid{grid-template-columns:1fr;}
+    .entry:nth-child(odd){border-right:none;}
+    .entry{padding:24px 0 !important; border-bottom:1px solid var(--line);}
+  }
+</style>
+<link rel="canonical" href="https://elefauch.github.io/opacity/opacity-index.html">
+<meta property="og:url" content="https://elefauch.github.io/opacity/opacity-index.html">
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>Opacity,<br><em>index</em>.</h1>
+
+    <div class="diagram-card">
+      <svg viewBox="0 0 680 220" width="100%" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Two runs of a system, one where a secret event occurs and one where it doesn't, producing the same observable events so an observer can't tell them apart">
+        <text x="40" y="76" font-family="JetBrains Mono" font-size="11.5" fill="var(--ink-soft)" text-anchor="start">Run A</text>
+        <text x="40" y="94" font-family="JetBrains Mono" font-size="10.5" fill="var(--ink-faint)" text-anchor="start">secret occurs</text>
+        <text x="40" y="146" font-family="JetBrains Mono" font-size="11.5" fill="var(--ink-soft)" text-anchor="start">Run B</text>
+        <text x="40" y="164" font-family="JetBrains Mono" font-size="10.5" fill="var(--ink-faint)" text-anchor="start">secret doesn't occur</text>
+
+        <line x1="150" y1="85" x2="560" y2="85" stroke="#C9BEA3" stroke-width="1"/>
+        <line x1="150" y1="155" x2="560" y2="155" stroke="#C9BEA3" stroke-width="1"/>
+
+        <line x1="205" y1="91" x2="205" y2="149" stroke="#C9BEA3" stroke-width="0.75" stroke-dasharray="2 3"/>
+        <line x1="345" y1="91" x2="345" y2="149" stroke="#C9BEA3" stroke-width="0.75" stroke-dasharray="2 3"/>
+        <line x1="485" y1="91" x2="485" y2="149" stroke="#C9BEA3" stroke-width="0.75" stroke-dasharray="2 3"/>
+
+        <circle cx="205" cy="85" r="6" fill="var(--teal-soft)" stroke="var(--teal)" stroke-width="1.2"/>
+        <circle cx="345" cy="85" r="6" fill="var(--teal-soft)" stroke="var(--teal)" stroke-width="1.2"/>
+        <circle cx="485" cy="85" r="6" fill="var(--teal-soft)" stroke="var(--teal)" stroke-width="1.2"/>
+        <circle cx="205" cy="155" r="6" fill="var(--teal-soft)" stroke="var(--teal)" stroke-width="1.2"/>
+        <circle cx="345" cy="155" r="6" fill="var(--teal-soft)" stroke="var(--teal)" stroke-width="1.2"/>
+        <circle cx="485" cy="155" r="6" fill="var(--teal-soft)" stroke="var(--teal)" stroke-width="1.2"/>
+
+        <rect x="255" y="72" width="30" height="26" rx="4" fill="var(--rust-soft)" stroke="var(--rust)" stroke-width="1.2"/>
+        <text x="270" y="115" font-family="JetBrains Mono" font-size="10.5" fill="#8A3A22" text-anchor="middle">secret</text>
+
+        <text x="345" y="60" font-family="JetBrains Mono" font-size="10.5" fill="var(--teal)" text-anchor="middle">same observable events, same order</text>
+
+        <path d="M560,85 L595,120" fill="none" stroke="#C9BEA3" stroke-width="1"/>
+        <path d="M560,155 L595,120" fill="none" stroke="#C9BEA3" stroke-width="1"/>
+        <path d="M578,115 Q598,101 618,115 Q598,129 578,115 Z" fill="none" stroke="var(--ink-soft)" stroke-width="1.2"/>
+        <circle cx="598" cy="115" r="4" fill="var(--ink-soft)"/>
+        <text x="598" y="180" font-family="Source Serif 4" font-size="20" fill="var(--rust)" text-anchor="middle">?</text>
+      </svg>
+      <div class="diagram-caption">Opacity, in one sentence: a system is opaque with respect to a secret if an observer, watching only what it's allowed to see, can never become certain that the secret occurred. Above: two runs that differ only in whether the secret event happens, but agree on every observable event, so the observer, seeing only the teal dots, can't tell which run actually took place.</div>
+    </div>
+  </header>
+
+  <section class="intro">
+    <div class="eyebrow"><span class="tick">●</span> What opacity is</div>
+    <p>Opacity is a confidentiality property for systems whose behavior is only partly visible to an outside observer. A system is opaque with respect to a chosen secret if, no matter what that observer sees, it can never become certain the secret occurred. Equivalently: for every run that reveals the secret, there must exist some other run, indistinguishable to the observer, that doesn't.</p>
+    <p>The notion originates in the discrete-event-systems and labeled-transition-system literature of the mid-2000s, and has since been formalized, verified, and enforced across a wide range of system models: plain finite automata, Petri nets (bounded and unbounded), pushdown automata, timed automata, timed process algebra, and more. The core question stays the same everywhere it goes, but the answer, and the machinery needed to get it, changes considerably depending on what kind of system is being asked about.</p>
+  </section>
+
+  <section class="pages">
+    <div class="pages-head">Pages in this Index</div>
+
+    <div class="grid">
+      <a class="entry" href="opacity-classical-systems.html">
+        <span class="entry-num">01</span>
+        <h3>Classical Systems</h3>
+        <p>The classical setting, and where the field started: finite automata, labeled transition systems, and bounded Petri nets, generally nondeterministic, with a single observer. The largest and most developed page in the index.</p>
+      </a>
+      <a class="entry" href="opacity-timed-systems.html">
+        <span class="entry-num">02</span>
+        <h3>Timed Systems</h3>
+        <p>Systems where the observer also reads off <em>when</em> events happen, not just their order, typically via timed automata and real-valued clocks. Timing becomes a side channel in its own right.</p>
+      </a>
+      <a class="entry" href="opacity-stochastic-systems.html">
+        <span class="entry-num">03</span>
+        <h3>Stochastic Systems</h3>
+        <p>Systems with randomness: probabilistic automata, hidden Markov models, and Markov decision processes. Strict yes/no opacity gives way to quantifying disclosure risk.</p>
+      </a>
+      <a class="entry" href="opacity-distributed-systems.html">
+        <span class="entry-num">04</span>
+        <h3>Distributed Systems</h3>
+        <p>Systems observed by more than one site. The underlying system stays finite-state; what changes is the observation architecture.</p>
+      </a>
+      <a class="entry" href="opacity-infinite-state-systems.html">
+        <span class="entry-num">05</span>
+        <h3>Infinite-State Systems</h3>
+        <p>What happens once the finite-state assumption is dropped: pushdown automata, unbounded Petri nets. A much smaller, younger corner of the literature, in part because many natural questions here turn out to be undecidable.</p>
+      </a>
+      <a class="entry" href="opacity-continuous-systems.html">
+        <span class="entry-num">06</span>
+        <h3>Continuous-State Systems</h3>
+        <p>Cyber-physical and control systems whose state evolves continuously. Exact indistinguishability gives way to a bounded, metric notion of closeness.</p>
+      </a>
+      <a class="entry" href="opacity-weighted-automata.html">
+        <span class="entry-num">07</span>
+        <h3>Weighted Automata</h3>
+        <p>Systems whose transitions carry algebraic weights, typically over the max-plus (tropical) semiring. Information can leak through the weight itself.</p>
+      </a>
+      <a class="entry" href="opacity-related-problems.html">
+        <span class="entry-num">08</span>
+        <h3>Related Problems</h3>
+        <p>Neighboring notions that keep surfacing while researching opacity: detectability, diagnosability, non-interference, and a few others. This page makes no attempt to be exhaustive about them.</p>
+      </a>
+      <a class="entry" href="opacity-tag-search.html">
+        <span class="entry-num">09</span>
+        <h3>Search by Tag</h3>
+        <p>A small tool over the whole bibliography. Pick tags and pull up every matching paper, across all pages at once.</p>
+      </a>
+    </div>
+  </section>
+
+  <section class="theses">
+    <h2>PhD Theses</h2>
+
+
+    <div class="thesis">
+      <b>Verification and Enforcement of State-Based Notions of Opacity in Discrete Event Systems</b>
+      <span>Anooshiravan Saboori · PhD thesis, University of Illinois at Urbana-Champaign, 2010 · <a href="https://hdl.handle.net/2142/18226" target="_blank" rel="noopener">IDEALS repository</a></span>
+      <div class="ref-tags">opacity · thesis</div>
+      <details class="ref-abs">
+        <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+        <div class="ref-abstract"><em>(no abstract added yet)</em></div>
+      </details>
+    </div>
+    <div class="thesis">
+      <b>Verification and Enforcement of Opacity Security Properties in Discrete Event Systems</b>
+      <span>Yi-Chin Wu · PhD thesis, University of Michigan, 2014 · <a href="https://deepblue.lib.umich.edu/handle/2027.42/107921" target="_blank" rel="noopener">Deep Blue repository</a></span>
+      <div class="ref-tags">opacity · thesis</div>
+      <details class="ref-abs">
+        <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+        <div class="ref-abstract"><em>(no abstract added yet)</em></div>
+      </details>
+    </div>
+    <div class="thesis">
+      <b>Controlling Information in Probabilistic Systems</b>
+      <span>Engel Lefaucheux · PhD thesis, Université Rennes 1, 2018 · <a href="https://theses.hal.science/tel-01964546" target="_blank" rel="noopener">HAL theses</a></span>
+      <div class="ref-tags">opacity · stochastic · thesis</div>
+      <details class="ref-abs">
+        <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+        <div class="ref-abstract"><em>(no abstract added yet)</em></div>
+      </details>
+    </div>
+    <div class="thesis">
+      <b>Opacity Verification and Fault Diagnosis in the Framework of Switching Output Automata</b>
+      <span>Tianyu Liu · PhD thesis, Università di Cagliari, 2026 · <a href="https://hdl.handle.net/11584/475188" target="_blank" rel="noopener">hdl.handle.net/11584/475188</a></span>
+      <div class="ref-tags">diagnosability · opacity · thesis</div>
+      <details class="ref-abs">
+        <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+        <div class="ref-abstract"><em>(no abstract added yet)</em></div>
+      </details>
+    </div>
+  </section>
+
+  <footer>
+    <p><strong>Maintained by</strong> <a href="https://elefauch.github.io/" target="_blank" rel="noopener">Engel Lefaucheux</a>. This bibliography is almost certainly incomplete. If you know of a relevant paper that's missing, please get in touch so it can be added.</p>
+  </footer>
+
+</div>
+</body>
+</html>

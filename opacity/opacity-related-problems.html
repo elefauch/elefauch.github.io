@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Related Problems</title>
+<meta name="description" content="Properties related to opacity (detectability, diagnosability, non-interference and others), with representative articles for each.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Related Problems">
+<meta property="og:description" content="Properties related to opacity (detectability, diagnosability, non-interference and others), with representative articles for each.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* Rules shared by the topic pages and the tag search page. */
+  :root{
+    --paper:#F1EDE4;
+    --card:#E8E1D2;
+    --ink:#2A2620;
+    --ink-soft:#5C5648;
+    --ink-faint:#6A6456;
+    --line:#D2C9B4;
+    --observable:#177A72;
+    --observable-soft:#DCEAE7;
+    --secret:#B04E2D;
+    --secret-soft:#F1DDD3;
+    --display: 'Fraunces', serif;
+    --body: 'Source Serif 4', serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--body);
+    line-height:1.65;
+  }
+  a{color:var(--secret); word-break:break-word;}
+  .wrap{max-width:1100px; margin:0 auto; padding:0 32px;}
+  /* ---------- HEADER / HERO ---------- */
+  header.hero{padding:60px 0 32px;}
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:11.5px;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:20px;
+  }
+  .eyebrow .tick{color:var(--secret); font-weight:600;}
+  .hub-link{
+    font-family:var(--mono); font-size:12px; color:var(--ink-faint);
+    text-decoration:none; display:inline-flex; align-items:center; gap:6px; margin-bottom:16px;
+  }
+  .hub-link:hover{color:var(--secret);}
+  h1.title{
+    font-family:var(--display);
+    font-weight:600;
+    font-size:clamp(38px, 6vw, 62px);
+    line-height:1.02;
+    margin:0 0 20px;
+    letter-spacing:-0.015em;
+  }
+  h1.title .secret-word{color:var(--secret); font-style:italic; font-weight:500;}
+  p.lede{
+    font-size:18px;
+    color:var(--ink-soft);
+    max-width:64ch;
+    margin:0 0 32px;
+  }
+  ul.refs li{border-left:2px solid var(--line); padding:10px 0 10px 16px; margin-bottom:2px; transition:border-color 0.15s ease;}
+  ul.refs li:hover{border-left-color:var(--secret);}
+  .ref-title{font-size:15.5px; color:var(--ink); font-weight:600;}
+  .verify-flag{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    background:#F3E3B8;
+    border:1px solid #B8863B;
+    color:#6B4A1E;
+    font-family:var(--mono);
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:0.03em;
+    text-transform:uppercase;
+    padding:2px 8px 2px 6px;
+    border-radius:3px;
+    margin-right:8px;
+    vertical-align:middle;
+  }
+  .ref-meta{font-family:var(--mono); font-size:11.5px; color:var(--ink-faint); margin-top:4px; line-height:1.5;}
+  .ref-meta a{color:var(--ink-faint);}
+  .ref-meta a:hover{color:var(--secret);}
+  .ref-note{font-size:13.5px; color:var(--ink-soft); margin-top:5px; max-width:100ch;}
+  .ref-caveat{font-size:13px; color:#6B4A1E; margin-top:5px; max-width:100ch; padding-left:8px; border-left:2px solid #B8863B;}
+  .ref-tags{font-family:var(--mono); font-size:11px; color:var(--ink-faint); margin-top:6px; letter-spacing:0.02em;}
+  /* "Show abstract" toggle: a native <details>, so the browser's find-in-page also searches the abstracts */
+  .abstract-toggle{display:inline-block; list-style:none; font-family:var(--mono); font-size:11px; line-height:normal; color:var(--secret); background:none; border:1px solid var(--ink-faint); border-radius:3px; padding:2px 8px; margin-top:6px; cursor:pointer;}
+  .abstract-toggle::-webkit-details-marker{display:none;}
+  .abstract-toggle:hover{border-color:var(--secret);}
+  .abstract-toggle:focus-visible{outline:2px solid var(--secret); outline-offset:2px;}
+  details.ref-abs .abs-hide{display:none;}
+  details.ref-abs[open] .abs-show{display:none;}
+  details.ref-abs[open] .abs-hide{display:inline;}
+  .ref-abstract{font-size:13.5px; color:var(--ink-soft); margin-top:6px; max-width:100ch; padding:8px 10px; background:rgba(0,0,0,0.03); border-radius:4px;}
+  footer p{font-size:12.5px; color:var(--ink-faint); max-width:104ch; margin:0 0 8px; line-height:1.55;}
+  /* Rules shared by the topic pages only (hero diagram, intro, table of contents, categories). */
+  /* ---------- TIMING DIAGRAM ---------- */
+  .diagram-card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:2px;
+    padding:22px 24px 16px;
+  }
+  .diagram-caption{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--ink-faint);
+    margin-top:12px;
+    line-height:1.6;
+  }
+  .diagram-caption b{color:var(--ink-soft); font-weight:600;}
+  /* ---------- DESCRIPTION SECTION ---------- */
+  section.intro{padding:44px 0 6px;}
+  section.intro p{margin:0 0 20px; max-width:72ch; color:var(--ink); font-size:17px;}
+  section.intro p:last-child{margin-bottom:0;}
+  /* ---------- CATEGORY SECTIONS ---------- */
+  section.category{padding:48px 0; border-bottom:1px solid var(--line);}
+  section.category:last-of-type{border-bottom:none;}
+  .cat-head{display:flex; gap:16px; align-items:baseline; margin-bottom:10px;}
+  .cat-letter{
+    font-family:var(--display); font-weight:600; font-size:16px; color:var(--ink-faint);
+    border:1px solid var(--line); border-radius:50%;
+    width:32px; height:32px; min-width:32px;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  h2.cat-title{font-family:var(--display); font-weight:600; font-size:26px; margin:0; letter-spacing:-0.01em;}
+  .cat-blurb{color:var(--ink-soft); font-size:15px; max-width:100ch; margin:0 0 26px; padding-left:48px;}
+  li:has(.verify-flag){border-left-color:#B8863B;}
+  footer{padding:32px 0 60px; border-top:1px solid var(--line); margin-top:12px;}
+  footer p:last-child{margin-bottom:0;}
+  footer strong{color:var(--ink-soft); font-weight:600;}
+  footer a{color:var(--ink-faint); text-decoration:none; border-bottom:1px dotted var(--ink-faint);}
+  footer a:hover{color:var(--secret); border-bottom-color:var(--secret);}
+
+  /* ---------- TOC ---------- */
+  nav.toc{margin:44px 0 0; padding:24px 0; border-top:2px solid var(--ink); border-bottom:1px solid var(--line);}
+  nav.toc ol{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:1fr 1fr; gap:8px 28px;}
+  nav.toc li a{
+    display:flex; justify-content:space-between; gap:10px; text-decoration:none; color:var(--ink);
+    font-family:var(--display); font-size:16px; font-weight:600; padding:6px 0;
+  }
+  nav.toc li a:hover{color:var(--secret);}
+  nav.toc li a .num{font-family:var(--mono); color:var(--ink-faint); font-weight:400; font-size:12.5px;}
+  nav.toc ol{align-items:start;}
+  nav.toc ul.toc-sub{list-style:none; margin:0 0 10px; padding:0 0 0 14px; border-left:1px solid var(--line);}
+  nav.toc ul.toc-sub li a{display:block; font-family:var(--body); font-size:14.5px; font-weight:400; color:var(--ink-soft); padding:2px 0;}
+  nav.toc ul.toc-sub li a:hover{color:var(--secret);}
+  @media (max-width:640px){
+    nav.toc ol{grid-template-columns:1fr;}
+  }
+
+  .subcat{padding-left:48px; margin-bottom:28px;}
+  .subcat:last-child{margin-bottom:0;}
+  h3.sub-title{
+    font-family:var(--mono); font-weight:600; font-size:12.5px; text-transform:uppercase; letter-spacing:0.07em;
+    color:var(--ink); margin:0 0 4px; display:flex; align-items:center; gap:8px;
+  }
+  h3.sub-title::before{content:"§"; color:var(--ink-faint); font-weight:400;}
+  .sub-note{font-size:13.5px; color:var(--ink-faint); margin:0 0 12px; max-width:100ch;}
+  ul.refs{list-style:none; margin:0; padding:0;}
+  .stub{
+    padding-left:48px;
+    font-family:var(--mono); font-size:13px; color:var(--ink-faint); font-style:normal;
+  }
+  .stub-list{padding-left:48px; margin:10px 0 0; font-size:13.5px; color:var(--ink-soft);}
+  .stub-list li{margin-bottom:4px;}
+  /* ---------- UNCLASSIFIED ---------- */
+  section.unclassified{padding:48px 0 70px;}
+  .unclass-note{color:var(--ink-soft); font-size:15px; max-width:100ch; margin:0 0 26px;}
+  @media (max-width:640px){
+    .wrap{padding:0 18px;}
+    .cat-blurb, .subcat, .stub, .stub-list{padding-left:0;}
+    .cat-head{gap:10px;}
+  }
+  .not-exhaustive{
+    margin-top:26px;
+    padding:18px 20px;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-left:3px solid var(--rust);
+    border-radius:2px;
+    font-size:14px;
+    color:var(--ink-soft);
+  }
+  .not-exhaustive b{color:var(--ink);}
+</style>
+<link rel="canonical" href="https://elefauch.github.io/opacity/opacity-related-problems.html">
+<meta property="og:url" content="https://elefauch.github.io/opacity/opacity-related-problems.html">
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="hero">
+    <a class="hub-link" href="opacity-index.html">← All opacity pages</a>
+    <a class="hub-link" href="opacity-tag-search.html" style="margin-left:16px;">Search by tag →</a>
+    <h1 class="title">Problems <span class="secret-word">Related</span> to Opacity</h1>
+  </header>
+
+  <section class="intro">
+    <p>Opacity is one of several formally related properties concerned with what an observer can or can't infer about a partially observed system. The others, detectability, diagnosability, non-interference, and a handful of more specialized variants, get studied by the same research groups, in the same venues, often in the same articles. Searching for opacity articles surfaces them constantly, so rather than silently discard every one of them, this page collects a few representative examples of each. The plan is to eventually grow each of these into its own dedicated page, the way opacity itself is split across the rest of this site, rather than leaving them as a single flat holding area indefinitely.</p>
+
+    <div class="not-exhaustive">
+      <b>This page is not exhaustive, on purpose.</b> Unlike the other pages on this site, it makes no attempt at complete coverage of any of the problems below. Each is a large research area in its own right; what's here is a small sample encountered along the way, not a survey.
+    </div>
+  </section>
+
+  <nav class="toc" aria-label="Table of contents">
+    <div class="eyebrow"><span class="tick">●</span> Categories</div>
+    <ol>
+      <li><a href="#cat-a"><span>Detectability</span><span class="num">A</span></a></li>
+      <li><a href="#cat-b"><span>Diagnosability</span><span class="num">B</span></a></li>
+      <li><a href="#cat-c"><span>Concealability</span><span class="num">C</span></a></li>
+      <li><a href="#cat-d"><span>Non-Interference</span><span class="num">D</span></a></li>
+      <li><a href="#cat-e"><span>Hypothesis-Testing Detection Avoidance</span><span class="num">E</span></a></li>
+      <li><a href="#cat-f"><span>Divergence-Based Secrecy</span><span class="num">F</span></a></li>
+      <li><a href="#cat-g"><span>Confidentiality</span><span class="num">G</span></a></li>
+    </ol>
+  </nav>
+
+
+  <!-- ===================== A. DETECTABILITY ===================== -->
+  <section class="category" id="cat-a">
+    <div class="cat-head"><div class="cat-letter">A</div><h2 class="cat-title">Detectability</h2></div>
+    <p class="cat-blurb">Roughly the opposite goal of opacity: instead of keeping the observer's state estimate imprecise, detectability asks whether that estimate eventually becomes exact. The two properties are built from the same observer/estimator machinery, which is why they're constantly studied side by side.</p>
+
+    <ul class="refs">
+        <li>
+          <div class="ref-title">Deciding Detectability for Labeled Petri Nets</div>
+          <div class="ref-meta">Tomáš Masopust, Xiang Yin · Automatica, 104, pp. 238–241, 2019 · <a href="https://doi.org/10.1016/j.automatica.2019.02.058" target="_blank" rel="noopener">doi.org/10.1016/j.automatica.2019.02.058</a> · preprint: <a href="https://arxiv.org/abs/1802.02087" target="_blank" rel="noopener">arXiv:1802.02087</a></div>
+          <div class="ref-tags">detectability</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Detectability of discrete event systems is a property to decide whether the current and subsequent states can be determined based on observations. We investigate the existence of algorithms for checking strong and weak detectability for systems modeled as labeled Petri nets. Strong detectability requires that we can always determine, after a finite number of observations, the current and subsequent markings of the system, while weak detectability requires that we can determine, after a finite number of observations, the current and subsequent markings for some trajectories of the system. We show that there is an algorithm to check strong detectability requiring exponential space, and that there is no algorithm to check weak detectability.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Verification of Detectability for Unambiguous Weighted Automata</div>
+          <div class="ref-meta">Aiwen Lai, Sébastien Lahaye, Alessandro Giua · IEEE Transactions on Automatic Control, 66(3), pp. 1437–1444, 2021 · <a href="https://doi.org/10.1109/TAC.2020.2995173" target="_blank" rel="noopener">doi.org/10.1109/TAC.2020.2995173</a></div>
+          <div class="ref-tags">detectability · weighted-automata</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">In this article, we deal with the detectability problem for unambiguous weighted automata (UWAs). The problem is to determine if, after a finite number of observations, the set of possible states is reduced to a singleton. Four types of detectabilities, namely, strong detectability, detectability, strong periodic detectability, and periodic detectability are defined in terms of different requirements for current state estimation. We first construct a deterministic finite state automaton (called observer) over a weighted alphabet and prove that it can be used as the current-state estimator of the studied UWA. Finally, necessary and sufficient conditions based on the observer are proposed to verify detectabilities of a UWA.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Detectability of Labeled Weighted Automata over Monoids</div>
+          <div class="ref-meta">Kuize Zhang · Discrete Event Dynamic Systems, 32(3), pp. 435–494, 2022 · <a href="https://doi.org/10.1007/s10626-022-00362-8" target="_blank" rel="noopener">doi.org/10.1007/s10626-022-00362-8</a> · <a href="https://arxiv.org/abs/2006.14164" target="_blank" rel="noopener">arXiv:2006.14164</a></div>
+          <div class="ref-tags">detectability · weighted-automata</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">In this paper, by developing appropriate methods, we for the first time obtain characterization of four fundamental notions of detectability for general labeled weighted automata over monoids (denoted by &#x1D49C;<sup>&#x1D510;</sup> for short), where the four notions are strong (periodic) detectability (SD and SPD) and weak (periodic) detectability (WD and WPD). The contributions of the current paper are as follows. Firstly, we formulate the notions of concurrent composition, observer, and detector for &#x1D49C;<sup>&#x1D510;</sup>. Secondly, we use the concurrent composition to give a necessary and sufficient condition for SD, use the detector to give a necessary and sufficient condition for SPD, and use the observer to give necessary and sufficient conditions for WD and WPD, all for general &#x1D49C;<sup>&#x1D510;</sup> without any assumption. Thirdly, we prove that for a labeled weighted automaton over monoid (&#x211A;<sup>k</sup>,+) (denoted by &#x1D49C;<sup>&#x211A;<sup>k</sup></sup>), its concurrent composition, observer, and detector can be computed in NP, 2-EXPTIME, and 2-EXPTIME, respectively, by developing novel connections between &#x1D49C;<sup>&#x211A;<sup>k</sup></sup> and the NP-complete exact path length problem (proven by [Nykänen and Ukkonen, 2002]) and a subclass of Presburger arithmetic. As a result, we prove that for &#x1D49C;<sup>&#x211A;<sup>k</sup></sup>, SD can be verified in coNP, while SPD, WD, and WPD can be verified in 2-EXPTIME. Particularly, for &#x1D49C;<sup>&#x211A;<sup>k</sup></sup> in which from every state, a distinct state can be reached through some unobservable, instantaneous path, detector &#x1D49C;<sup>&#x211A;<sup>k</sup></sup><sub>det</sub> can be computed in NP, and SPD can be verified in coNP. Finally, we prove that the problems of verifying SD and SPD of deterministic, deadlock-free, and divergence-free &#x1D49C;<sup>&#x2115;</sup> over monoid (&#x2115;,+) are both coNP-hard. The original methods developed in this paper will provide foundations for characterizing other fundamental properties (e.g., diagnosability and opacity) in labeled weighted automata over monoids. In addition, in order to differentiate labeled weighted automata over monoids from labeled timed automata, we also initially explore detectability in labeled timed automata, and prove that the SD verification problem is PSPACE-complete, while WD and WPD are undecidable.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Formulation and Verification of Strong Detectability for Labeled Real-Time Automata — A Concurrent-Composition Method</div>
+          <div class="ref-meta">Kuize Zhang · Information and Computation, 313, article 105519, 2026 · <a href="https://doi.org/10.1016/j.ic.2026.105519" target="_blank" rel="noopener">doi.org/10.1016/j.ic.2026.105519</a></div>
+          <div class="ref-tags">detectability</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Real-time automata are a widely-used class of real-time systems. In this paper, two versions of strong detectability are formulated for a labeled real-time automaton (LRTA) which imply after some delay (the number of observed labels or real-time delay), along every generated infinite run, one can determine the current and subsequent states by observing the generated timed label sequence. By using the concurrent composition defined and computed in one of the author&rsquo;s previous papers, necessary and sufficient conditions for the negations of the two strong versions of detectability are given. It is also proven that the verification problems for the two definitions of strong detectability are both coNP-complete. As a byproduct, an NP state estimation algorithm for LRTAs is shown as well.</div>
+          </details>
+        </li>
+    </ul>
+  </section>
+
+  <!-- ===================== B. DIAGNOSABILITY ===================== -->
+  <section class="category" id="cat-b">
+    <div class="cat-head"><div class="cat-letter">B</div><h2 class="cat-title">Diagnosability</h2></div>
+    <p class="cat-blurb">Will the system eventually and always detect that a specific fault occurred, within some bounded delay? A third sibling alongside opacity and detectability, often grouped together in surveys as the canonical trio of partial-observation verification problems.</p>
+
+    <ul class="refs">
+        <li>
+          <div class="ref-title">Overview of Fault Diagnosis Methods for Discrete Event Systems</div>
+          <div class="ref-meta">Janan Zaytoon, Stéphane Lafortune · Annual Reviews in Control, 37(2), pp. 308–320, 2013 · <a href="https://doi.org/10.1016/j.arcontrol.2013.09.009" target="_blank" rel="noopener">doi.org/10.1016/j.arcontrol.2013.09.009</a></div>
+          <div class="ref-tags">diagnosability</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Fault diagnosis of Discrete Event Systems has become an active research area in recent years. The research activity in this area is driven by the needs of many different application domains such as manufacturing, process control, control systems, transportation, communication networks, software engineering, and others. The aim of this paper is to review the state-of the art of methods and techniques for fault diagnosis of Discrete Event Systems based on models that include faulty behaviour. Theoretical and practical issues related to model description tools, diagnosis processing structure, sensor selection, fault representation and inference are discussed.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Verification Complexity of a Class of Observational Properties for Modular Discrete Event Systems</div>
+          <div class="ref-meta">Xiang Yin, Stéphane Lafortune · Automatica, 83, pp. 199–205, 2017 · <a href="https://doi.org/10.1016/j.automatica.2017.06.013" target="_blank" rel="noopener">doi.org/10.1016/j.automatica.2017.06.013</a></div>
+          <div class="ref-note">Covers diagnosability, predictability and detectability rather than opacity itself; the Masopust and Yin paper that follows treats opacity for modular systems.</div>
+          <div class="ref-tags">distributed · modular · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">A modular discrete event system is modeled by a set of module automata running synchronously. In this paper, we investigate the complexity of the verification problems of three different properties, diagnosability, predictability, and detectability, for partially-observed modular discrete event systems. We first show that deciding diagnosability for modular discrete event systems is PSPACE-complete when the number of modules is unbounded. Then we show that deciding predictability and detectability for modular discrete event systems are both PSPACE-hard problems. These results reveal that in order to verify these properties for the complete system, exploring the state space of the monolithic model may be unavoidable, in the worst case.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">The Complexity of Diagnosability and Opacity Verification for Petri Nets</div>
+          <div class="ref-meta">Béatrice Bérard, Stefan Haar, Sylvain Schmitz, Stefan Schwoon · Fundamenta Informaticae, 161(4), pp. 317–349, 2018 · <a href="https://doi.org/10.3233/FI-2018-1706" target="_blank" rel="noopener">doi.org/10.3233/FI-2018-1706</a> (journal version; conference precursor: 38th International Conference on Application and Theory of Petri Nets and Concurrency (Petri Nets 2017), LNCS vol. 10258, pp. 200–220, Springer · <a href="https://doi.org/10.1007/978-3-319-57861-3_13" target="_blank" rel="noopener">doi.org/10.1007/978-3-319-57861-3_13</a>)</div>
+          <div class="ref-note">Compares the two problems: diagnosability goes from NL-complete (finite-state systems) to PSPACE-complete (safe convergent nets) and EXPSPACE-complete (general nets without fairness).</div>
+          <div class="ref-tags">classical · diagnosability · infinite-state · opacity · petri-nets</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Diagnosability and opacity are two well-studied problems in discrete-event systems. We revisit these two problems with respect to expressiveness and complexity issues. We first relate different notions of diagnosability and opacity. We consider in particular fairness issues and extend the definition of Germanos et al. [ACM TECS, 2015] of weakly fair diagnosability for safe Petri nets to general Petri nets and to opacity questions. Second, we provide a global picture of complexity results for the verification of diagnosability and opacity. We show that diagnosability is NL-complete for finite state systems, PSPACE-complete for safe convergent Petri nets (even with fairness), and EXPSPACE-complete for general Petri nets without fairness, while non diagnosability is inter-reducible with reachability when fault events are not weakly fair. Opacity is EXPSPACE-complete for safe Petri nets (even with fairness) and undecidable for general Petri nets already without fairness.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Accurate Approximate Diagnosis of (Controllable) Stochastic Systems</div>
+          <div class="ref-meta">Engel Lefaucheux · Quantitative Evaluation of Systems (QEST 2021), Springer LNCS vol. 12846, pp. 413–434 · <a href="https://doi.org/10.1007/978-3-030-85172-9_22" target="_blank" rel="noopener">doi.org/10.1007/978-3-030-85172-9_22</a></div>
+          <div class="ref-note">Its conclusion relates the accurate approximate disclosure studied here to quantitative opacity, presented as a kind of dual to diagnosability.</div>
+          <div class="ref-tags">applications · opacity · stochastic</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Diagnosis of partially observable stochastic systems prone to faults was introduced in the late nineties. Diagnosability may be specified in different ways: exact diagnosability requires that almost surely a fault is detected and that no fault is erroneously claimed; approximate diagnosability tolerates a small error probability when claiming a fault; last, accurate approximate diagnosability guarantees that the error probability can be chosen arbitrarily small. While all three notions were studied for passive systems such as observable Markov chains, only the exact notion was considered for systems equipped with a controller. As the approximate notion of diagnosability was shown to be undecidable in passive systems, in this article, we complete the picture by deciding the accurate approximate diagnosability for controllable observable Markov chains. More precisely, we show how to adapt the accurate approximate notion to the active setting and establish EXPTIME-completeness of the associated decision problem. We also show how to measure the set of faulty paths that are detected under the accurate approximate notion in the passive setting.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Distributed Fault Diagnosis in Discrete Event Systems With Transmission Delay Impairments</div>
+          <div class="ref-meta">Jiwei Wang, Simone Baldi, Wenwu Yu, Xiang Yin · IEEE Transactions on Automatic Control, 69(8), pp. 5508–5515, 2024 · <a href="https://doi.org/10.1109/TAC.2024.3369510" target="_blank" rel="noopener">doi.org/10.1109/TAC.2024.3369510</a> · preprint: <a href="https://arxiv.org/abs/2608.06035" target="_blank" rel="noopener">arXiv:2608.06035</a></div>
+          <div class="ref-tags">diagnosability · distributed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">This note studies the distributed fault diagnosis problem in partially-observed discrete event systems, where the system is monitored by a group of agents to cooperatively diagnose faults within a finite number of steps. The novelty of this work is the creation of a methodology to verify when the faults can be diagnosed even in the presence of transmission delay impairments. To address this scenario, a new distributed diagnosability condition is proposed, which extends decentralized diagnosability conditions proposed in the literature. Such distributed diagnosability condition is then verified via a novel structure named delay recorder and a new diagnosis function. Theoretical analysis shows that the verification method can successfully determine whether the faults can be diagnosed.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Distributed Sensing and Information Transmission of Discrete-Event Systems with Edge Sensors</div>
+          <div class="ref-meta">Yingying Liu, Shaoyuan Li, Jin Hu, Xiang Yin · IEEE Transactions on Automatic Control, 71(5), pp. 3432–3439, 2026 · <a href="https://doi.org/10.1109/TAC.2025.3639520" target="_blank" rel="noopener">doi.org/10.1109/TAC.2025.3639520</a> (journal version; conference precursor: Yingying Liu, Xiang Yin, Shaoyuan Li · 60th IEEE Conference on Decision and Control (CDC 2021), pp. 309–315 · <a href="https://doi.org/10.1109/CDC45484.2021.9683006" target="_blank" rel="noopener">doi.org/10.1109/CDC45484.2021.9683006</a>)</div>
+          <div class="ref-tags">detectability · diagnosability · distributed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">This article studies distributed sensing and information transmission in partially observed discrete-event systems with edge sensors. We assume that each edge sensor selectively transmits its observable events, according to information transmission policies, to a central site for the purpose of decision making. A general class of decision-making requirement at the central site called distinguishability is considered. We consider both the verification problem and the synthesis problem in this setting. For the verification problem, two different approaches, one based on the observer and the other based on the verifier, are proposed to check whether or not a given set of sensor transmission policies fulfills the distinguishability requirement. For the synthesis problem, we also develop an effective algorithm to design an observer-based optimal information transmission policy for each edge sensor. Moreover, we show that finding an information transmission policy with minimal number of transmitted events is NP-hard.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Verification and Enforcement of Concealability and Diagnosability in Probabilistic Timed Automata</div>
+          <div class="ref-meta">Tareq Ahmad Al-Sarayrah, Sjood Ammen Daje, Ding Liu, Mohamed Ghazel, Zhiwu Li · IEEE Transactions on Automation Science and Engineering, 23, pp. 12827–12846, 2026 · <a href="https://doi.org/10.1109/TASE.2026.3709035" target="_blank" rel="noopener">doi.org/10.1109/TASE.2026.3709035</a></div>
+          <div class="ref-note">Studies diagnosability in probabilistic timed automata alongside concealability, using diagnosers, and analyzes the interplay between the two.</div>
+          <div class="ref-tags">concealability · diagnosability · stochastic · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">This study explores the diagnosability and concealability in discrete event systems modeled by probabilistic timed automata, with a focus on the concept of enforced concealability. The research enhances methods for verifying concealability, with a particular emphasis on concealability during state transitions and the critical temporal elements that ensure security and operational privacy. In this model, observers and diagnosers are central, with the latter playing a critical role in enhancing system concealability. We analyze the interplay between diagnosability and concealability in discrete event systems, viewed through a probabilistic timed approach to advance system secrecy. A key aspect of this research is the application of supervisory control for selective event disabling, which is effective in maintaining desired system states, thus optimizing process flows. The proposed approach is illustrated through a case study on a city-scale intelligent transportation system modeled via a dual probabilistic timed-automaton construction (a primary model and an auxiliary mimic model) for an urban autonomous passenger transport mission (e.g., an automated shuttle or robo-taxi) under partial observation, which demonstrates not only the framework’s capacity for enforcing concealability but also its impact on operational efficiency and security. Including a practical case study underscores the managerial implications and real-world applicability of these methods, laying the groundwork for future research in process modeling and data feature analysis. The main aim is to facilitate the implementation of the proposed framework as a protective measure in systems necessitating augmented security. Note to Practitioners—Modern engineering systems are increasingly complex, challenging their security and reliability, especially under partial observability and probabilistic constraints. This article introduces a framework using probabilistic timed automata to address these challenges by incorporating diagnosability and concealability concepts, suitable for secure communication protocols and supervisory control systems. We present methods that enhance system secrecy and verify critical transitions, advancing both theoretical understanding and practical application. These techniques are designed to handle uncertainties inherent in cyberphysical systems, making them relevant in cybersecurity, industrial automation, and intelligent transportation systems. Engineers and system designers will find the methodologies valuable for enhancing system reliability and security in dynamic environments. This study provides major insights and tools for professionals in automated control, offering new perspectives and methods to effectively manage nondeterministic observations and state estimations.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Existential Opacity for Discrete-Event Systems with State Observations</div>
+          <div class="ref-meta">Zhiyuan Huang, Zhao Tong, Jiakai Li, Bingzhuo Zhong · arXiv preprint, 2026 · <a href="https://arxiv.org/abs/2609.02132" target="_blank" rel="noopener">arXiv:2609.02132</a></div>
+          <div class="ref-note">Read from the diagnosability side, existential opacity is essentially the negation of a diagnosis requirement: it holds when some secret behavior is never told apart from a non-secret one by the observations, whereas diagnosing the secret would require every secret behavior to be revealed. The standard diagnosability definition adds a bounded-delay condition that is not part of this notion.</div>
+          <div class="ref-tags">classical · diagnosability · opacity · trajectory-planning</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Opacity is a fundamental system property for confidentiality in discrete-event systems (DES). Classical opacity is typically defined under event-based observations, requiring that any secret system behavior remains indistinguishable from some non-secret behavior to an external intruder. However, in many applications such as path planning or opacity-preserving tasks, the intruder observes system states rather than events. Moreover, it often suffices that the system exhibits secret behaviors that can be exploited for opacity-preserving task execution, but such a system property cannot be fully captured by existing notions of state-observation-based opacity. Motivated by this limitation, we propose a relaxed notion of existing state-observation-based opacity, called existential opacity (EO), which only requires the existence of secret behaviors (instead of all secret behaviors) that are indistinguishable from a non-secret behavior under the state observations of the intruder. We show that the notion of EO is more expressive than existing state-observation-based opacity notions. In addition, a class of EO properties together with their corresponding verification approaches are developed, enabling the analysis of existential opacity in discrete-event systems and providing a new criterion for determining the feasibility of opacity-preserving problems.</div>
+          </details>
+        </li>
+    </ul>
+  </section>
+
+  <!-- ===================== C. CONCEALABILITY ===================== -->
+  <section class="category" id="cat-c">
+    <div class="cat-head"><div class="cat-letter">C</div><h2 class="cat-title">Concealability</h2></div>
+    <p class="cat-blurb">An event-level cousin of opacity: rather than an intruder never becoming certain the system is in a secret state, concealability asks that a designated set of secret events never become certain to have occurred, using the same partial-observation eavesdropper model as opacity but operating on events instead of states.</p>
+
+    <ul class="refs">
+        <li>
+          <div class="ref-title">Event Concealment and Concealability Enforcement in Discrete Event Systems Under Partial Observation</div>
+          <div class="ref-meta">Wei Duan, Christoforos N. Hadjicostis, Zhiwu Li · IEEE Transactions on Automatic Control, 69(10), pp. 7263–7269, 2024 · <a href="https://doi.org/10.1109/TAC.2024.3397198" target="_blank" rel="noopener">doi.org/10.1109/TAC.2024.3397198</a> · <a href="https://arxiv.org/abs/2205.03170" target="_blank" rel="noopener">arXiv:2205.03170</a></div>
+          <div class="ref-tags">concealability</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">In this article, we investigate event concealment and concealability enforcement in discrete event systems modeled as nondeterministic finite automata under partial observation. Given a subset of secret events in a given system, concealability holds if the occurrences of all secret events remain hidden to a curious observer (an eavesdropper). When concealability of a system does not hold, we analyze how a defensive function, placed at the interface of the system with the eavesdropper, can be used to enforce concealability by manipulating the observations generated by the system using event deletions, insertions, or replacements. The defensive function is said to be C-enforcing if, following the occurrence of secret events and regardless of earlier and subsequent activity generated by the system, it can always deploy a strategy to manipulate observations and conceal the secret events perpetually. We propose a polynomial complexity construction for obtaining one necessary and one sufficient condition for C-enforceability.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Verification and Enforcement of Concealability and Diagnosability in Probabilistic Timed Automata</div>
+          <div class="ref-meta">Tareq Ahmad Al-Sarayrah, Sjood Ammen Daje, Ding Liu, Mohamed Ghazel, Zhiwu Li · IEEE Transactions on Automation Science and Engineering, 23, pp. 12827–12846, 2026 · <a href="https://doi.org/10.1109/TASE.2026.3709035" target="_blank" rel="noopener">doi.org/10.1109/TASE.2026.3709035</a></div>
+          <div class="ref-note">Studies concealability in probabilistic timed automata, with a focus on enforced concealability through supervisory control that selectively disables events.</div>
+          <div class="ref-tags">concealability · diagnosability · stochastic · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">This study explores the diagnosability and concealability in discrete event systems modeled by probabilistic timed automata, with a focus on the concept of enforced concealability. The research enhances methods for verifying concealability, with a particular emphasis on concealability during state transitions and the critical temporal elements that ensure security and operational privacy. In this model, observers and diagnosers are central, with the latter playing a critical role in enhancing system concealability. We analyze the interplay between diagnosability and concealability in discrete event systems, viewed through a probabilistic timed approach to advance system secrecy. A key aspect of this research is the application of supervisory control for selective event disabling, which is effective in maintaining desired system states, thus optimizing process flows. The proposed approach is illustrated through a case study on a city-scale intelligent transportation system modeled via a dual probabilistic timed-automaton construction (a primary model and an auxiliary mimic model) for an urban autonomous passenger transport mission (e.g., an automated shuttle or robo-taxi) under partial observation, which demonstrates not only the framework’s capacity for enforcing concealability but also its impact on operational efficiency and security. Including a practical case study underscores the managerial implications and real-world applicability of these methods, laying the groundwork for future research in process modeling and data feature analysis. The main aim is to facilitate the implementation of the proposed framework as a protective measure in systems necessitating augmented security. Note to Practitioners—Modern engineering systems are increasingly complex, challenging their security and reliability, especially under partial observability and probabilistic constraints. This article introduces a framework using probabilistic timed automata to address these challenges by incorporating diagnosability and concealability concepts, suitable for secure communication protocols and supervisory control systems. We present methods that enhance system secrecy and verify critical transitions, advancing both theoretical understanding and practical application. These techniques are designed to handle uncertainties inherent in cyberphysical systems, making them relevant in cybersecurity, industrial automation, and intelligent transportation systems. Engineers and system designers will find the methodologies valuable for enhancing system reliability and security in dynamic environments. This study provides major insights and tools for professionals in automated control, offering new perspectives and methods to effectively manage nondeterministic observations and state estimations.</div>
+          </details>
+        </li>
+    </ul>
+  </section>
+
+  <!-- ===================== D. NON-INTERFERENCE ===================== -->
+  <section class="category" id="cat-d">
+    <div class="cat-head"><div class="cat-letter">D</div><h2 class="cat-title">Non-Interference</h2></div>
+    <p class="cat-blurb">An older, language-based-security notion asking that confidential actions never produce any effect observable by an unauthorized user. Some formulations overlap enough with opacity that they've been described as a kind of opacity themselves.</p>
+
+    <ul class="refs">
+        <li>
+          <div class="ref-title">A Notion of Non-Interference for Timed Automata</div>
+          <div class="ref-meta">Roberto Barbuti, Nicoletta De Francesco, Antonella Santone, Luca Tesei · Fundamenta Informaticae, 51(1–2), pp. 1–11, 2002 · <a href="https://doi.org/10.5555/2371116.2371118" target="_blank" rel="noopener">doi.org/10.5555/2371116.2371118</a></div>
+          <div class="ref-tags">non-interference · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">The non-interference property of concurrent systems is a security property concerning the flow of information among different levels of security of the system. In this paper we introduce a notion of timed non-interference for real-time systems specified by timed automata. The notion is presented using an automata based approach and then it is characterized also by operations and equivalence between timed languages. The definition is applied to an example of a time-critical system modeling a simplified control of an airplane.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">A Decidable Notion of Timed Non-Interference</div>
+          <div class="ref-meta">Roberto Barbuti, Luca Tesei · Fundamenta Informaticae, 54(2–3), pp. 137–150, 2003 · <a href="https://doi.org/10.5555/2370741.2370744" target="_blank" rel="noopener">doi.org/10.5555/2370741.2370744</a></div>
+          <div class="ref-tags">non-interference</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">We present a notion of non-interference which embodies the notion of time. It is useful to verify the strength of a system against attacks depending on the frequency of certain actions. In particular we give a decidable definition of non-interference which can be checked by using existing verification tools. We show an application example of our notion of non-interference by defining a variant of the classical Fischer's mutual exclusion protocol and by analyzing its strength against attacks.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Generalized Abstract Non-interference: Abstract Secure Information-Flow Analysis for Automata</div>
+          <div class="ref-meta">Roberto Giacobazzi, Isabella Mastroeni · Computer Network Security — MMM-ACNS 2005, LNCS vol. 3685, pp. 209–221, Springer, 2005 · <a href="https://doi.org/10.1007/11560326_17" target="_blank" rel="noopener">doi.org/10.1007/11560326_17</a></div>
+          <div class="ref-tags">non-interference · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Abstract non-interference has been introduced as a weakening non-interference which models attackers as abstract interpretations (i.e., static analyzers) of programming language semantics. In this paper we generalize the notion of abstract non-interference to deal with tree-like models of computation. This allows us to widen the scope of abstract non-interference for modeling security properties in automata, timed automata as models of real-time systems, and concurrent systems. We show that well known definitions of non-interference in these models of computation can be viewed as instances of our generalization. This proves that abstract non-interference can reasonably be considered as a general framework for studying and comparing security properties at different levels of abstraction in both programming languages and systems. Moreover, the most precise harmless attacker of a system is systematically derived by transforming abstract domains, characterizing the security degree of automata and concurrent systems.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Non-Interference Control Synthesis for Security Timed Automata</div>
+          <div class="ref-meta">Guillaume Gardey, John Mullins, Olivier H. Roux · Electronic Notes in Theoretical Computer Science, 180(1), pp. 35–53, 2007 · <a href="https://doi.org/10.1016/j.entcs.2005.05.046" target="_blank" rel="noopener">doi.org/10.1016/j.entcs.2005.05.046</a> · <a href="https://hal.science/hal-00523598" target="_blank" rel="noopener">hal-00523598</a></div>
+          <div class="ref-tags">non-interference · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">In this paper, the problem of synthesizing controllers that ensures non interference for multilevel security dense timed discrete event systems modeled by an extension of Timed Automata, is addressed for the first time. We first discuss a notion of non interference for dense real-time systems that refines notions existing in the literature and investigate decidability issues raised by the verification problem for dense time properties. We then prove the decidability of the problem of synthesis of the timed controller for some of these timed non interference properties, providing so a symbolic method to synthesize a controller that ensures them.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Checking Noninterference in Timed CSP</div>
+          <div class="ref-meta">A. W. Roscoe, Jian Huang · Formal Aspects of Computing, 2013 · <a href="https://doi.org/10.1007/s00165-012-0251-6" target="_blank" rel="noopener">doi.org/10.1007/s00165-012-0251-6</a></div>
+          <div class="ref-tags">non-interference · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">A well-established specification of noninterference in CSP is that, when high-level events are appropriately abstracted, the remaining low-level view is deterministic. This is not a workable definition in Timed CSP, where many processes cannot be refined to deterministic ones. We argue that in fact “deterministic” should be replaced by “maximally refined” in the definition above. We show how to automate the resulting timed noninterference check within the context of the recent extension of FDR to analyse a discrete version of Timed CSP, and how an extended theory of digitisation has the potential both to create more accurate specifications and to infer when processes are noninterfering in the more usual continuous-time semantics.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Control and Synthesis of Non-Interferent Timed Systems</div>
+          <div class="ref-meta">Gilles Benattar, Franck Cassez, Didier Lime, Olivier H. Roux · International Journal of Control, 88(2), pp. 217–236, 2015 · <a href="https://doi.org/10.1080/00207179.2014.944356" target="_blank" rel="noopener">doi.org/10.1080/00207179.2014.944356</a> · preprint: <a href="https://arxiv.org/abs/1207.4984" target="_blank" rel="noopener">arXiv:1207.4984</a></div>
+          <div class="ref-tags">non-interference · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">We focus on the control and the synthesis of secure timed systems which are modelled as timed automata. The security property that the system must satisfy is a non-interference property. Intuitively, non-interference ensures the absence of any causal dependency from a high-level domain to a lower level domain. Various notions of non-interference have been defined in the literature, and in this paper, we focus on strong non-deterministic non-interference (SNNI) and two (bi)simulation-based variants thereof (cosimulation-based SNNI and bisimulation-based SNNI). These properties and their extensions have been mostly studied in the context of discrete event systems, while it is now well-known that time is an important attack vector against secure systems.
+
+At the same time, there is an obvious interest in going beyond simple verification to control problems: to be able to automatically make systems secure.
+
+We consider non-interference properties in the challenging setting of control of dense-time systems specified by timed automata and we study the two following problems: (1) check whether it is possible to find a sub-system so that it is non-interferent; if yes, (2) compute a (largest) sub-system which is non-interferent.
+
+We exhibit decidable sub-classes for these problems, assess their theoretical complexities and provide effective algorithms based on the classical framework of timed games.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Non-interference in Partial Order Models</div>
+          <div class="ref-meta">Béatrice Bérard, Loïc Hélouët, John Mullins · ACM Transactions on Embedded Computing Systems, 16(2), article 44, 2017 · <a href="https://doi.org/10.1145/2984639" target="_blank" rel="noopener">doi.org/10.1145/2984639</a> · <a href="https://hal.science/hal-01379451" target="_blank" rel="noopener">hal-01379451</a></div>
+          <div class="ref-tags">distributed · infinite-state · non-interference</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Non-interference (NI) is a property of systems stating that confidential actions should not cause effects observable by unauthorized users. Several variants of NI have been studied for many types of models but rarely for true concurrency or unbounded models. This work investigates NI for High-level Message Sequence Charts (HMSCs), a scenario language for the description of distributed systems, based on composition of partial orders. We first propose a general definition of security properties in terms of equivalence among observations of behaviors. Observations are naturally captured by partial order automata, a formalism that generalizes HMSCs and permits assembling partial orders. We show that equivalence or inclusion properties for HMSCs (and hence for partial order automata) are undecidable, which means in particular that NI is undecidable for HMSCs. We hence consider decidable subclasses of partial order automata and HMSCs. Finally, we define weaker local properties, describing situations where a system is attacked by a single agent, and show that local NI is decidable. We then refine local NI to a finer notion of causal NI that emphasizes causal dependencies between confidential actions and observations and extend it to causal NI with (selective) declassification of confidential events. Checking whether a system satisfies local and causal NI and their declassified variants are PSPACE-complete problems.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Parametric Non-Interference in Timed Automata</div>
+          <div class="ref-meta">Étienne André, Aleksander Kryukov · 25th International Conference on Engineering of Complex Computer Systems (ICECCS 2020), pp. 37–42 · <a href="https://doi.org/10.1109/ICECCS51672.2020.00012" target="_blank" rel="noopener">doi.org/10.1109/ICECCS51672.2020.00012</a> · <a href="https://arxiv.org/abs/2010.09527" target="_blank" rel="noopener">arXiv:2010.09527</a></div>
+          <div class="ref-tags">non-interference · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">We consider a notion of non-interference for timed automata (TAs) that allows to quantify the frequency of an attack; that is, we infer values of the minimal time between two consecutive actions of the attacker, so that (s)he disturbs the set of reachable locations. We also synthesize valuations for the timing constants of the TA (seen as parameters) guaranteeing non-interference. We show that this can reduce to reachability synthesis in parametric timed automata. We apply our method to a model of the Fischer mutual exclusion protocol and obtain preliminary results.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Timed Non-Interference Under Partial Observability and Bounded Memory</div>
+          <div class="ref-meta">Anthony Spriet, Didier Lime, Olivier H. Roux · 21st International Conference on Formal Modeling and Analysis of Timed Systems (FORMATS 2023), LNCS vol. 14138, pp. 122–137 · <a href="https://doi.org/10.1007/978-3-031-42626-1_8" target="_blank" rel="noopener">doi.org/10.1007/978-3-031-42626-1_8</a> · <a href="https://hal.science/hal-04312271v1" target="_blank" rel="noopener">hal-04312271</a></div>
+          <div class="ref-tags">non-interference · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">We investigate a timed non-interference property for security systems modeled as timed automata, in which a low-security level user should not be able to deduce the occurrence of some high-security level actions. We assume an attack model in which the malicious (low-level) user has the ability to partially observe and memorize the set of runs of the timed automaton modeling the system.
+
+We first formalize a non-interference property that ensures the system security under such an attack model and we then prove the undecidability of that property when the attacker can have an arbitrarily big memory, i.e., when they are able to memorize sequences of previous observations, with time-stamps, of any length. We next assume bounded memory for the attacker and show that the property can then be decided in PSPACE for a subclass of timed automata ensuring finite duration between distinct observations.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Noninterference Analysis of Stochastically Timed Reversible Systems</div>
+          <div class="ref-meta">Andrea Esposito, Alessandro Aldini, Marco Bernardo · 45th International Conference on Formal Techniques for Distributed Objects, Components, and Systems (FORTE 2025), LNCS vol. 15740, pp. 75–95 · <a href="https://doi.org/10.1007/978-3-031-95497-9_5" target="_blank" rel="noopener">doi.org/10.1007/978-3-031-95497-9_5</a></div>
+          <div class="ref-tags">non-interference · stochastic · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Noninterference theory aims at ensuring the absence of covert channels among different security levels. As far as the verification of information-flow properties via equivalence checking is concerned, in nondeterministic and probabilistic settings weak bisimilarity has turned out to be adequate only for standard systems, while branching bisimilarity has proven to be appropriate for reversible systems too. In this paper we investigate noninterference for stochastically timed systems represented in the interactive Markov chain model of Hermanns. After recasting a selection of noninterference properties via Markovian variants of weak and branching bisimilarities, we study their preservation and compositionality aspects, build their taxonomy, and compare it with the nondeterministic and probabilistic taxonomies. We show the adequacy of our proposal through some examples about a database management system.</div>
+          </details>
+        </li>
+    </ul>
+  </section>
+
+  <!-- ===================== E. HYPOTHESIS-TESTING DETECTION AVOIDANCE ===================== -->
+  <section class="category" id="cat-e">
+    <div class="cat-head"><div class="cat-letter">E</div><h2 class="cat-title">Hypothesis-Testing Detection Avoidance</h2></div>
+    <p class="cat-blurb">Keeping a deviation statistically hard for a passive observer to detect, bounding a hypothesis test's success probability rather than reasoning over the observer's state estimate. Close enough to opacity in motivation to surface constantly in the same searches.</p>
+
+    <ul class="refs">
+        <li>
+          <div class="ref-title">Covert Planning against Imperfect Observers</div>
+          <div class="ref-meta">Haoxiang Ma, Chongyang Shi, Shuo Han, Michael R. Dorothy, Jie Fu · Proceedings of the 23rd International Conference on Autonomous Agents and Multiagent Systems (AAMAS 2024), pp. 1319–1327, 2024 · <a href="https://doi.org/10.5555/3635637.3662990" target="_blank" rel="noopener">doi.org/10.5555/3635637.3662990</a> · preprint: <a href="https://arxiv.org/abs/2310.16791" target="_blank" rel="noopener">arXiv:2310.16791</a></div>
+          <div class="ref-tags">hypothesis-testing · stochastic</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Covert planning refers to a class of constrained planning problems where an agent aims to accomplish a task with minimal information leaked to a passive observer to avoid detection. However, existing methods of covert planning often consider deterministic environments or do not exploit the observer's imperfect information. This paper studies how covert planning can leverage the coupling of stochastic dynamics and the observer's imperfect observation to achieve optimal task performance without being detected. Specifically, we employ a Markov decision process to model the interaction between the agent and its stochastic environment, and a partial observation function to capture the leaked information to a passive observer. Assuming the observer employs hypothesis testing to detect if the observation deviates from a nominal policy, the covert planning agent aims to maximize the total discounted reward while keeping the probability of being detected as an adversary below a given threshold. We prove that finite-memory policies are more powerful than Markovian policies in covert planning. Then, we develop a primal-dual proximal policy gradient method with a two-time-scale update to compute a (locally) optimal covert policy. We demonstrate the effectiveness of our methods using a stochastic gridworld example. Our experimental results illustrate that the proposed method computes a policy that maximizes the adversary's expected reward without violating the detection constraint, and empirically demonstrates how the environmental noises can influence the performance of the covert policies. </div>
+          </details>
+        </li>
+    </ul>
+  </section>
+
+  <!-- ===================== F. DIVERGENCE-BASED SECRECY ===================== -->
+  <section class="category" id="cat-f">
+    <div class="cat-head"><div class="cat-letter">F</div><h2 class="cat-title">Divergence-Based Secrecy</h2></div>
+    <p class="cat-blurb">A quantitative sibling of opacity that measures leakage via statistical divergence between the observations a secret behavior produces and the observations a designated “cover” behavior produces, rather than via the observer's state estimate.</p>
+
+    <ul class="refs">
+        <li>
+          <div class="ref-title">Quantification of Secrecy in Partially Observed Stochastic Discrete Event Systems</div>
+          <div class="ref-meta">Jun Chen, Mariam Ibrahim, Ratnesh Kumar · IEEE Transactions on Automation Science and Engineering, 14(1), pp. 185–195, 2017 · <a href="https://doi.org/10.1109/TASE.2016.2604222" target="_blank" rel="noopener">doi.org/10.1109/TASE.2016.2604222</a></div>
+          <div class="ref-tags">divergence-secrecy · stochastic</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">While cryptography is used to protect the content of information (e.g., a message) by making it undecipherable, behaviors (as opposed to information) may not be encrypted and may only be protected by partially or fully hiding through creation of ambiguity (by providing covers that generate indistinguishable observations from secrets). Having a cover together with partial observability does cause ambiguity about the system behaviors desired to be kept secret, yet some information about secrets may still be leaked due to statistical difference between the occurrence probabilities of the secrets and their covers. In this paper, we propose a Jensen-Shannon divergence (JSD)-based measure to quantify secrecy loss in systems modeled as partially observed stochastic discrete event systems, which quantifies the statistical difference between two distributions, one over the observations generated by secret and the other over those generated by cover. We further show that the proposed JSD measure for secrecy loss is equivalent to the mutual information between the distributions over possible observations and that over possible system status (secret versus cover). Since an adversary is likely to discriminate more if he/she observes for a longer period, our goal is to evaluate the worst case loss of secrecy as obtained in the limit over longer and longer observations. Computation for the proposed measure is also presented. Illustrative examples, including the one with side-channel attack, are provided to demonstrate the proposed computation approach.</div>
+          </details>
+        </li>
+    </ul>
+  </section>
+
+  <!-- ===================== G. CONFIDENTIALITY ===================== -->
+  <section class="category" id="cat-g" style="border-bottom:none;">
+    <div class="cat-head"><div class="cat-letter">G</div><h2 class="cat-title">Confidentiality</h2></div>
+    <p class="cat-blurb">As defined in this pair of articles, confidentiality is opacity's closest sibling, and easy to mistake for a synonym: an eavesdropper must not recover the secret, but unlike opacity, a designated "friendly" recipient must still be able to. That authorized-recovery requirement is what keeps it a distinct property rather than a renaming of opacity.</p>
+
+    <ul class="refs">
+        <li>
+          <div class="ref-title">Existence Conditions for Confidentiality in Discrete-Event Systems</div>
+          <div class="ref-meta">Bryony H. Laporte (published as Bryony H. Schonewille), Karen Rudie · 2024 American Control Conference (ACC), pp. 5412–5418 · <a href="https://doi.org/10.23919/ACC60939.2024.10644328" target="_blank" rel="noopener">doi.org/10.23919/ACC60939.2024.10644328</a></div>
+          <div class="ref-tags">confidentiality</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Confidentiality as it has been formulated for discrete-event systems is a way of defining security which allows friendly agents to recover obscured secret information. This work presents two new definitions for confidentiality in discrete-event systems that model the scenario when an adversary is eavesdropping from the beginning of a system's evolution. Necessary and sufficient conditions are also provided for each version of confidentiality that describe the properties a system needs for an encryption function to exist that enforces confidentiality on the system.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Existence Conditions for Stealthy Confidentiality of Discrete-Event Systems</div>
+          <div class="ref-meta">Bryony H. Laporte, Karen Rudie · 2025 IEEE 64th Conference on Decision and Control (CDC), pp. 261–268 · <a href="https://doi.org/10.1109/CDC57313.2025.11312361" target="_blank" rel="noopener">doi.org/10.1109/CDC57313.2025.11312361</a></div>
+          <div class="ref-tags">confidentiality</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Confidentiality is a security model for discreteevent systems that uses an encryption function to obscure communications so the original information can be recovered by any agent with the decryption key. In this work we introduce the idea of stealthy confidentiality, namely when the set of possible behaviours of the encrypted system appears to be possible behaviours of the actual plant. We then present conditions that must be satisfied for stealthy confidentiality-enforcing encryption functions to exist under the assumptions from our previous work and under generalized assumptions that permit the existence of strings that are neither secret nor non-secret.</div>
+          </details>
+        </li>
+    </ul>
+  </section>
+
+
+  <footer>
+    <p><strong>Maintained by</strong> <a href="https://elefauch.github.io/" target="_blank" rel="noopener">Engel Lefaucheux</a>. This bibliography is almost certainly incomplete. If you know of a relevant paper that's missing, please get in touch so it can be added.</p>
+  </footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Opacity of Weighted Automata</title>
+<meta name="description" content="Opacity for unambiguous weighted automata, where the observer sees both the labels and the accumulated weight of a run.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Opacity of Weighted Automata">
+<meta property="og:description" content="Opacity for unambiguous weighted automata, where the observer sees both the labels and the accumulated weight of a run.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* Rules shared by the topic pages and the tag search page. */
+  :root{
+    --paper:#F1EDE4;
+    --card:#E8E1D2;
+    --ink:#2A2620;
+    --ink-soft:#5C5648;
+    --ink-faint:#6A6456;
+    --line:#D2C9B4;
+    --observable:#177A72;
+    --observable-soft:#DCEAE7;
+    --secret:#B04E2D;
+    --secret-soft:#F1DDD3;
+    --display: 'Fraunces', serif;
+    --body: 'Source Serif 4', serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--body);
+    line-height:1.65;
+  }
+  a{color:var(--secret); word-break:break-word;}
+  .wrap{max-width:1100px; margin:0 auto; padding:0 32px;}
+  /* ---------- HEADER / HERO ---------- */
+  header.hero{padding:60px 0 32px;}
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:11.5px;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:20px;
+  }
+  .eyebrow .tick{color:var(--secret); font-weight:600;}
+  .hub-link{
+    font-family:var(--mono); font-size:12px; color:var(--ink-faint);
+    text-decoration:none; display:inline-flex; align-items:center; gap:6px; margin-bottom:16px;
+  }
+  .hub-link:hover{color:var(--secret);}
+  h1.title{
+    font-family:var(--display);
+    font-weight:600;
+    font-size:clamp(38px, 6vw, 62px);
+    line-height:1.02;
+    margin:0 0 20px;
+    letter-spacing:-0.015em;
+  }
+  h1.title .secret-word{color:var(--secret); font-style:italic; font-weight:500;}
+  p.lede{
+    font-size:18px;
+    color:var(--ink-soft);
+    max-width:64ch;
+    margin:0 0 32px;
+  }
+  ul.refs li{border-left:2px solid var(--line); padding:10px 0 10px 16px; margin-bottom:2px; transition:border-color 0.15s ease;}
+  ul.refs li:hover{border-left-color:var(--secret);}
+  .ref-title{font-size:15.5px; color:var(--ink); font-weight:600;}
+  .verify-flag{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    background:#F3E3B8;
+    border:1px solid #B8863B;
+    color:#6B4A1E;
+    font-family:var(--mono);
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:0.03em;
+    text-transform:uppercase;
+    padding:2px 8px 2px 6px;
+    border-radius:3px;
+    margin-right:8px;
+    vertical-align:middle;
+  }
+  .ref-meta{font-family:var(--mono); font-size:11.5px; color:var(--ink-faint); margin-top:4px; line-height:1.5;}
+  .ref-meta a{color:var(--ink-faint);}
+  .ref-meta a:hover{color:var(--secret);}
+  .ref-note{font-size:13.5px; color:var(--ink-soft); margin-top:5px; max-width:100ch;}
+  .ref-caveat{font-size:13px; color:#6B4A1E; margin-top:5px; max-width:100ch; padding-left:8px; border-left:2px solid #B8863B;}
+  .ref-tags{font-family:var(--mono); font-size:11px; color:var(--ink-faint); margin-top:6px; letter-spacing:0.02em;}
+  /* "Show abstract" toggle: a native <details>, so the browser's find-in-page also searches the abstracts */
+  .abstract-toggle{display:inline-block; list-style:none; font-family:var(--mono); font-size:11px; line-height:normal; color:var(--secret); background:none; border:1px solid var(--ink-faint); border-radius:3px; padding:2px 8px; margin-top:6px; cursor:pointer;}
+  .abstract-toggle::-webkit-details-marker{display:none;}
+  .abstract-toggle:hover{border-color:var(--secret);}
+  .abstract-toggle:focus-visible{outline:2px solid var(--secret); outline-offset:2px;}
+  details.ref-abs .abs-hide{display:none;}
+  details.ref-abs[open] .abs-show{display:none;}
+  details.ref-abs[open] .abs-hide{display:inline;}
+  .ref-abstract{font-size:13.5px; color:var(--ink-soft); margin-top:6px; max-width:100ch; padding:8px 10px; background:rgba(0,0,0,0.03); border-radius:4px;}
+  footer p{font-size:12.5px; color:var(--ink-faint); max-width:104ch; margin:0 0 8px; line-height:1.55;}
+  /* Rules shared by the topic pages only (hero diagram, intro, table of contents, categories). */
+  /* ---------- TIMING DIAGRAM ---------- */
+  .diagram-card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:2px;
+    padding:22px 24px 16px;
+  }
+  .diagram-caption{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--ink-faint);
+    margin-top:12px;
+    line-height:1.6;
+  }
+  .diagram-caption b{color:var(--ink-soft); font-weight:600;}
+  /* ---------- DESCRIPTION SECTION ---------- */
+  section.intro{padding:44px 0 6px;}
+  section.intro p{margin:0 0 20px; max-width:72ch; color:var(--ink); font-size:17px;}
+  section.intro p:last-child{margin-bottom:0;}
+  /* ---------- CATEGORY SECTIONS ---------- */
+  section.category{padding:48px 0; border-bottom:1px solid var(--line);}
+  section.category:last-of-type{border-bottom:none;}
+  .cat-head{display:flex; gap:16px; align-items:baseline; margin-bottom:10px;}
+  .cat-letter{
+    font-family:var(--display); font-weight:600; font-size:16px; color:var(--ink-faint);
+    border:1px solid var(--line); border-radius:50%;
+    width:32px; height:32px; min-width:32px;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  h2.cat-title{font-family:var(--display); font-weight:600; font-size:26px; margin:0; letter-spacing:-0.01em;}
+  .cat-blurb{color:var(--ink-soft); font-size:15px; max-width:100ch; margin:0 0 26px; padding-left:48px;}
+  li:has(.verify-flag){border-left-color:#B8863B;}
+  footer{padding:32px 0 60px; border-top:1px solid var(--line); margin-top:12px;}
+  footer p:last-child{margin-bottom:0;}
+  footer strong{color:var(--ink-soft); font-weight:600;}
+  footer a{color:var(--ink-faint); text-decoration:none; border-bottom:1px dotted var(--ink-faint);}
+  footer a:hover{color:var(--secret); border-bottom-color:var(--secret);}
+
+  /* ---------- TOC ---------- */
+  nav.toc{margin:44px 0 0; padding:24px 0; border-top:2px solid var(--ink); border-bottom:1px solid var(--line);}
+  nav.toc ol{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:1fr 1fr; gap:8px 28px;}
+  nav.toc li a{
+    display:flex; justify-content:space-between; gap:10px; text-decoration:none; color:var(--ink);
+    font-family:var(--display); font-size:16px; font-weight:600; padding:6px 0;
+  }
+  nav.toc li a:hover{color:var(--secret);}
+  nav.toc li a .num{font-family:var(--mono); color:var(--ink-faint); font-weight:400; font-size:12.5px;}
+  nav.toc ol{align-items:start;}
+  nav.toc ul.toc-sub{list-style:none; margin:0 0 10px; padding:0 0 0 14px; border-left:1px solid var(--line);}
+  nav.toc ul.toc-sub li a{display:block; font-family:var(--body); font-size:14.5px; font-weight:400; color:var(--ink-soft); padding:2px 0;}
+  nav.toc ul.toc-sub li a:hover{color:var(--secret);}
+  @media (max-width:640px){
+    nav.toc ol{grid-template-columns:1fr;}
+  }
+
+  .scope-box{
+    margin-top:26px;
+    padding:18px 20px;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:2px;
+  }
+  .scope-box .scope-label{
+    font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:0.08em;
+    color:var(--ink-faint); margin-bottom:10px; display:block;
+  }
+  .scope-box ul{margin:0; padding-left:18px; font-size:14px; color:var(--ink-soft);}
+  .scope-box li{margin-bottom:5px;}
+  .scope-box li b{color:var(--ink);}
+  ul.refs{list-style:none; margin:0; padding:0; padding-left:48px;}
+  @media (max-width:640px){
+    .wrap{padding:0 18px;}
+    .cat-blurb, ul.refs{padding-left:0;}
+    .cat-head{gap:10px;}
+  }
+</style>
+<link rel="canonical" href="https://elefauch.github.io/opacity/opacity-weighted-automata.html">
+<meta property="og:url" content="https://elefauch.github.io/opacity/opacity-weighted-automata.html">
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="hero">
+    <a class="hub-link" href="opacity-index.html">← All opacity pages</a>
+    <a class="hub-link" href="opacity-tag-search.html" style="margin-left:16px;">Search by tag →</a>
+    <h1 class="title">Opacity of <span class="secret-word">Weighted</span> Automata</h1>
+
+    <div class="diagram-card">
+      <svg viewBox="0 0 860 150" width="100%" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A transition system where each edge carries an algebraic weight rather than a probability or time value">
+        <circle cx="120" cy="75" r="26" fill="none" stroke="#D2C9B4" stroke-width="1.5"/>
+        <text x="120" y="80" font-family="JetBrains Mono" font-size="11" fill="#5C5648" text-anchor="middle">q0</text>
+
+        <line x1="146" y1="60" x2="330" y2="30" stroke="#D2C9B4" stroke-width="1.3"/>
+        <text x="220" y="35" font-family="JetBrains Mono" font-size="11" fill="#177A72">a / 3</text>
+        <line x1="146" y1="90" x2="330" y2="120" stroke="#D2C9B4" stroke-width="1.3"/>
+        <text x="220" y="130" font-family="JetBrains Mono" font-size="11" fill="#177A72">a / 5</text>
+
+        <circle cx="356" cy="30" r="24" fill="none" stroke="#177A72" stroke-width="1.5"/>
+        <text x="356" y="35" font-family="JetBrains Mono" font-size="10" fill="#177A72" text-anchor="middle">q1</text>
+        <circle cx="356" cy="120" r="24" fill="none" stroke="#B5502E" stroke-width="1.5"/>
+        <text x="356" y="125" font-family="JetBrains Mono" font-size="10" fill="#B04E2D" text-anchor="middle">q2</text>
+        <rect x="330" y="132" width="52" height="14" rx="2" fill="#F1DDD3" stroke="#B5502E" stroke-width="1"/>
+        <text x="356" y="142" font-family="JetBrains Mono" font-size="9" fill="#B04E2D" text-anchor="middle">secret</text>
+
+        <text x="600" y="55" font-family="Source Serif 4" font-size="13" fill="#5C5648">Same label "a" seen twice,</text>
+        <text x="600" y="75" font-family="Source Serif 4" font-size="13" fill="#5C5648">but with different weights.</text>
+        <text x="600" y="95" font-family="Source Serif 4" font-size="13" fill="#5C5648">Can the observed weight</text>
+        <text x="600" y="115" font-family="Source Serif 4" font-size="13" fill="#5C5648">give the secret away?</text>
+      </svg>
+      <div class="diagram-caption">Two transitions can share the same event label but carry different algebraic weights. The observer sees labels and weights together, so a weight can leak information a label alone would not.</div>
+    </div>
+
+  </header>
+
+  <section class="intro">
+    <div class="eyebrow"><span class="tick">●</span> Scope of this page</div>
+    <p>Weighted automata attach an algebraic weight, typically from the max-plus (tropical) semiring, to each transition, on top of the usual event label. Weights accumulate by addition along a run, and the literature on this page works specifically with <em>unambiguous</em> weighted automata, where each word has at most one accepting run, so there's never more than one run's weight to combine: the semiring's max operation, which would otherwise resolve ambiguity between competing runs, plays no role here. The observer sees both the sequence of labels and the accumulated weight, so information can leak through the weight even when the label sequence alone would be safe.</p>
+    <p>The literature builds on a shared weighted-observer construction for <em>unambiguous</em> weighted automata, where the weight of any given run is uniquely determined by its label sequence. From there it has extended one classical opacity notion at a time (initial-state, then initial-and-final-state, then multi-step) before moving from pure verification to enforcement and, most recently, path planning.</p>
+  </section>
+
+  <nav class="toc" aria-label="Table of contents">
+    <div class="eyebrow"><span class="tick">●</span> Categories</div>
+    <ol>
+      <li><a href="#cat-a"><span>Notions &amp; Verification</span><span class="num">A</span></a></li>
+      <li><a href="#cat-b"><span>Enforcement &amp; Planning</span><span class="num">B</span></a></li>
+    </ol>
+  </nav>
+
+  
+
+  <!-- ===================== A. NOTIONS & VERIFICATION ===================== -->
+  <section class="category" id="cat-a">
+    <div class="cat-head"><div class="cat-letter">A</div><h2 class="cat-title">Notions &amp; Verification</h2></div>
+    <p class="cat-blurb">The core literature for this formalism: each article extends a classical opacity notion (initial-state, initial-and-final-state, or multi-step) to unambiguous weighted automata, where the observer's information includes the accumulated transition weight, not just the event sequence. All three build on the same weighted-observer / weighted state-estimator machinery introduced by the founding article.</p>
+
+    <ul class="refs">
+        <li>
+          <div class="ref-title">Initial-State Detectability and Initial-State Opacity of Unambiguous Weighted Automata</div>
+          <div class="ref-meta">Aiwen Lai, Sébastien Lahaye, Zhiwu Li · Automatica, 127, article 109490, 2021 · <a href="https://doi.org/10.1016/j.automatica.2021.109490" target="_blank" rel="noopener">doi.org/10.1016/j.automatica.2021.109490</a></div>
+          <div class="ref-tags">opacity · weighted-automata</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">In this paper, we investigate the verification problem of initial-state detectability (I-detectability) and initial-state opacity (I-opacity) in discrete event systems modeled by unambiguous weighted automata. An I-observer is constructed so as to derive necessary and sufficient conditions for checking strong I-detectability, weak I-detectability, and I-opacity, with exponential complexity. In addition, an approach based on diagnosability analysis is proposed for verifying strong I-detectability. Compared with an I-observer-based approach, the diagnosability-based approach has a lower complexity, and in the case where all the unobservable events in an unambiguous weighted automaton are represented by a unique symbol, the diagnosability-based approach has polynomial complexity.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Verification of Initial-and-Final-State Opacity for Unambiguous Weighted Automata</div>
+          <div class="ref-meta">Lei Shen, Shaowen Miao, Aiwen Lai, Jan Komenda · ISA Transactions, 148, pp. 237–246, 2024 · <a href="https://doi.org/10.1016/j.isatra.2024.03.019" target="_blank" rel="noopener">doi.org/10.1016/j.isatra.2024.03.019</a></div>
+          <div class="ref-tags">opacity · weighted-automata</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Initial-and-final-state opacity (IFO) is a type of opacity that characterizes a system’s ability to prevent the disclosure of information about whether its evolution starts at an initial state and ends at a final state. In this paper, we extend the notion of IFO from the logical automata to the framework of unambiguous weighted automata (UWAs) that do not contain any cycle composed solely of unobservable events. For the verification of IFO, we first construct a labeled observer and a trellis-based initial state estimator for a given UWA. Even though the labeled observer has much smaller state space compared to the trellis-based initial state estimator, it cannot be used when the set of secret state pairs or the set of non-secret state pairs is not in the Cartesian product form. Based on the labeled observer, we present a more efficient method to verify IFO in the case when the set of non-secret state pairs is expressed as a Cartesian product, regardless of whether the set of secret state pairs is in the Cartesian product form. Furthermore, we use the labeled observer to verify initial-state opacity for a UWA.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Multi-Step State-Based Opacity for Unambiguous Weighted Machines</div>
+          <div class="ref-meta">Zhipeng Zhang, Chengyi Xia, Guoyuan Qi, et al. · Science China Information Sciences, 67(11), article 212204, 2024 · <a href="https://doi.org/10.1007/s11432-023-4041-6" target="_blank" rel="noopener">doi.org/10.1007/s11432-023-4041-6</a></div>
+          <div class="ref-tags">opacity · weighted-automata</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Opacity is a central concept in the issue of privacy security and has been studied extensively in fields such as finite automata, probabilistic automata, and stochastic automata. Here, we investigate the problem of validating multi-step opaque properties through unambiguous weighted machines from the perspective of cyber-physical systems. First, the notion of multi-step state-based opacity for unambiguous weighted machines is presented and defined. It includes two variants of delays with a finite K and infinite steps. Subsequently, the weighted state estimate with K (infinite)-step delay is established by abstracting the possible state set that the system could have through these weighted observations. Meanwhile, to keep the observable weighted sequence consistent between the bidirectional observers, the unobserved weights of the reverse weighted machine are assumed to be reserved. Subsequently, the existence conditions are developed, and the corresponding algorithms, termed the weighted bidirectional observer, are generalized to verify these properties. Finally, several numerical examples are illustrated to demonstrate the effectiveness of the proposed method. Taken together, the current approach will be conducive to a deep understanding of the security and privacy of cyber-physical systems.</div>
+          </details>
+        </li>
+    </ul>
+  </section>
+
+  <!-- ===================== B. ENFORCEMENT & PLANNING ===================== -->
+  <section class="category" id="cat-b" style="border-bottom:none;">
+    <div class="cat-head"><div class="cat-letter">B</div><h2 class="cat-title">Enforcement &amp; Planning</h2></div>
+    <p class="cat-blurb">Where category A only verifies whether a weighted system is already opaque, this category goes further and actively builds something opacity-preserving: a supervisor, a controller, or a planned trajectory, rather than just a yes/no answer.</p>
+
+    <ul class="refs">
+        <li>
+          <div class="ref-title">Optimal Path Planning With Opacity-Preserving Temporal Logic Specifications Using Bipartite Synthesizers</div>
+          <div class="ref-meta">Yiwei Zheng, Aiwen Lai, Weiyao Lan, Xiao Yu · 2023 62nd IEEE Conference on Decision and Control (CDC), pp. 7862–7867 · <a href="https://doi.org/10.1109/CDC49753.2023.10383570" target="_blank" rel="noopener">doi.org/10.1109/CDC49753.2023.10383570</a></div>
+          <div class="ref-tags">enforcement · opacity · trajectory-planning · weighted-automata</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">This paper investigates an optimal planning problem with the requirement of preventing high-level mission specifications from being revealed to the intruder. We assume that the behavior of the robotic system at some specific locations is partially observable, and the intruder is modeled as a passive observer for the observable behavior and the corresponding overall transition cost of the trajectories. We first use the transition system to model the robot system. Then, we say that the transition system is LTL-based opaque with respect to high-level mission specifications if the intruder cannot infer the exact behavior of the system via the observable sequence of the system. We design a synthesizer for the product automaton of the transition system and the Büchi automaton to find the evolutions of possible reachable states. Based on the synthesizer, the corresponding run can be synthesized in which the optimality, correctness, and opacity can be guaranteed.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Enforcement of Opacity for Interval Weighted Discrete-Event System by Supervisory Control</div>
+          <div class="ref-meta">Yiwei Zheng, Aiwen Lai, Weiyao Lan, Xiao Yu, Rong Su · IEEE Transactions on Automatic Control, 71(3), pp. 1537–1552, 2026 · <a href="https://doi.org/10.1109/TAC.2025.3611993" target="_blank" rel="noopener">doi.org/10.1109/TAC.2025.3611993</a></div>
+          <div class="ref-tags">enforcement · opacity · weighted-automata</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">This article focuses on the problem of enforcing weighted opacity for interval weighted automata, a more general class of one-clock automata, in which the transition costs are allowed to be within an interval. The objective is to develop a supervisor synthesis algorithm such that the controlled system is enforced to be weighted opaque, that is, no weighted observation can lead to the exposure of specified states. First, we propose the tree of unobservable reach to synthesize the minimal full set of control patterns that covers all possible unobservable reach for the given state. Then, we propose a new structure named weighted all-inclusive controller (W-AIC), which shows all possible reachable states according to different control patterns and presents the reachable states under certain observations. Finally, based on our proposed structure, we can discover all states in which the secrets will be inevitably revealed. By removing these states and making the W-AIC consistent, the maximally permissive supervisors that enforce the non-opaque system to generate secret-preserving languages can be synthesized. It is proved that by employing W-AICs, the enforcement weighted opacity problem can be solved when the accumulated transition costs of successive observations are restricted to be lower than the user-defined cutoff weight.</div>
+          </details>
+        </li>
+    </ul>
+  </section>
+
+
+  <footer>
+    <p><strong>Maintained by</strong> <a href="https://elefauch.github.io/" target="_blank" rel="noopener">Engel Lefaucheux</a>. This bibliography is almost certainly incomplete. If you know of a relevant paper that's missing, please get in touch so it can be added.</p>
+  </footer>
+</div>
+</body>
+</html>

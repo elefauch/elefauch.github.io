@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Opacity of Continuous-State Systems</title>
+<meta name="description" content="Opacity for systems with continuous state, governed by difference or differential equations, with verification and synthesis methods.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Opacity of Continuous-State Systems">
+<meta property="og:description" content="Opacity for systems with continuous state, governed by difference or differential equations, with verification and synthesis methods.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* Rules shared by the topic pages and the tag search page. */
+  :root{
+    --paper:#F1EDE4;
+    --card:#E8E1D2;
+    --ink:#2A2620;
+    --ink-soft:#5C5648;
+    --ink-faint:#6A6456;
+    --line:#D2C9B4;
+    --observable:#177A72;
+    --observable-soft:#DCEAE7;
+    --secret:#B04E2D;
+    --secret-soft:#F1DDD3;
+    --display: 'Fraunces', serif;
+    --body: 'Source Serif 4', serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--body);
+    line-height:1.65;
+  }
+  a{color:var(--secret); word-break:break-word;}
+  .wrap{max-width:1100px; margin:0 auto; padding:0 32px;}
+  /* ---------- HEADER / HERO ---------- */
+  header.hero{padding:60px 0 32px;}
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:11.5px;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:20px;
+  }
+  .eyebrow .tick{color:var(--secret); font-weight:600;}
+  .hub-link{
+    font-family:var(--mono); font-size:12px; color:var(--ink-faint);
+    text-decoration:none; display:inline-flex; align-items:center; gap:6px; margin-bottom:16px;
+  }
+  .hub-link:hover{color:var(--secret);}
+  h1.title{
+    font-family:var(--display);
+    font-weight:600;
+    font-size:clamp(38px, 6vw, 62px);
+    line-height:1.02;
+    margin:0 0 20px;
+    letter-spacing:-0.015em;
+  }
+  h1.title .secret-word{color:var(--secret); font-style:italic; font-weight:500;}
+  p.lede{
+    font-size:18px;
+    color:var(--ink-soft);
+    max-width:64ch;
+    margin:0 0 32px;
+  }
+  ul.refs li{border-left:2px solid var(--line); padding:10px 0 10px 16px; margin-bottom:2px; transition:border-color 0.15s ease;}
+  ul.refs li:hover{border-left-color:var(--secret);}
+  .ref-title{font-size:15.5px; color:var(--ink); font-weight:600;}
+  .verify-flag{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    background:#F3E3B8;
+    border:1px solid #B8863B;
+    color:#6B4A1E;
+    font-family:var(--mono);
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:0.03em;
+    text-transform:uppercase;
+    padding:2px 8px 2px 6px;
+    border-radius:3px;
+    margin-right:8px;
+    vertical-align:middle;
+  }
+  .ref-meta{font-family:var(--mono); font-size:11.5px; color:var(--ink-faint); margin-top:4px; line-height:1.5;}
+  .ref-meta a{color:var(--ink-faint);}
+  .ref-meta a:hover{color:var(--secret);}
+  .ref-note{font-size:13.5px; color:var(--ink-soft); margin-top:5px; max-width:100ch;}
+  .ref-caveat{font-size:13px; color:#6B4A1E; margin-top:5px; max-width:100ch; padding-left:8px; border-left:2px solid #B8863B;}
+  .ref-tags{font-family:var(--mono); font-size:11px; color:var(--ink-faint); margin-top:6px; letter-spacing:0.02em;}
+  /* "Show abstract" toggle: a native <details>, so the browser's find-in-page also searches the abstracts */
+  .abstract-toggle{display:inline-block; list-style:none; font-family:var(--mono); font-size:11px; line-height:normal; color:var(--secret); background:none; border:1px solid var(--ink-faint); border-radius:3px; padding:2px 8px; margin-top:6px; cursor:pointer;}
+  .abstract-toggle::-webkit-details-marker{display:none;}
+  .abstract-toggle:hover{border-color:var(--secret);}
+  .abstract-toggle:focus-visible{outline:2px solid var(--secret); outline-offset:2px;}
+  details.ref-abs .abs-hide{display:none;}
+  details.ref-abs[open] .abs-show{display:none;}
+  details.ref-abs[open] .abs-hide{display:inline;}
+  .ref-abstract{font-size:13.5px; color:var(--ink-soft); margin-top:6px; max-width:100ch; padding:8px 10px; background:rgba(0,0,0,0.03); border-radius:4px;}
+  footer p{font-size:12.5px; color:var(--ink-faint); max-width:104ch; margin:0 0 8px; line-height:1.55;}
+  /* Rules shared by the topic pages only (hero diagram, intro, table of contents, categories). */
+  /* ---------- TIMING DIAGRAM ---------- */
+  .diagram-card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:2px;
+    padding:22px 24px 16px;
+  }
+  .diagram-caption{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--ink-faint);
+    margin-top:12px;
+    line-height:1.6;
+  }
+  .diagram-caption b{color:var(--ink-soft); font-weight:600;}
+  /* ---------- DESCRIPTION SECTION ---------- */
+  section.intro{padding:44px 0 6px;}
+  section.intro p{margin:0 0 20px; max-width:72ch; color:var(--ink); font-size:17px;}
+  section.intro p:last-child{margin-bottom:0;}
+  /* ---------- CATEGORY SECTIONS ---------- */
+  section.category{padding:48px 0; border-bottom:1px solid var(--line);}
+  section.category:last-of-type{border-bottom:none;}
+  .cat-head{display:flex; gap:16px; align-items:baseline; margin-bottom:10px;}
+  .cat-letter{
+    font-family:var(--display); font-weight:600; font-size:16px; color:var(--ink-faint);
+    border:1px solid var(--line); border-radius:50%;
+    width:32px; height:32px; min-width:32px;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  h2.cat-title{font-family:var(--display); font-weight:600; font-size:26px; margin:0; letter-spacing:-0.01em;}
+  .cat-blurb{color:var(--ink-soft); font-size:15px; max-width:100ch; margin:0 0 26px; padding-left:48px;}
+  li:has(.verify-flag){border-left-color:#B8863B;}
+  footer{padding:32px 0 60px; border-top:1px solid var(--line); margin-top:12px;}
+  footer p:last-child{margin-bottom:0;}
+  footer strong{color:var(--ink-soft); font-weight:600;}
+  footer a{color:var(--ink-faint); text-decoration:none; border-bottom:1px dotted var(--ink-faint);}
+  footer a:hover{color:var(--secret); border-bottom-color:var(--secret);}
+
+  /* ---------- TOC ---------- */
+  nav.toc{margin:44px 0 0; padding:24px 0; border-top:2px solid var(--ink); border-bottom:1px solid var(--line);}
+  nav.toc ol{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:1fr 1fr; gap:8px 28px;}
+  nav.toc li a{
+    display:flex; justify-content:space-between; gap:10px; text-decoration:none; color:var(--ink);
+    font-family:var(--display); font-size:16px; font-weight:600; padding:6px 0;
+  }
+  nav.toc li a:hover{color:var(--secret);}
+  nav.toc li a .num{font-family:var(--mono); color:var(--ink-faint); font-weight:400; font-size:12.5px;}
+  nav.toc ol{align-items:start;}
+  nav.toc ul.toc-sub{list-style:none; margin:0 0 10px; padding:0 0 0 14px; border-left:1px solid var(--line);}
+  nav.toc ul.toc-sub li a{display:block; font-family:var(--body); font-size:14.5px; font-weight:400; color:var(--ink-soft); padding:2px 0;}
+  nav.toc ul.toc-sub li a:hover{color:var(--secret);}
+  @media (max-width:640px){
+    nav.toc ol{grid-template-columns:1fr;}
+  }
+
+  .scope-box{
+    margin-top:26px;
+    padding:18px 20px;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:2px;
+  }
+  .scope-box .scope-label{
+    font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:0.08em;
+    color:var(--ink-faint); margin-bottom:10px; display:block;
+  }
+  .scope-box ul{margin:0; padding-left:18px; font-size:14px; color:var(--ink-soft);}
+  .scope-box li{margin-bottom:5px;}
+  .scope-box li b{color:var(--ink);}
+  ul.refs{list-style:none; margin:0; padding:0; padding-left:48px;}
+  @media (max-width:640px){
+    .wrap{padding:0 18px;}
+    .cat-blurb, ul.refs{padding-left:0;}
+    .cat-head{gap:10px;}
+  }
+</style>
+<link rel="canonical" href="https://elefauch.github.io/opacity/opacity-continuous-systems.html">
+<meta property="og:url" content="https://elefauch.github.io/opacity/opacity-continuous-systems.html">
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="hero">
+    <a class="hub-link" href="opacity-index.html">← All opacity pages</a>
+    <a class="hub-link" href="opacity-tag-search.html" style="margin-left:16px;">Search by tag →</a>
+    <h1 class="title">Opacity of <span class="secret-word">Continuous-State</span> Systems</h1>
+
+    <div class="diagram-card">
+      <svg viewBox="0 0 860 160" width="100%" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Two continuous trajectories, one secret and one cover, whose outputs stay within a bounded distance of each other">
+        <line x1="60" y1="130" x2="820" y2="130" stroke="#D2C9B4" stroke-width="1"/>
+        <text x="60" y="35" font-family="JetBrains Mono" font-size="11" fill="#6A6456">output y(t)</text>
+
+        <path d="M60,90 Q 200,50 340,85 T 620,70 T 820,95" fill="none" stroke="#B5502E" stroke-width="1.8"/>
+        <path d="M60,95 Q 200,60 340,92 T 620,80 T 820,102" fill="none" stroke="#177A72" stroke-width="1.8" stroke-dasharray="1 0"/>
+
+        <path d="M60,90 Q 200,50 340,85 T 620,70 T 820,95 L 820,102 Q 620,80 340,92 T 60,95 Z" fill="#DCEAE7" opacity="0.35" stroke="none"/>
+
+        <text x="120" y="45" font-family="JetBrains Mono" font-size="10.5" fill="#B04E2D">secret trajectory</text>
+        <text x="600" y="115" font-family="JetBrains Mono" font-size="10.5" fill="#177A72">cover trajectory</text>
+
+        <line x1="430" y1="88" x2="430" y2="95" stroke="#2A2620" stroke-width="1.2"/>
+        <text x="445" y="94" font-family="JetBrains Mono" font-size="10" fill="#2A2620">ε</text>
+      </svg>
+      <div class="diagram-caption">Instead of demanding an identical observable sequence, the <b style="color:#177A72;">cover trajectory</b>'s output only needs to stay within a bounded distance <b>ε</b> of the <b style="color:#B04E2D;">secret trajectory</b>'s output at every point in time. Opacity becomes a question of how small ε can be made, not a strict yes/no.</div>
+    </div>
+
+  </header>
+
+  <section class="intro">
+    <div class="eyebrow"><span class="tick">●</span> Scope of this page</div>
+    <p>Every other page in this index keeps a discrete event structure at its core: something observable happens, or it doesn't, at a countable sequence of points, even when time, randomness, or multiple observers are added on top. This page covers what happens once that assumption is dropped entirely: the state evolves continuously, via difference or differential equations, and the observer sees a physical signal rather than a symbol from a finite alphabet.</p>
+    <p>Demanding an <em>exactly</em> indistinguishable cover trajectory almost never works once outputs are continuous, so the field's founding move was to equip the output space with a metric and define <em>approximate opacity</em>: a cover trajectory only needs to stay within a bounded distance of the secret one. The toolkit is imported largely from control theory rather than automata theory: (bi)simulation relations built specifically to preserve opacity (since the field's own founding result showed the standard ones don't), finite abstraction of infinite continuous state spaces, and barrier certificates. There's also a sub-thread combining this with randomness, approximate opacity for <em>stochastic</em> control systems, sitting at the intersection of this page and the stochastic one.</p>
+  </section>
+
+  <nav class="toc" aria-label="Table of contents">
+    <div class="eyebrow"><span class="tick">●</span> Categories</div>
+    <ol>
+      <li><a href="#cat-a"><span>Linear &amp; Algebraic Systems</span><span class="num">A</span></a></li>
+      <li><a href="#cat-b"><span>Verification via Abstraction &amp; Barrier Certificates</span><span class="num">B</span></a>
+        <ul class="toc-sub">
+          <li><a href="#cat-b-barrier-certificates">B.1 — Barrier certificates</a></li>
+          <li><a href="#cat-b-finite-abstractions-bisimulation-and-compositional-simulation">B.2 — Finite abstractions, bisimulation &amp; compositional simulation</a></li>
+          <li><a href="#cat-b-data-driven">B.3 — Data-driven</a></li>
+        </ul>
+      </li>
+      <li><a href="#cat-c"><span>Synthesis &amp; Enforcement</span><span class="num">C</span></a></li>
+    </ol>
+  </nav>
+
+  
+  <!-- ===================== A. LINEAR & ALGEBRAIC SYSTEMS ===================== -->
+  <section class="category" id="cat-a">
+    <div class="cat-head"><div class="cat-letter">A</div><h2 class="cat-title">Linear &amp; Algebraic Systems</h2></div>
+    <p class="cat-blurb">Articles that work directly with the system's algebraic structure rather than building a discrete abstraction. Opacity conditions are expressed in terms of rank, unobservable subspaces, or algebraic output maps, and the observer is typically a state estimator rather than a finite automaton.</p>
+
+    <ul class="refs">
+        <li>
+          <div class="ref-title">Opacity Enforcement for Confidential Robust Control in Linear Cyber-Physical Systems</div>
+          <div class="ref-meta">Liwei An, Guang-Hong Yang · IEEE Transactions on Automatic Control, 65(3), pp. 1234–1241, 2020 · <a href="https://doi.org/10.1109/TAC.2019.2925498" target="_blank" rel="noopener">doi.org/10.1109/TAC.2019.2925498</a></div>
+          <div class="ref-tags">continuous · linear-systems · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Opacity, a confidentiality property, is an increasing concern in cyber-physical systems (CPSs) that are vulnerable to an intruder which intends to reveal a “secret” of a system. This note presents a new framework for opacity and considers the problem of enforcing opacity in CPSs modeled as linear time-invariant systems. The confidential information involves the CPS' interference attenuation capacity (IAC), called the secret. A system is opaque if the intruder never infers the secret IAC from an observation mapping of system output. To guarantee the confidentiality requirement, an effective algorithm is proposed for synthesizing opacity-enforcing controllers by using a new approximation-based Q-learning. A main advantage of this method is that it does not require any knowledge of the system dynamics matrices. A simulation example is presented to sustain the theoretical results.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Notions of Centralized and Decentralized Opacity in Linear Systems</div>
+          <div class="ref-meta">Bhaskar Ramasubramanian, Rance Cleaveland, Steven I. Marcus · IEEE Transactions on Automatic Control, 65(4), pp. 1442–1455, 2020 · <a href="https://doi.org/10.1109/TAC.2019.2920837" target="_blank" rel="noopener">doi.org/10.1109/TAC.2019.2920837</a> · preprint: <a href="https://arxiv.org/abs/1903.06869" target="_blank" rel="noopener">arXiv:1903.06869</a></div>
+          <div class="ref-tags">continuous · distributed · linear-systems · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">We formulate notions of opacity for cyberphysical systems modeled as discrete-time linear time-invariant systems. A set of secret states is k-ISO with respect to a set of nonsecret states if, starting from these sets at time 0, the outputs at time k are indistinguishable to an adversarial observer. Necessary and sufficient conditions to ensure that a secret specification is k-ISO are established in terms of sets of reachable states. We also show how to adapt techniques for computing underapproximations and overapproximations of the set of reachable states of dynamical systems in order to soundly approximate k-ISO. Furthermore, we provide a condition for output controllability, if k-ISO holds, and show that the converse holds under an additional assumption. We extend the theory of opacity for single-adversary systems to the case of multiple adversaries and develop several notions of decentralized opacity. We study the following scenarios: first, the presence or lack of a centralized coordinator, and, second, the presence or absence of collusion among adversaries. In the case of colluding adversaries, we derive a condition for nonopacity that depends on the structure of the directed graph representing the communication between adversaries. Finally, we relax the condition that the outputs be indistinguishable and define a notion of ϵ-opacity, and also provide an extension to the case of nonlinear systems.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Enhancement of Opacity for Distributed State Estimation in Cyber-Physical Systems</div>
+          <div class="ref-meta">Liwei An, Guang-Hong Yang · Automatica, 136, article 110087, 2022 · <a href="https://doi.org/10.1016/j.automatica.2021.110087" target="_blank" rel="noopener">doi.org/10.1016/j.automatica.2021.110087</a></div>
+          <div class="ref-tags">continuous · distributed · linear-systems · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Opacity, a confidentiality property that characterizes whether a “secret” of a system can be inferred by an outside intruder, is an increasing concern in cyber–physical systems (CPSs). The existing distributed estimation algorithms allow each node to broadcast its explicit state information to its neighbors, which results in the disclosure of CPS’s secret state. To meet the confidentiality requirement, this paper formulates a new framework for opacity for distributed state estimation. Two opacity-enhancing algorithms are proposed against the intruder models with different eavesdropping capacities for a subset of nodes. Necessary and sufficient conditions to ensure that a secret state is opaque are established in terms of the rank of constructed structural matrices of the eavesdropped nodes. Moreover, it is shown that the use of enhancement mechanism does not compromise the estimation accuracy. The framework of opacity is further extended to the case of measurement noises.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Opacity Versus Security in Linear Dynamical Systems</div>
+          <div class="ref-meta">Varkey M. John, Vaibhav Katewa · IEEE Transactions on Automatic Control, 70(1), pp. 323–338, 2025 · <a href="https://doi.org/10.1109/TAC.2024.3426549" target="_blank" rel="noopener">doi.org/10.1109/TAC.2024.3426549</a></div>
+          <div class="ref-tags">continuous · linear-systems · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Opacity is a notion of privacy that is well studied in computer science and discrete-event systems. It describes an eavesdropper's inability to infer a system's “secret” states by observing the system's outputs. In this article, we consider opacity in linear dynamical systems and study four opacity classes—initial-state, current-state, K-step and infinite-step opacity, and show that they are fundamentally connected to two subspaces of the linear system—the weakly unobservable subspace and the weakly unconstructible subspace. With these subspaces, we derive conditions for the opacity of secret states under constrained and unconstrained state and input sets. Further, we establish that a tradeoff exists between opacity and security in the system. We show this in two ways: 1) We prove that an opaque system always permits undetectable attacks. 2) We show that expanding the set of opaque states in the system expands the set of undetectable attacks. Our work provides the necessary mathematical foundation for system designers to build opaque systems, while ensuring adequate security.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Notion of Opacity Considering Security Levels for Piecewise Affine Systems</div>
+          <div class="ref-meta">Taiga Matsumae, Koichi Kobayashi, Yuh Yamashita · Sensors, 26(12), article 3771, 2026 · <a href="https://doi.org/10.3390/s26123771" target="_blank" rel="noopener">doi.org/10.3390/s26123771</a></div>
+          <div class="ref-tags">continuous · linear-systems · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Cyber-physical systems (CPSs) integrate physical processes and information components through communication networks and are therefore vulnerable to cyber attacks. Opacity is a security property that prevents an adversary from inferring sensitive information from observations, and it has been studied mainly for discrete-event systems. In this paper, we extend this concept to discrete-time piecewise affine (DT-PWA) systems, which constitute an important class of hybrid systems used to model CPSs. In conventional opacity analysis, the result is typically binary, i.e., a system is either opaque or not. For systems with continuous dynamics, however, such a binary characterization may be insufficient, and it is desirable to evaluate the degree of security. To address this issue, we introduce a notion of opacity that incorporates security levels. We first formulate opacity for DT-PWA systems and then derive a necessary and sufficient condition for opacity. Based on this condition, we present a verification method using polytope computations and discuss the interpretation of the proposed notion. Finally, a numerical example is provided to illustrate the effectiveness of the proposed method.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Enforcing Current-State Opacity and Utility of Cyber-Physical Systems Using Multipath Event Routing</div>
+          <div class="ref-meta">Lucas N. R. Reis, Lilian K. Carvalho, Marcos V. Moreira · IEEE Transactions on Automatic Control, 71(6), pp. 4208–4214, 2026 · <a href="https://doi.org/10.1109/TAC.2026.3653255" target="_blank" rel="noopener">doi.org/10.1109/TAC.2026.3653255</a></div>
+          <div class="ref-note">The model stays finite-state: the link to this page is the cyber-physical motivation (a physical plant abstracted as a networked discrete-event system), not a continuous state space.</div>
+          <div class="ref-tags">classical · continuous · distributed · enforcement · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Several strategies have been proposed in the literature to ensure data security in cyber-physical systems abstracted as networked discrete-event systems, such as enforcing opacity by using obfuscation policies. In these cases, if it is considered the existence of an intended receiver, the useful information can be hidden from him/her. This problem becomes worse when the confidentiality of the data must be ensured, i.e., when the intended receiver must always know the system current state from the observation of the obfuscated transmitted sequence. In this article, we propose a defense strategy to enforce current-state opacity using an obfuscation policy based on event replacements that also ensures the utility of the transmitted information. The notion of utility used, called current-state utility, is associated with the ability of the intended receiver to be always certain of the system current state. In order to implement the defense strategy, a multipath event routing technique is considered.</div>
+          </details>
+        </li>
+    </ul>
+  </section>
+
+  <!-- ===================== B. VERIFICATION VIA ABSTRACTION & BARRIER CERTIFICATES ===================== -->
+  <section class="category" id="cat-b">
+    <div class="cat-head"><div class="cat-letter">B</div><h2 class="cat-title">Verification via Abstraction &amp; Barrier Certificates</h2></div>
+    <p class="cat-blurb">Checking whether a given continuous-state or stochastic system already satisfies an opacity property, using abstraction-based methods rather than the direct algebraic conditions of category A. Two main techniques recur, plus one data-driven outlier.</p>
+
+    <div class="subcat" id="cat-b-barrier-certificates">
+      <h3 class="sub-title">B.1 — Barrier certificates</h3>
+
+      <ul class="refs">
+        <li>
+          <div class="ref-title">Verification of Approximate Opacity via Barrier Certificates</div>
+          <div class="ref-meta">Siyuan Liu, Majid Zamani · IEEE Control Systems Letters, 5(4), pp. 1369–1374, 2020 · <a href="https://doi.org/10.1109/LCSYS.2020.3037840" target="_blank" rel="noopener">doi.org/10.1109/LCSYS.2020.3037840</a></div>
+          <div class="ref-tags">continuous · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">This letter is motivated by the increasing security concerns of cyber-physical systems. Here, we develop a discretization-free verification scheme targeting an information-flow security property, called approximate initial-state opacity, for the class of discrete-time control systems. We propose notions of so-called augmented control barrier certificates in conjunction with specified regions of interest capturing the initial and secret sets of the system. Sufficient conditions for (the lack of) approximate initial-state opacity of discrete-time control systems are proposed based on the existence of the proposed barrier certificates. We further present an efficient computation method by casting the conditions for barrier certificates as sum-of-squares programming problems. The effectiveness of the proposed results is illustrated through two numerical examples.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Modular Verification of Opacity for Interconnected Control Systems via Barrier Certificates</div>
+          <div class="ref-meta">Shadi Tasdighi Kalat, Siyuan Liu, Majid Zamani · IEEE Control Systems Letters, 6, pp. 890–895, 2022 · <a href="https://doi.org/10.1109/LCSYS.2021.3087103" target="_blank" rel="noopener">doi.org/10.1109/LCSYS.2021.3087103</a></div>
+          <div class="ref-tags">continuous · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">In this letter, we consider the problem of verifying initial-state opacity for networks of discrete-time control systems. We formulate the opacity property as a safety one over an appropriately constructed augmented system, and aim to verify this latter property by finding suitable barrier certificates. To reduce the computational complexity associated with computing barrier certificates for large networks, we propose a compositional approach to construct such barrier certificates for large-scale interconnected systems. This is achieved by introducing local barrier certificates for subsystems in the network and imposing some small-gain type conditions on the gains of those local barrier certificates. We also provide sufficient conditions for verifying the lack of opacity in large-scale networks by constructing barrier certificates ensuring some reachability properties over the augmented systems. To illustrate the effectiveness of our results, we consider the problem of tracking a target using a team of vehicles and verify if its initial position is secret from possible outside intruders.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Verification of Approximate Infinite-Step Opacity Using Barrier Certificates</div>
+          <div class="ref-meta">Shadi Tasdighi Kalat, Siyuan Liu, Majid Zamani · European Control Conference (ECC 2022), pp. 175–180 · <a href="https://doi.org/10.23919/ECC55457.2022.9838153" target="_blank" rel="noopener">doi.org/10.23919/ECC55457.2022.9838153</a></div>
+          <div class="ref-tags">continuous · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">In this paper, we consider the verification of approximate infinite-step opacity for discrete-time control sys-tems. Relying on finite abstraction techniques for solving this problem requires discretization of the state and input sets, which requires significant computational resources. Here, we propose a discretization-free approach in which we formulate opacity as a safety property over an appropriately constructed augmented system, and seek to verify it by finding suitable barrier certificates. Within our proposed scheme, lack of opacity is also verified by posing it as a reachability property over the augmented system. The main result of this paper offers a discretization-free approach to verify (lack of) infinite-step opacity in discrete-time control systems. We also discuss other notions of opacity, and their relations to one another. We particularly study the conditions under which verifying one form of opacity for a system also implies other forms. Finally, we illustrate our theoretical results on two numerical examples, where we utilize sum-of-squares programming to search for polynomial barrier certificates. In these examples, we verify the infinite-step, and current-step opacity for a vehicle by checking whether its position is concealed from possible outside intruders.</div>
+          </details>
+        </li>
+      </ul>
+    </div>
+
+    <div class="subcat" id="cat-b-finite-abstractions-bisimulation-and-compositional-simulation">
+      <h3 class="sub-title">B.2 — Finite abstractions, bisimulation &amp; compositional simulation</h3>
+
+      <ul class="refs">
+        <li>
+          <div class="ref-title">Opacity of Nondeterministic Transition Systems: A (Bi)simulation Relation Approach</div>
+          <div class="ref-meta">Kuize Zhang, Xiang Yin, Majid Zamani · IEEE Transactions on Automatic Control, 64(12), pp. 5116–5123, 2019 · <a href="https://doi.org/10.1109/TAC.2019.2908726" target="_blank" rel="noopener">doi.org/10.1109/TAC.2019.2908726</a> · preprint: <a href="https://arxiv.org/abs/1802.03321" target="_blank" rel="noopener">arXiv:1802.03321</a> · conference precursor: &ldquo;Infinite-Step Opacity of Nondeterministic Finite Transition Systems: A Bisimulation Relation Approach&rdquo;, 56th IEEE Conference on Decision and Control (CDC 2017), pp. 5615–5619 · <a href="https://doi.org/10.1109/CDC.2017.8264506" target="_blank" rel="noopener">doi.org/10.1109/CDC.2017.8264506</a></div>
+          <div class="ref-note">Cross-listed from the infinite-state page: the (bi)simulation relations on which the approximate-opacity results of this page build.</div>
+          <div class="ref-tags">continuous · infinite-state · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">In this paper, we propose several opacity-preserving (bi)simulation relations for general nondeterministic transition systems (NTS) in terms of initial-state opacity, current-state opacity, K-step opacity, and infinite-step opacity. We also show how one can leverage quotient construction to compute such relations. In addition, we use a two-way observer method to verify opacity of nondeterministic finite transition systems (NFTSs). As a result, although the verification of opacity for infinite NTSs is generally undecidable, if one can find such an opacity-preserving relation from an infinite NTS to an NFTS, the (lack of) opacity of the NTS can be easily verified over the NFTS which is decidable.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Compositional Verification of Initial-State Opacity for Switched Systems</div>
+          <div class="ref-meta">Siyuan Liu, Abdalla Swikir, Majid Zamani · 59th IEEE Conference on Decision and Control (CDC 2020), pp. 2146–2151 · <a href="https://doi.org/10.1109/CDC42340.2020.9304322" target="_blank" rel="noopener">doi.org/10.1109/CDC42340.2020.9304322</a> · preprint: <a href="https://arxiv.org/abs/2109.12024" target="_blank" rel="noopener">arXiv:2109.12024</a> (published version), <a href="https://arxiv.org/abs/2006.16661" target="_blank" rel="noopener">arXiv:2006.16661</a> (earlier posting, June 2020, under the working title &ldquo;Verification of Initial-State Opacity for Switched Systems: A Compositional Approach&rdquo;)</div>
+          <div class="ref-tags">continuous · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">In this work, we propose a compositional framework for the verification of approximate initial-state opacity for networks of discrete-time switched systems. The proposed approach is based on a notion of approximate initial-state opacity-preserving simulation functions (InitSOPSFs), which characterize how close concrete networks and their finite abstractions are in terms of the satisfaction of approximate initialstate opacity. We show that such InitSOPSFs can be obtained compositionally by assuming some small-gain type conditions and composing so-called local InitSOPSFs constructed for each subsystem separately. Additionally, for switched systems satisfying certain stability property, we provide an approach to construct their finite abstractions together with the corresponding local InitSOPSFs. Finally, the effectiveness of our results is illustrated through an example.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">On Approximate Opacity of Cyber-Physical Systems</div>
+          <div class="ref-meta">Xiang Yin, Majid Zamani, Siyuan Liu · IEEE Transactions on Automatic Control, 2021 · preprint: <a href="https://arxiv.org/abs/1902.09411" target="_blank" rel="noopener">arXiv:1902.09411</a> · <a href="https://doi.org/10.1109/TAC.2020.2998733" target="_blank" rel="noopener">doi.org/10.1109/TAC.2020.2998733</a></div>
+          <div class="ref-tags">continuous · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Opacity is an important information-flow security property in the analysis of cyber-physical systems. It captures the plausible deniability of the system's secret behavior in the presence of an intruder that may access the information flow. Existing works on opacity only consider nonmetric systems by assuming that the intruder can always distinguish between two different outputs precisely. In this article, we extend the concept of opacity to systems whose output sets are equipped with metrics. Such systems are widely used in the modeling of many real-world systems whose measurements are physical signals. A new concept called approximate opacity is proposed in order to quantitatively evaluate the security guarantee level with respect to the measurement precision of the intruder. Then, we propose a new simulation-type relation, called approximate opacity-preserving simulation relation, which characterizes how close two systems are in terms of the satisfaction of approximate opacity. This allows us to verify approximate opacity for large-scale, or even infinite, systems using their abstractions. We also discuss how to construct approximate opacity-preserving symbolic models for a class of discrete-time control systems. Our results extend the definitions and analysis techniques for opacity from nonmetric systems to metric systems.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Verification of Approximate Opacity for Switched Systems: A Compositional Approach</div>
+          <div class="ref-meta">Siyuan Liu, Abdalla Swikir, Majid Zamani · Nonlinear Analysis: Hybrid Systems, 42, article 101084, 2021 · <a href="https://doi.org/10.1016/j.nahs.2021.101084" target="_blank" rel="noopener">doi.org/10.1016/j.nahs.2021.101084</a></div>
+          <div class="ref-note">Covers both approximate initial-state and current-state opacity, while the CDC 2020 paper on this page only treats initial-state opacity.</div>
+          <div class="ref-tags">continuous · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">The security in information-flow has become a major concern for cyber–physical systems (CPSs). In this work, we focus on the analysis of an information-flow security property, called opacity. Opacity characterizes the plausible deniability of a system’s secret in the presence of a malicious outside intruder. We propose a methodology of checking a notion of opacity, called approximate opacity, for networks of discrete-time switched systems. Our framework relies on compositional constructions of finite abstractions for networks of switched systems and their approximate opacity-preserving simulation functions. Those functions characterize how close concrete networks and their finite abstractions are in terms of the satisfaction of approximate opacity. We show that such simulation functions can be obtained compositionally by assuming some small-gain type conditions and composing local simulation functions constructed for each switched subsystem separately. Additionally, assuming certain stability property of switched systems, we also provide a technique on constructing their finite abstractions together with the corresponding local simulation functions. Finally, we illustrate the effectiveness of our results through an example.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Abstraction-Based Verification of Approximate Preopacity for Control Systems</div>
+          <div class="ref-meta">Junyao Hou, Siyuan Liu, Xiang Yin, Majid Zamani · IEEE Control Systems Letters, 7, pp. 1087–1092, 2023 · <a href="https://doi.org/10.1109/LCSYS.2022.3230770" target="_blank" rel="noopener">doi.org/10.1109/LCSYS.2022.3230770</a></div>
+          <div class="ref-tags">continuous · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">In this letter, we consider the problem of verifying pre-opacity for discrete-time control systems. Pre-opacity is an important information-flow security property that secures the intention of a system to execute some secret behaviors in the future. Existing works on pre-opacity only consider non-metric discrete systems, where it is assumed that intruders can distinguish different output behaviors precisely. However, for continuous-space control systems whose output sets are equipped with metrics (which is the case for most real-world applications), it is too restrictive to assume precise measurements from outside observers. In this letter, we first introduce a concept of approximate pre-opacity by capturing the security level of control systems with respect to the measurement precision of the intruder. Based on this new notion of pre-opacity, we propose a verification approach for continuous-space control systems by leveraging abstraction-based techniques. In particular, a new concept of approximate pre-opacity preserving simulation relation is introduced to characterize the distance between two systems in terms of preserving pre-opacity. This new system relation allows us to verify pre-opacity of complex continuous-space control systems using their finite abstractions. We also present a method to construct pre-opacity preserving finite abstractions for a class of discrete-time control systems under certain stability assumptions.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">On Approximate Opacity of Stochastic Control Systems</div>
+          <div class="ref-meta">Siyuan Liu, Xiang Yin, Dimos V. Dimarogonas, Majid Zamani · IEEE Transactions on Automatic Control, 2024 · <a href="https://doi.org/10.1109/TAC.2024.3516202" target="_blank" rel="noopener">doi.org/10.1109/TAC.2024.3516202</a> · conference precursor: &ldquo;On a Notion of Approximate Opacity for Discrete-Time Stochastic Control Systems&rdquo;, 2020 American Control Conference (ACC), pp. 5413–5418 · <a href="https://doi.org/10.23919/ACC45564.2020.9147235" target="_blank" rel="noopener">doi.org/10.23919/ACC45564.2020.9147235</a></div>
+          <div class="ref-tags">continuous · opacity · stochastic</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">This article investigates an important class of information-flow security property called opacity for stochastic control systems. Opacity captures whether a system's secret behavior (a subset of the system's behavior that is considered to be critical) can be kept from outside observers. Existing works on opacity for control systems only provide a binary characterization of the system's security level by determining whether the system is opaque or not. In this work, we introduce a quantifiable measure of opacity that considers the likelihood of satisfying opacity for stochastic control systems modeled as general Markov decision processes (gMDPs). We also propose verification methods tailored to the new notions of opacity for finite gMDPs by using value iteration techniques. Then, a new notion called approximate opacity-preserving stochastic simulation relation is proposed, which captures the distance between two systems' behaviors in terms of preserving opacity. Based on this new system relation, we show that one can verify opacity for stochastic control systems using their abstractions (modeled as finite gMDPs). We also discuss how to construct such abstractions for a class of gMDPs under certain stability conditions.</div>
+          </details>
+        </li>
+      </ul>
+    </div>
+
+    <div class="subcat" id="cat-b-data-driven">
+      <h3 class="sub-title">B.3 — Data-driven</h3>
+
+      <ul class="refs">
+        <li>
+          <div class="ref-title">A Data-Driven Approach to Approximate Opacity Verification</div>
+          <div class="ref-meta">Vishnu Murali, Shadi Tasdighi Kalat, Majid Zamani · 62nd IEEE Conference on Decision and Control (CDC 2023), pp. 5085–5090 · <a href="https://doi.org/10.1109/CDC49753.2023.10384216" target="_blank" rel="noopener">doi.org/10.1109/CDC49753.2023.10384216</a></div>
+          <div class="ref-tags">continuous · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Recent results in the verification of cyber-physical systems have focused not just in giving guarantees of properties such as safety, but also in ensuring that these systems are secure. One such notion of security is that of initial-state opacity, where one seeks to ensure that an outside intruder is not able to determine some sensitive information about the initial-state of the system by observing the output traces. An existing approach to verify the initial-state opacity of a system relies on finding a barrier certificate over an appropriately constructed augmented system. However this search for a barrier certificate relies on the dynamics of the system being known. Unfortunately, in many scenarios, it may be difficult or infeasible to determine the dynamics of a given system. We thus consider the problem of determining whether a system is opaque when its dynamics are unknown. To do so, we recast the conditions of opacity on the augmented system as a robust program with uncountably many constraints. By collecting data from the system's trajectories, we construct a corresponding scenario program. We show that if a feasible solution of the scenario program satisfies some conditions, then the original system with unknown dynamics is opaque under reasonable assumptions. We show the effectiveness of the proposed approach by demonstrating the opacity of a room-temperature model.</div>
+          </details>
+        </li>
+      </ul>
+    </div>
+
+  </section>
+
+  <!-- ===================== C. SYNTHESIS & ENFORCEMENT ===================== -->
+  <section class="category" id="cat-c">
+    <div class="cat-head"><div class="cat-letter">C</div><h2 class="cat-title">Synthesis &amp; Enforcement</h2></div>
+    <p class="cat-blurb">Designing a controller or policy that actively makes a system opaque. Most articles use abstraction-based synthesis: compute a finite-state abstraction of the continuous system, synthesize a discrete controller on it, then refine back to the original dynamics. One article replaces this pipeline with reinforcement learning.</p>
+
+    <ul class="refs">
+        <li>
+          <div class="ref-title">Abstraction-Based Synthesis of Opacity-Enforcing Controllers Using Alternating Simulation Relations</div>
+          <div class="ref-meta">Yunyi Hou, Xiang Yin, Shaoyuan Li, Majid Zamani · 58th IEEE Conference on Decision and Control (CDC 2019), pp. 7653–7658 · <a href="https://doi.org/10.1109/CDC40024.2019.9029932" target="_blank" rel="noopener">doi.org/10.1109/CDC40024.2019.9029932</a></div>
+          <div class="ref-tags">continuous · enforcement · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Opacity is an important information-flow security property that captures the plausible deniability for some "secret" of a system. In this paper, we investigate the problem of synthesizing controllers that enforce opacity for labeled transition systems (LTS). Most of the existing works on synthesis of opacity-enforcing controllers are based on the original system model, which may contain a large number of states. To mitigate the complexity of the controller synthesis procedure, we propose an abstraction-based approach for controller synthesis. Specifically, we propose notion of opacity-preserving alternating (bi)simulation relation for the purpose of abstraction. We show that, if the abstract system is opacity-preserving alternatingly simulated by the original system which may be significantly smaller, then we can synthesize an opacity-enforcing controller based on the abstract system and then refine it back to a controller enforcing opacity of the original system. We investigate both initial-state opacity and infinite-step opacity. We also show the effectiveness of the proposed approach by a set of examples.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Compositional Synthesis of Opacity-Preserving Finite Abstractions for Interconnected Systems</div>
+          <div class="ref-meta">Siyuan Liu, Majid Zamani · Automatica, 131, article 109745, 2021 · <a href="https://doi.org/10.1016/j.automatica.2021.109745" target="_blank" rel="noopener">doi.org/10.1016/j.automatica.2021.109745</a> · preprint: <a href="https://arxiv.org/abs/2004.00131" target="_blank" rel="noopener">arXiv:2004.00131</a></div>
+          <div class="ref-tags">continuous · enforcement · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">In this paper, we propose a compositional approach to construct opacity-preserving finite abstractions (a.k.a symbolic models) for networks of discrete-time nonlinear control systems. Particularly, we introduce new notions of simulation functions that characterize the distance between control systems while preserving opacity properties across them. Instead of treating large-scale systems in a monolithic manner, we develop a compositional scheme to construct the finite abstractions together with the overall opacity-preserving simulation functions based on those of the smaller subsystems. For a network of incrementally input-to-state stable control subsystems and under some small-gain type condition, an algorithm for designing local quantization parameters is presented to orderly build the local symbolic models of subsystems. We show that the network of those constructed symbolic models simulates the original network for an a-priori defined abstraction accuracy while preserving its opacity properties.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Abstraction-Based Control Under Quantized Observation With Approximate Opacity Using Symbolic Control Barrier Functions</div>
+          <div class="ref-meta">Masashi Mizoguchi, Toshimitsu Ushio · IEEE Control Systems Letters, 6, pp. 2222–2227, 2022 · <a href="https://doi.org/10.1109/LCSYS.2021.3135082" target="_blank" rel="noopener">doi.org/10.1109/LCSYS.2021.3135082</a></div>
+          <div class="ref-tags">continuous · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">The notion of opacity refers to a condition that external observers cannot distinguish between secret and non-secret states, which is important for security of a plant. On the other hand, the authors have recently proposed a “symbolic control barrier function” that enforces forward invariance on the plant with its finite abstracted model. In this letter, we propose symbolic synthesis achieving both desired behaviors and approximated initial-state opacity. First, a symbolic controller that enforces a desired behavior is synthesized without considering the opacity. Next, we eliminate transitions violating a condition on the opacity, which is induced by the symbolic control barrier function. Finally, it is proved that the controlled plant satisfies the opacity if a deadlock-free sub-transition system is obtained. The proposed method is illustrated with a numerical example on tank volume control.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Abstraction-Based Synthesis of Controllers for Approximate Opacity</div>
+          <div class="ref-meta">Junyao Hou, Siyuan Liu, Xiang Yin, Majid Zamani · 62nd IEEE Conference on Decision and Control (CDC 2023), pp. 7930–7936 · <a href="https://doi.org/10.1109/CDC49753.2023.10383482" target="_blank" rel="noopener">doi.org/10.1109/CDC49753.2023.10383482</a></div>
+          <div class="ref-tags">continuous · enforcement · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Opacity is an important information-flow security property which characterizes the plausible deniability of certain “secret behaviors” in dynamical systems. In this paper, we study the problem of synthesizing controllers enforcing a notion of opacity over discrete-time control systems with continuous state sets. In this paper, we develop an abstraction-based approach to tackle the controller synthesis problem. Specifically, we adopt a notion of approximate opacity which is suitable for continuous-space control systems. We propose a notion of approximate initial-state opacity preserving alternating simulation relation which characterizes the closeness between two systems in terms of opacity preservation. We show that, based on this new notion of system relation, one can synthesize an opacity-enforcing controller for the abstract system which is finite and then refine it back to enforce opacity over the original control system. Finally, we present a method for constructing opacity-preserving finite abstractions for discrete-time control systems under some stability properties. Our results are illustrated on a two-room temperature control problem.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Secure-by-Construction Synthesis for Control Systems</div>
+          <div class="ref-meta">Bingzhuo Zhong, Siyuan Liu, Marco Caccamo, Majid Zamani · IEEE Transactions on Automatic Control, 2025 · <a href="https://doi.org/10.1109/TAC.2025.3532541" target="_blank" rel="noopener">doi.org/10.1109/TAC.2025.3532541</a> · preprint: <a href="https://arxiv.org/abs/2307.02564" target="_blank" rel="noopener">arXiv:2307.02564</a></div>
+          <div class="ref-tags">continuous · enforcement · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">In this note, we present the synthesis of secure-by-construction controllers that address safety and security properties simultaneously in cyber-physical systems. Our focus is on studying a specific security property called opacity, which characterizes the system's ability to maintain plausible deniability of its secret behavior in the presence of an intruder. These controllers are synthesized based on a concept of so-called (augmented) control barrier functions (CBFs). We propose conditions that facilitate the construction of the desired (augmented) CBFs and their corresponding secure-by-construction controllers. To compute these functions, we propose an iterative scheme that leverages iterative sum-of-square programming techniques. This approach enables efficient computation of these functions, particularly for polynomial systems. Finally, we validate the effectiveness of our results through a case study of a vehicle.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Approximate Opacity and Its Enforcement for Cyber-Physical Systems Based on Reinforcement Q-Learning</div>
+          <div class="ref-meta">Xinxin Qiao, Yiwen Qi, Zonghua Zheng, Wu Wang · IEEE Transactions on Industrial Cyber-Physical Systems, 4, pp. 1–11, 2026 · <a href="https://doi.org/10.1109/TICPS.2025.3634056" target="_blank" rel="noopener">doi.org/10.1109/TICPS.2025.3634056</a></div>
+          <div class="ref-tags">continuous · enforcement · opacity</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">The security issues of cyber-physical systems (CPSs) have received widespread attention because they are vulnerable. Opacity is an important security property used to measure whether secrets are leaked to intruders. Existing works on opacity mostly focus on discrete event systems (DESs) and qualitative analysis. In order to quantitatively analyze the opacity in continuous state systems (i.e., the considered CPSs), this paper presents a new approximate opacity framework and proposes a multi-system T-δ approximate initial state opacity (MS-T-δ-AISO). Further, to improve the MS-T-δ-AISO, the fully cooperative game approximate initial state opacity enforcement (FCG-AISOE) is studied. Reinforcement Q-learning is used to optimize the MS-T-δ-AISO, which can achieve rapid iteration of control policy and converge to the optimal control policy, resulting in a rapid increase in opacity and ultimately tending towards the optimal opacity. Finally, simulation examples are given to verify the effectiveness of the proposed method.</div>
+          </details>
+        </li>
+    </ul>
+  </section>
+
+
+  <footer>
+    <p><strong>Maintained by</strong> <a href="https://elefauch.github.io/" target="_blank" rel="noopener">Engel Lefaucheux</a>. This bibliography is almost certainly incomplete. If you know of a relevant paper that's missing, please get in touch so it can be added.</p>
+  </footer>
+</div>
+</body>
+</html>

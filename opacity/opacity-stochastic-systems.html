@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Opacity of Stochastic Systems</title>
+<meta name="description" content="Opacity for stochastic systems: probabilistic automata, hidden Markov models and Markov decision processes.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Opacity of Stochastic Systems">
+<meta property="og:description" content="Opacity for stochastic systems: probabilistic automata, hidden Markov models and Markov decision processes.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* Rules shared by the topic pages and the tag search page. */
+  :root{
+    --paper:#F1EDE4;
+    --card:#E8E1D2;
+    --ink:#2A2620;
+    --ink-soft:#5C5648;
+    --ink-faint:#6A6456;
+    --line:#D2C9B4;
+    --observable:#177A72;
+    --observable-soft:#DCEAE7;
+    --secret:#B04E2D;
+    --secret-soft:#F1DDD3;
+    --display: 'Fraunces', serif;
+    --body: 'Source Serif 4', serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--body);
+    line-height:1.65;
+  }
+  a{color:var(--secret); word-break:break-word;}
+  .wrap{max-width:1100px; margin:0 auto; padding:0 32px;}
+  /* ---------- HEADER / HERO ---------- */
+  header.hero{padding:60px 0 32px;}
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:11.5px;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:20px;
+  }
+  .eyebrow .tick{color:var(--secret); font-weight:600;}
+  .hub-link{
+    font-family:var(--mono); font-size:12px; color:var(--ink-faint);
+    text-decoration:none; display:inline-flex; align-items:center; gap:6px; margin-bottom:16px;
+  }
+  .hub-link:hover{color:var(--secret);}
+  h1.title{
+    font-family:var(--display);
+    font-weight:600;
+    font-size:clamp(38px, 6vw, 62px);
+    line-height:1.02;
+    margin:0 0 20px;
+    letter-spacing:-0.015em;
+  }
+  h1.title .secret-word{color:var(--secret); font-style:italic; font-weight:500;}
+  p.lede{
+    font-size:18px;
+    color:var(--ink-soft);
+    max-width:64ch;
+    margin:0 0 32px;
+  }
+  ul.refs li{border-left:2px solid var(--line); padding:10px 0 10px 16px; margin-bottom:2px; transition:border-color 0.15s ease;}
+  ul.refs li:hover{border-left-color:var(--secret);}
+  .ref-title{font-size:15.5px; color:var(--ink); font-weight:600;}
+  .verify-flag{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    background:#F3E3B8;
+    border:1px solid #B8863B;
+    color:#6B4A1E;
+    font-family:var(--mono);
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:0.03em;
+    text-transform:uppercase;
+    padding:2px 8px 2px 6px;
+    border-radius:3px;
+    margin-right:8px;
+    vertical-align:middle;
+  }
+  .ref-meta{font-family:var(--mono); font-size:11.5px; color:var(--ink-faint); margin-top:4px; line-height:1.5;}
+  .ref-meta a{color:var(--ink-faint);}
+  .ref-meta a:hover{color:var(--secret);}
+  .ref-note{font-size:13.5px; color:var(--ink-soft); margin-top:5px; max-width:100ch;}
+  .ref-caveat{font-size:13px; color:#6B4A1E; margin-top:5px; max-width:100ch; padding-left:8px; border-left:2px solid #B8863B;}
+  .ref-tags{font-family:var(--mono); font-size:11px; color:var(--ink-faint); margin-top:6px; letter-spacing:0.02em;}
+  /* "Show abstract" toggle: a native <details>, so the browser's find-in-page also searches the abstracts */
+  .abstract-toggle{display:inline-block; list-style:none; font-family:var(--mono); font-size:11px; line-height:normal; color:var(--secret); background:none; border:1px solid var(--ink-faint); border-radius:3px; padding:2px 8px; margin-top:6px; cursor:pointer;}
+  .abstract-toggle::-webkit-details-marker{display:none;}
+  .abstract-toggle:hover{border-color:var(--secret);}
+  .abstract-toggle:focus-visible{outline:2px solid var(--secret); outline-offset:2px;}
+  details.ref-abs .abs-hide{display:none;}
+  details.ref-abs[open] .abs-show{display:none;}
+  details.ref-abs[open] .abs-hide{display:inline;}
+  .ref-abstract{font-size:13.5px; color:var(--ink-soft); margin-top:6px; max-width:100ch; padding:8px 10px; background:rgba(0,0,0,0.03); border-radius:4px;}
+  footer p{font-size:12.5px; color:var(--ink-faint); max-width:104ch; margin:0 0 8px; line-height:1.55;}
+  /* Rules shared by the topic pages only (hero diagram, intro, table of contents, categories). */
+  /* ---------- TIMING DIAGRAM ---------- */
+  .diagram-card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:2px;
+    padding:22px 24px 16px;
+  }
+  .diagram-caption{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--ink-faint);
+    margin-top:12px;
+    line-height:1.6;
+  }
+  .diagram-caption b{color:var(--ink-soft); font-weight:600;}
+  /* ---------- DESCRIPTION SECTION ---------- */
+  section.intro{padding:44px 0 6px;}
+  section.intro p{margin:0 0 20px; max-width:72ch; color:var(--ink); font-size:17px;}
+  section.intro p:last-child{margin-bottom:0;}
+  /* ---------- CATEGORY SECTIONS ---------- */
+  section.category{padding:48px 0; border-bottom:1px solid var(--line);}
+  section.category:last-of-type{border-bottom:none;}
+  .cat-head{display:flex; gap:16px; align-items:baseline; margin-bottom:10px;}
+  .cat-letter{
+    font-family:var(--display); font-weight:600; font-size:16px; color:var(--ink-faint);
+    border:1px solid var(--line); border-radius:50%;
+    width:32px; height:32px; min-width:32px;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  h2.cat-title{font-family:var(--display); font-weight:600; font-size:26px; margin:0; letter-spacing:-0.01em;}
+  .cat-blurb{color:var(--ink-soft); font-size:15px; max-width:100ch; margin:0 0 26px; padding-left:48px;}
+  li:has(.verify-flag){border-left-color:#B8863B;}
+  footer{padding:32px 0 60px; border-top:1px solid var(--line); margin-top:12px;}
+  footer p:last-child{margin-bottom:0;}
+  footer strong{color:var(--ink-soft); font-weight:600;}
+  footer a{color:var(--ink-faint); text-decoration:none; border-bottom:1px dotted var(--ink-faint);}
+  footer a:hover{color:var(--secret); border-bottom-color:var(--secret);}
+
+  /* ---------- TOC ---------- */
+  nav.toc{margin:44px 0 0; padding:24px 0; border-top:2px solid var(--ink); border-bottom:1px solid var(--line);}
+  nav.toc ol{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:1fr 1fr; gap:8px 28px;}
+  nav.toc li a{
+    display:flex; justify-content:space-between; gap:10px; text-decoration:none; color:var(--ink);
+    font-family:var(--display); font-size:16px; font-weight:600; padding:6px 0;
+  }
+  nav.toc li a:hover{color:var(--secret);}
+  nav.toc li a .num{font-family:var(--mono); color:var(--ink-faint); font-weight:400; font-size:12.5px;}
+  nav.toc ol{align-items:start;}
+  nav.toc ul.toc-sub{list-style:none; margin:0 0 10px; padding:0 0 0 14px; border-left:1px solid var(--line);}
+  nav.toc ul.toc-sub li a{display:block; font-family:var(--body); font-size:14.5px; font-weight:400; color:var(--ink-soft); padding:2px 0;}
+  nav.toc ul.toc-sub li a:hover{color:var(--secret);}
+  @media (max-width:640px){
+    nav.toc ol{grid-template-columns:1fr;}
+  }
+
+  .subcat{padding-left:48px; margin-bottom:28px;}
+  .subcat:last-child{margin-bottom:0;}
+  h3.sub-title{
+    font-family:var(--mono); font-weight:600; font-size:12.5px; text-transform:uppercase; letter-spacing:0.07em;
+    color:var(--ink); margin:0 0 4px; display:flex; align-items:center; gap:8px;
+  }
+  h3.sub-title::before{content:"§"; color:var(--ink-faint); font-weight:400;}
+  .sub-note{font-size:13.5px; color:var(--ink-faint); margin:0 0 12px; max-width:100ch;}
+  ul.refs{list-style:none; margin:0; padding:0;}
+  .stub{
+    padding-left:48px;
+    font-family:var(--mono); font-size:13px; color:var(--ink-faint); font-style:normal;
+  }
+  .stub-list{padding-left:48px; margin:10px 0 0; font-size:13.5px; color:var(--ink-soft);}
+  .stub-list li{margin-bottom:4px;}
+  /* ---------- UNCLASSIFIED ---------- */
+  section.unclassified{padding:48px 0 70px;}
+  .unclass-note{color:var(--ink-soft); font-size:15px; max-width:100ch; margin:0 0 26px;}
+  @media (max-width:640px){
+    .wrap{padding:0 18px;}
+    .cat-blurb, .subcat, .stub, .stub-list{padding-left:0;}
+    .cat-head{gap:10px;}
+  }
+  .scope-box{
+    margin-top:26px;
+    padding:18px 20px;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:2px;
+  }
+  .scope-box .scope-label{
+    font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:0.08em;
+    color:var(--ink-faint); margin-bottom:10px; display:block;
+  }
+  .scope-box ul{margin:0; padding-left:18px; font-size:14px; color:var(--ink-soft);}
+  .scope-box li{margin-bottom:5px;}
+  .scope-box li b{color:var(--ink);}
+</style>
+<link rel="canonical" href="https://elefauch.github.io/opacity/opacity-stochastic-systems.html">
+<meta property="og:url" content="https://elefauch.github.io/opacity/opacity-stochastic-systems.html">
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="hero">
+    <a class="hub-link" href="opacity-index.html">← All opacity pages</a>
+    <a class="hub-link" href="opacity-tag-search.html" style="margin-left:16px;">Search by tag →</a>
+    <h1 class="title">Opacity of <span class="secret-word">Stochastic</span> Systems</h1>
+
+    <div class="diagram-card">
+      <svg viewBox="0 0 860 150" width="100%" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A branching probabilistic run, where the secret is revealed with some probability rather than certainly or never">
+        <circle cx="100" cy="75" r="5" fill="#2A2620"/>
+        <line x1="105" y1="72" x2="220" y2="30" stroke="#D2C9B4" stroke-width="1.3"/>
+        <line x1="105" y1="78" x2="220" y2="75" stroke="#D2C9B4" stroke-width="1.3"/>
+        <line x1="105" y1="80" x2="220" y2="120" stroke="#D2C9B4" stroke-width="1.3"/>
+        <text x="160" y="42" font-family="JetBrains Mono" font-size="10" fill="#6A6456">0.5</text>
+        <text x="160" y="72" font-family="JetBrains Mono" font-size="10" fill="#6A6456">0.3</text>
+        <text x="160" y="108" font-family="JetBrains Mono" font-size="10" fill="#6A6456">0.2</text>
+
+        <circle cx="225" cy="30" r="4" fill="#177A72"/>
+        <circle cx="225" cy="75" r="4" fill="#177A72"/>
+        <rect x="210" y="112" width="90" height="16" rx="2" fill="#F1DDD3" stroke="#B5502E" stroke-width="1.2"/>
+        <text x="255" y="124" font-family="JetBrains Mono" font-size="10" fill="#B04E2D" text-anchor="middle">secret</text>
+
+        <line x1="420" y1="75" x2="560" y2="75" stroke="#D2C9B4" stroke-width="1.5" marker-end="url(#arrowst)"/>
+        <defs>
+          <marker id="arrowst" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6 Z" fill="#D2C9B4"/>
+          </marker>
+        </defs>
+
+        <text x="610" y="55" font-family="Source Serif 4" font-size="13" fill="#5C5648">Not "can the observer</text>
+        <text x="610" y="75" font-family="Source Serif 4" font-size="13" fill="#5C5648">learn the secret,"</text>
+        <text x="610" y="95" font-family="Source Serif 4" font-size="13" fill="#5C5648">but "with what</text>
+        <text x="610" y="115" font-family="Source Serif 4" font-size="13" fill="#5C5648">probability?"</text>
+      </svg>
+      <div class="diagram-caption">Once transitions carry probabilities, a <b style="color:#B04E2D;">secret</b> branch usually can't be made strictly indistinguishable from every other branch. The question shifts from a binary yes/no to a measure: how likely is disclosure, and can that likelihood be bounded or minimized?</div>
+    </div>
+
+  </header>
+
+  <section class="intro">
+    <div class="eyebrow"><span class="tick">●</span> Scope of this page</div>
+    <p>Every other page in this index assumes the system's dynamics are non-deterministic at worst: several runs may be possible from a given point, but none is more likely than another. This page covers what happens once transitions carry probabilities: probabilistic automata, hidden Markov models, and Markov decision processes (which add controllable non-determinism on top of probabilistic transitions).</p>
+    <p>The core question doesn't quite survive the transition intact. With probabilities in the picture, a secret run can usually still be matched by some non-secret run producing the same observation, but the two are rarely equally likely, so strict opacity in the classical sense is often either trivially false or too strong a demand. Much of this literature is about replacing the binary yes/no with a quantitative measure instead: the probability that an observer's belief crosses some confidence threshold, or a value to be minimized or bounded rather than a property to be strictly guaranteed.</p>
+</section>
+
+  <nav class="toc" aria-label="Table of contents">
+    <div class="eyebrow"><span class="tick">●</span> Categories</div>
+    <ol>
+      <li><a href="#cat-a"><span>Notions &amp; Decidability</span><span class="num">A</span></a>
+        <ul class="toc-sub">
+          <li><a href="#cat-a-probabilistic-automata-and-stochastic-des">A.1 — Probabilistic automata &amp; stochastic DES</a></li>
+          <li><a href="#cat-a-beyond-automata-petri-nets-constraint-markov-chains-fuzzy-models">A.2 — Beyond automata: Petri nets, constraint Markov chains, fuzzy models</a></li>
+          <li><a href="#cat-a-continuous-state-stochastic-systems">A.3 — Continuous-state stochastic systems</a></li>
+        </ul>
+      </li>
+      <li><a href="#cat-b"><span>Verification &amp; Scalability</span><span class="num">B</span></a></li>
+      <li><a href="#cat-c"><span>MDP Enforcement &amp; Synthesis</span><span class="num">C</span></a></li>
+      <li><a href="#cat-d"><span>Applications &amp; Case Studies</span><span class="num">D</span></a></li>
+    </ol>
+  </nav>
+
+
+
+  <!-- ===================== A. NOTIONS & DECIDABILITY ===================== -->
+  <section class="category" id="cat-a">
+    <div class="cat-head"><div class="cat-letter">A</div><h2 class="cat-title">Notions &amp; Decidability</h2></div>
+    <p class="cat-blurb">Definitions, decidability, and complexity results for opacity across the stochastic models on this page. Most of the literature here re-derives the classical automaton-based notions with probabilities, or some other form of graded uncertainty, attached, then asks how hard the resulting problem is to decide, which turns out to be undecidable in general and only recoverable under restrictions.</p>
+
+    <div class="subcat" id="cat-a-probabilistic-automata-and-stochastic-des">
+      <h3 class="sub-title">A.1 — Probabilistic automata &amp; stochastic DES</h3>
+
+      <ul class="refs">
+        <li>
+          <div class="ref-title">Opacity Verification in Stochastic Discrete Event Systems</div>
+          <div class="ref-meta">Anooshiravan Saboori, Christoforos N. Hadjicostis · 49th IEEE Conference on Decision and Control (CDC 2010), pp. 6759–6764 · <a href="https://doi.org/10.1109/CDC.2010.5717580" target="_blank" rel="noopener">doi.org/10.1109/CDC.2010.5717580</a></div>
+          <div class="ref-tags">opacity · stochastic</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Motivated by security and privacy considerations in applications of discrete event systems, various notions of opacity have been introduced. Specifically, a system is said to be current-state opaque if the entrance of the system state to a set of secret states remains opaque (uncertain) to an intruder - at least until the system leaves the set of secret states. This notion, which has been studied in non-deterministic finite automaton settings where the intruder observes a subset of events, has been shown to be useful in characterizing security requirements in many applications (including encryption using pseudo-random generators and trajectory coverage of a mobile agent in sensor networks). One limitation of these existing approaches is that they fail to provide a quantifiable measure for characterizing the degree of opacity of a given system. In this paper, we partially address this limitation by extending this framework to systems that can be modeled as probabilistic finite automata, characterizing in the process the probability of observing a violation of current-state opacity. We introduce the notion of step-based almost current-state opacity which provides a measure of opacity for a given system. We also propose a verification method for this probabilistic notion of opacity and characterize its computational complexity.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Current-State Opacity Formulations in Probabilistic Finite Automata</div>
+          <div class="ref-meta">Anooshiravan Saboori, Christoforos N. Hadjicostis · IEEE Transactions on Automatic Control, 59(1), pp. 120–133, 2014 · <a href="https://doi.org/10.1109/TAC.2013.2279914" target="_blank" rel="noopener">doi.org/10.1109/TAC.2013.2279914</a></div>
+          <div class="ref-tags">opacity · stochastic</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">A system is said to be current-state opaque if the entrance of the system state to a set of secret states remains opaque (uncertain) to an intruder-at least until the system leaves the set of secret states. This notion of opacity has been studied in nondeterministic finite automata settings (where the intruder observes a subset of events, for example, via some natural projection mapping) and has been shown to be useful in characterizing security requirements in many applications (including encryption using pseudorandom generators and coverage properties in sensor networks). One limitation of the majority of existing analysis is that it fails to provide a quantifiable measure of opacity for a given system; instead, it simply provides a binary characterization of the system (being opaque or not opaque). In this paper, we address this limitation by extending current-state opacity formulations to systems that can be modeled as probabilistic finite automata under partial observation. We introduce three notions of opacity, namely: 1) step-based almost current-state opacity; 2) almost current-state opacity; and 3) probabilistic current-state opacity, all of which can be used to provide a measure of a given system's opacity. We also propose verification methods for these probabilistic notions of opacity and characterize their corresponding computational complexities.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Quantifying Opacity</div>
+          <div class="ref-meta">Béatrice Bérard, John Mullins, Mathieu Sassolas · Mathematical Structures in Computer Science, 25(2), pp. 361–403, 2015 · <a href="https://doi.org/10.1017/S0960129513000637" target="_blank" rel="noopener">doi.org/10.1017/S0960129513000637</a> · conference version: QEST 2010, pp. 263–272 · <a href="https://doi.org/10.1109/QEST.2010.40" target="_blank" rel="noopener">doi.org/10.1109/QEST.2010.40</a> · preprint: <a href="https://arxiv.org/abs/1301.6799" target="_blank" rel="noopener">arXiv:1301.6799</a></div>
+          <div class="ref-tags">opacity · stochastic</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">In this paper we propose two dual notions of quantitative information leakage in probabilistic systems, both related to opacity for non probabilistic systems. The liberal one measures the probability for an attacker observing a random execution of the system, to be able to gain information he can be sure about. We show that a null value for this measure corresponds to a secure system, in the usual sense of opacity. On the other hand, restrictive opacity is defined as the complement of the information-theoretic notion of mutual information. It measures the level of certitude in the information acquired by an attacker observing the system: we prove that a null value for this second measure corresponds to non opacity. We also show how these measures can be computed for regular secrets and observations. We finally apply them to the dining cryptographers problem and to the crowd anonymity protocol.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Probabilistic System Opacity in Discrete Event Systems</div>
+          <div class="ref-meta">Christoforos Keroglou, Christoforos N. Hadjicostis · Discrete Event Dynamic Systems, 28, pp. 289–314, 2018 · <a href="https://doi.org/10.1007/s10626-017-0263-8" target="_blank" rel="noopener">doi.org/10.1007/s10626-017-0263-8</a></div>
+          <div class="ref-tags">opacity · stochastic</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">In many emerging security applications, a system designer frequently needs to ensure that a certain property of a given system (that may reveal important details about the system’s operation) be kept secret (opaque) to outside observers (eavesdroppers). Motivated by such applications, several researchers have formalized, analyzed, and described methods to verify notions of opacity in discrete event systems of interest. This paper introduces and analyzes a notion of opacity in systems that can be modeled as probabilistic finite automata or hidden Markov models. We consider a setting where a user needs to choose a specific hidden Markov model (HMM) out of m possible (different) HMMs, but would like to “hide” the true system from eavesdroppers, by not allowing them to have an arbitrary level of confidence as to which system has been chosen. We describe necessary and sufficient conditions (that can be checked with polynomial complexity), under which the intruder cannot distinguish the true HMM, namely, the intruder cannot achieve a level of certainty about its decision, which is above a certain threshold that we can a priori compute.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Infinite-Step Opacity and K-Step Opacity of Stochastic Discrete-Event Systems</div>
+          <div class="ref-meta">Xiang Yin, Zhaoan Li, Weilin Wang, Shaoyuan Li · Automatica, 99, pp. 266–274, 2019 · <a href="https://doi.org/10.1016/j.automatica.2018.10.049" target="_blank" rel="noopener">doi.org/10.1016/j.automatica.2018.10.049</a></div>
+          <div class="ref-tags">opacity · stochastic</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Opacity is an important information-flow property that arises in security and privacy analysis of cyber–physical systems. Among many different notions of opacity, K-step opacity requires that the intruder can never determine unambiguously that the system was at a secret state for any specific instant within K steps prior to that particular instant. This notion becomes infinity-step opacity when K goes to infinity. Existing works on the analysis of infinite-step opacity and K-step opacity only provide a binary characterization, i.e., a system is either opaque or non-opaque. To analyze infinite-step and K-step opacity more quantitatively, in this paper, we investigate the verification of infinite-step and K-step opacity in the context of stochastic discrete-event systems. A new notion of opacity, called almost infinite-step opacity (respectively, almost K-step opacity), is proposed to capture whether or not the probability of violating infinite-step opacity (respectively, K-step opacity) is smaller than a given threshold. We also provide effective algorithms for the verification of almost infinite-step opacity and almost K-step opacity.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Decidability of Probabilistic Current-State Opacity for Probabilistic Finite Automata</div>
+          <div class="ref-meta">Keru Chen, Shaowen Miao, Aiwen Lai, Ji Ma, Sihan Chen · 2024 43rd Chinese Control Conference (CCC), pp. 1556–1561, 2024 · <a href="https://doi.org/10.23919/CCC63176.2024.10661575" target="_blank" rel="noopener">doi.org/10.23919/CCC63176.2024.10661575</a></div>
+          <div class="ref-tags">opacity · stochastic</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Opacity holds significance as a critical property for probabilistic finite automata. Specifically, we center our attention on probabilistic current-state opacity, a property acknowledged to be generally undecidable. In this paper, we present a reduction from the problem of verifying probabilistic current-state opacity to the emptiness problem for finitely ambiguous stochastic automata. Subsequently, we establish that verifying probabilistic current-state opacity becomes feasible for probabilistic finite automata with finite ambiguity, and we conduct a complexity analysis of this problem.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Online Verification and Enforcement of Sequential K-Opacity in Extended Probabilistic Automata</div>
+          <div class="ref-meta">Tareq Ahmad Al-Sarayrah, Zhiwu Li, Li Yin, Almetwally M. Mostafa · IEEE Access, vol. 12, 2024 · <a href="https://doi.org/10.1109/ACCESS.2024.3413070" target="_blank" rel="noopener">doi.org/10.1109/ACCESS.2024.3413070</a></div>
+          <div class="ref-tags">opacity · stochastic</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">In the context of extended probabilistic automata, this study focuses on an information flow property, called opacity, of discrete event systems. The achievement of this research is the formulation and in-depth analysis of what is termed sequential k-opacity. This metric, through its detailed assessment, marks an explicit and visible advancement beyond the existing paradigms for measuring system opacity. It introduces an improved method for analyzing the probability of event sequences leading to confidential states within a system. An approach of such a comprehensive nature is essential for a detailed analysis of opacity in systems typified by deterministic and stochastic elements. Furthermore, this work incorporates a numerical case study that provides a baseline for further investigations in practical applications, thereby validating the proposed framework’s usefulness. The research progresses to explore novel approaches to the reinforcement and persistence of system opacity within extended probabilistic automata. Among these approaches, the strategic use of fake events is critical as it is a fundamental tool for enhancing system security and secrecy, which plays an important role in protecting sensitive and secret data by effectively hiding the real status of the system from outside inspection.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Research on k-Step Active Opacity of Stochastic Discrete Event Systems</div>
+          <div class="ref-meta">Weiqi Liu, Fuchun Liu · Journal of Guangdong University of Technology, 42(4), pp. 79–87, 2025 (published in Chinese) · <a href="https://doi.org/10.12052/gdutxb.240131" target="_blank" rel="noopener">doi.org/10.12052/gdutxb.240131</a></div>
+          <div class="ref-tags">opacity · stochastic</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">In recent years, the opacity of discrete event systems has achieved remarkable application results in information security mechanisms, attracting increasing attention from the researchers of the world. With the aim to address the security issue of leakage paths in the system, this paper proposes a method to enhance the k-step opacity of the system through active control based on the framework of stochastic discrete event systems, ensuring that all secret states in the system are not disclosed. First, the k-step active opacity of stochastic discrete event systems is formalized. Second, by constructing a k-step active opacity verifier, a controllable event string with the lowest leakage probability is found for each secret state in the system, allowing the system to enter the secret state through the safest path by enforcing controllable events. In this way, the k-step opacity can be enhanced, and additionally a necessary and sufficient condition for the k-step active opacity of stochastic discrete event systems is obtained, which can be used to verify the k-step active opacity of stochastic discrete event systems.</div>
+          </details>
+        </li>
+      </ul>
+    </div>
+
+    <div class="subcat" id="cat-a-beyond-automata-petri-nets-constraint-markov-chains-fuzzy-models">
+      <h3 class="sub-title">A.2 — Beyond automata: Petri nets, constraint Markov chains, fuzzy models</h3>
+
+      <ul class="refs">
+        <li>
+          <div class="ref-title">Opacity for Linear Constraint Markov Chains</div>
+          <div class="ref-meta">Béatrice Bérard, Olga Kouchnarenko, John Mullins, Mathieu Sassolas · Discrete Event Dynamic Systems, 28(1), pp. 83–108, 2018 · <a href="https://doi.org/10.1007/s10626-017-0259-4" target="_blank" rel="noopener">doi.org/10.1007/s10626-017-0259-4</a> · <a href="https://hal.science/hal-01384153" target="_blank" rel="noopener">hal-01384153</a> · conference precursor: &ldquo;Preserving Opacity on Interval Markov Chains Under Simulation&rdquo;, 13th International Workshop on Discrete Event Systems (WODES 2016), pp. 319–324 · <a href="https://doi.org/10.1109/WODES.2016.7497866" target="_blank" rel="noopener">doi.org/10.1109/WODES.2016.7497866</a> · preprint: <a href="https://arxiv.org/abs/1510.04316" target="_blank" rel="noopener">arXiv:1510.04316</a> (posted under the working title "Probabilistic Opacity in Refinement-Based Modeling")</div>
+          <div class="ref-tags">opacity · stochastic</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">On a partially observed system, a secret &phi; is opaque if an observer cannot ascertain that its trace belongs to &phi;. We consider specifications given as Constraint Markov Chains (CMC), which are underspecified Markov chains where probabilities on edges are required to belong to some set. The nondeterminism is resolved by a scheduler, and opacity on this model is defined as a worst case measure over all implementations obtained by scheduling. This measures the information obtained by a passive observer when the system is controlled by the smartest scheduler in coalition with the observer. When restricting to the subclass of Linear CMC, we compute (or approximate) this measure and prove that refinement of a specification can only improve opacity.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Opacity Measures of Fuzzy Discrete Event Systems</div>
+          <div class="ref-meta">Weilin Deng, Daowen Qiu, Jingkai Yang · IEEE Transactions on Fuzzy Systems, 29(9), pp. 2612–2622, 2020 · <a href="https://doi.org/10.1109/TFUZZ.2020.3005335" target="_blank" rel="noopener">doi.org/10.1109/TFUZZ.2020.3005335</a></div>
+          <div class="ref-note">Fuzzy rather than probabilistic uncertainty, grouped here because it plays the same role: quantifying how opaque a system is instead of giving a yes/no verdict.</div>
+          <div class="ref-tags">opacity · stochastic</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Opacity, as an important security property, has been well investigated in crisp discrete event systems. However, in some practical systems, the general behaviors, secret and nonsecret behaviors obtained by the intruder need to be expressed as fuzzy sets rather than crisp sets. Under this situation, the intruder makes inferences by fuzzy logic rather than classic logic, thus the notions of the fuzzy opacity measures are desired to be established. First, by means of the basic laws of fuzzy logic, a general fuzzy opacity measure, as a template, is presented, in this article, for the given generalized characterizations of secret and nonsecret behaviors. Moreover, a specific measure, called as fuzzy initial-final opacity (FIFO) measure, is investigated under the assumption that the secrets and nonsecrets can be coded into the initial-final state-pairs. In addition, two variants of FIFO measure are also proposed under the assumptions that the secrets and nonsecrets are only related to the initial-states or final-states. With these fuzzy opacity measures, the system designers can evaluate the opacity degree of the systems to be designed. To show the applicability of the fuzzy opacity measures to practical systems, we finally present an illustrative example of evaluating the location privacy protection systems in location-based services by means of the fuzzy opacity measures.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Quantifying opacity of discrete event systems modeled with probabilistic Petri nets</div>
+          <div class="ref-meta">Sian Zhou, Li Yin, Zhiwu Li · Information Sciences, 666, article 120434, 2024 · <a href="https://doi.org/10.1016/j.ins.2024.120434" target="_blank" rel="noopener">doi.org/10.1016/j.ins.2024.120434</a></div>
+          <div class="ref-tags">opacity · stochastic</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">The verification and enforcement problem of opacity that falls into the category of security properties of information flows in a cyber-physical system has been extensively studied from the view of discrete event systems. Recent years have witnessed growing interest in the quantitative analysis of opacity. However, documented results on quantifying opacity in the literature are not formulated within the framework of Petri nets. By introducing a new class of Petri net as a modeling vehicle for opacity quantification, we suggest a novel notion of opacity referred to as worthy opacity, which describes the worth associated with the information that a system might leak during its evolution. Depending on how much system information is captured by an intruder, we propose two types of worthy opacity: stepwise and observational worthy opacity. We provide a necessary and sufficient condition for stepwise worthy opacity and prove its decidability. Observational worthy opacity is established by considering both system and observation aspects, with its verification shown to be undecidable. Compared with the existing works on quantifying opacity, we argue that the worthy opacity is of practical concern, as being aware of the information worth that a system may leak during its evolution is a more realistic guide than the probability that it may reveal a system secret.</div>
+          </details>
+        </li>
+      </ul>
+    </div>
+
+    <div class="subcat" id="cat-a-continuous-state-stochastic-systems">
+      <h3 class="sub-title">A.3 — Continuous-state stochastic systems</h3>
+
+      <ul class="refs">
+        <li>
+          <div class="ref-title">On Approximate Opacity of Stochastic Control Systems</div>
+          <div class="ref-meta">Siyuan Liu, Xiang Yin, Dimos V. Dimarogonas, Majid Zamani · IEEE Transactions on Automatic Control, 2024 · <a href="https://doi.org/10.1109/TAC.2024.3516202" target="_blank" rel="noopener">doi.org/10.1109/TAC.2024.3516202</a> · conference precursor: &ldquo;On a Notion of Approximate Opacity for Discrete-Time Stochastic Control Systems&rdquo;, 2020 American Control Conference (ACC), pp. 5413–5418 · <a href="https://doi.org/10.23919/ACC45564.2020.9147235" target="_blank" rel="noopener">doi.org/10.23919/ACC45564.2020.9147235</a></div>
+          <div class="ref-note">Cross-listed from the continuous-systems page for its stochastic setting: general Markov decision processes over continuous state spaces.</div>
+          <div class="ref-tags">continuous · opacity · stochastic</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">This article investigates an important class of information-flow security property called opacity for stochastic control systems. Opacity captures whether a system's secret behavior (a subset of the system's behavior that is considered to be critical) can be kept from outside observers. Existing works on opacity for control systems only provide a binary characterization of the system's security level by determining whether the system is opaque or not. In this work, we introduce a quantifiable measure of opacity that considers the likelihood of satisfying opacity for stochastic control systems modeled as general Markov decision processes (gMDPs). We also propose verification methods tailored to the new notions of opacity for finite gMDPs by using value iteration techniques. Then, a new notion called approximate opacity-preserving stochastic simulation relation is proposed, which captures the distance between two systems' behaviors in terms of preserving opacity. Based on this new system relation, we show that one can verify opacity for stochastic control systems using their abstractions (modeled as finite gMDPs). We also discuss how to construct such abstractions for a class of gMDPs under certain stability conditions.</div>
+          </details>
+        </li>
+      </ul>
+    </div>
+
+  </section>
+
+  <!-- ===================== B. VERIFICATION & SCALABILITY ===================== -->
+  <section class="category" id="cat-b">
+    <div class="cat-head"><div class="cat-letter">B</div><h2 class="cat-title">Verification &amp; Scalability</h2></div>
+    <p class="cat-blurb">Algorithms and techniques that make checking, or enforcing, the notions from category A actually tractable, as opposed to defining them. Belief-state estimators blow up combinatorially just like their non-probabilistic counterparts, so each article here targets that scalability problem with a specific technique: two-way observers, belief abstraction, barrier certificates, or a simulation relation that lets a smaller model stand in for verification.</p>
+
+    <ul class="refs">
+        <li>
+          <div class="ref-title">Privacy Verification and Enforcement via Belief Abstraction</div>
+          <div class="ref-meta">Bo Wu, Hai Lin · IEEE Control Systems Letters, 2(4), pp. 815–820, 2018 · <a href="https://doi.org/10.1109/LCSYS.2018.2849554" target="_blank" rel="noopener">doi.org/10.1109/LCSYS.2018.2849554</a> · earlier version: &ldquo;Privacy Preserving Controller Synthesis via Belief Abstraction&rdquo;, arXiv:1802.10051, 2018 · <a href="https://arxiv.org/abs/1802.10051" target="_blank" rel="noopener">arXiv:1802.10051</a></div>
+          <div class="ref-tags">enforcement · mdp · opacity · stochastic</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Privacy is a crucial concern in many practical systems. We consider a new notion of privacy based on beliefs of the system states, which is closely related to opacity in discrete event systems. To guarantee the privacy requirement, we propose to abstract the belief space whose dynamics is shown to be mixed monotone where efficient abstraction algorithm exists. Based on the abstraction, we propose two different approaches to preserve privacy with an illustrative example.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Privacy Verification in POMDPs via Barrier Certificates</div>
+          <div class="ref-meta">Mohamadreza Ahmadi, Bo Wu, Hai Lin, Ufuk Topcu · 57th IEEE Conference on Decision and Control (CDC), pp. 5610–5615, 2018 · <a href="https://doi.org/10.1109/CDC.2018.8619061" target="_blank" rel="noopener">doi.org/10.1109/CDC.2018.8619061</a></div>
+          <div class="ref-tags">opacity · stochastic</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Privacy is an increasing concern in cyber-physical systems that operates over a shared network. In this paper, we propose a method for privacy verification of cyber-physical systems modeled by Markov decision processes (MDPs) and partially-observable Markov decision processes (POMDPs) based on barrier certificates. To this end, we consider an opacity-based notion of privacy, which is characterized by the beliefs in system states. We show that the belief update equations can be represented as discrete-time switched systems, for which we propose a set of conditions for privacy verification in terms of barrier certificates. We further demonstrate that, for MDPs and for POMDPs, privacy verification can be computationally implemented by solving a set of semi-definite programs and sum-of-squares programs, respectively. The method is illustrated by an application to privacy verification of an inventory management system.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Opacity Verification in Stochastic Discrete Event Systems Using Two-Way Observers</div>
+          <div class="ref-meta">Guangzhao Qi, Fuchun Liu, Hongyan Cui · Journal of Guangdong University of Technology, 40(3), pp. 32–37, 2023 (published in Chinese) · <a href="https://dx.doi.org/10.12052/gdutxb.210169" target="_blank" rel="noopener">doi.org/10.12052/gdutxb.210169</a></div>
+          <div class="ref-tags">opacity · stochastic</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">The opacity of stochastic discrete event system is studied for stochastic system models. Firstly, the notions of stochastic infinite-step opacity and stochastic K-step opacity are formalized. By constructing a validator based on a two-way observer, a necessary and sufficient condition is obtained to verify the stochastic infinite-step opacity and stochastic K-step opacity of systems by using the validator of two-way observer. Finally, the verification algorithm for stochastic infinite-step opacity and stochastic K-step opacity based on two-way observer is proposed.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Verifying Opacity Properties in Security Systems</div>
+          <div class="ref-meta">Chunyan Mu, David Clark · IEEE Transactions on Dependable and Secure Computing, 20(2), pp. 1450–1460, 2023 · <a href="https://doi.org/10.1109/TDSC.2022.3155323" target="_blank" rel="noopener">doi.org/10.1109/TDSC.2022.3155323</a></div>
+          <div class="ref-note">Adds a probabilistic operator to OpacTL for quantitative analysis in PRISM; the core model and main results stay qualitative, and an entropy-based quantification is only sketched.</div>
+          <div class="ref-tags">classical · finite-automata · opacity · stochastic</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">We delineate a methodology for the specification and verification of flow security properties expressible in the opacity framework. We propose a logic, OpacTL, for straightforwardly expressing such properties in systems that can be modelled as partially observable labelled transition systems. We develop verification techniques for analysing property opacity with respect to observation notions. Adding a probabilistic operator to the specification language enables quantitative analysis and verification. This analysis is implemented as an extension to the PRISM model checker and illustrated via a number of examples. Finally, an alternative approach to quantifying the opacity property based on entropy is sketched.</div>
+          </details>
+        </li>
+    </ul>
+  </section>
+
+  <!-- ===================== C. MDP ENFORCEMENT & SYNTHESIS ===================== -->
+  <section class="category" id="cat-c">
+    <div class="cat-head"><div class="cat-letter">C</div><h2 class="cat-title">MDP Enforcement &amp; Synthesis</h2></div>
+    <p class="cat-blurb">Where categories A and B verify or measure leakage in a fixed system, this one is about actively synthesizing a controller or policy in an MDP that keeps a secret opaque going forward: supervisors, masking policies, and planners, several of them adversarial or game-theoretic in flavor.</p>
+
+    <ul class="refs">
+        <li>
+          <div class="ref-title">Probabilistic Opacity for Markov Decision Processes</div>
+          <div class="ref-meta">Béatrice Bérard, Krishnendu Chatterjee, Nathalie Sznajder · Information Processing Letters, 115(1), pp. 52–59, 2015 · <a href="https://doi.org/10.1016/j.ipl.2014.09.001" target="_blank" rel="noopener">doi.org/10.1016/j.ipl.2014.09.001</a> · <a href="https://hal.science/hal-01176435" target="_blank" rel="noopener">hal-01176435</a></div>
+          <div class="ref-tags">enforcement · mdp · opacity · stochastic</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Opacity is a generic security property, that has been defined on (non-probabilistic) transition systems and later on Markov chains with labels. For a secret predicate, given as a subset of runs, and a function describing the view of an external observer, the value of interest for opacity is a measure of the set of runs disclosing the secret. We extend this definition to the richer framework of Markov decision processes, where non-deterministic choice is combined with probabilistic transitions, and we study related decidability problems with partial or complete observation hypotheses for the schedulers. We prove that all questions are decidable with complete observation and &omega;-regular secrets. With partial observation, we prove that all quantitative questions are undecidable but the question whether a system is almost surely non-opaque becomes decidable for a restricted class of &omega;-regular secrets, as well as for all &omega;-regular secrets under finite-memory schedulers.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Probabilistic Disclosure: Maximisation vs. Minimisation</div>
+          <div class="ref-meta">Béatrice Bérard, Serge Haddad, Engel Lefaucheux · 37th IARCS Conference on Foundations of Software Technology and Theoretical Computer Science (FSTTCS 2017), LIPIcs vol. 93, pp. 13:1–13:14 · <a href="https://doi.org/10.4230/LIPIcs.FSTTCS.2017.13" target="_blank" rel="noopener">doi.org/10.4230/LIPIcs.FSTTCS.2017.13</a> · <a href="https://hal.science/hal-01618955" target="_blank" rel="noopener">hal-01618955</a></div>
+          <div class="ref-tags">enforcement · mdp · opacity · stochastic</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">We consider opacity questions where an observation function provides to an external attacker a view of the states along executions and secret executions are those visiting some state from a fixed subset. Disclosure occurs when the observer can deduce from a finite observation that the execution is secret, the &epsilon;-disclosure variant corresponding to the execution being secret with probability greater than 1 &minus; &epsilon;. In a probabilistic and nondeterministic setting, where an internal agent can choose between actions, there are two points of view, depending on the status of this agent: the successive choices can either help the attacker trying to disclose the secret, if the system has been corrupted, or they can prevent disclosure as much as possible if these choices are part of the system design. In the former situation, corresponding to a worst case, the disclosure value is the supremum over the strategies of the probability to disclose the secret (maximisation), whereas in the latter case, the disclosure is the infimum (minimisation). We address quantitative problems (comparing the optimal value with a threshold) and qualitative ones (when the threshold is zero or one) related to both forms of disclosure for a fixed or finite horizon. For all problems, we characterise their decidability status and their complexity. We discover a surprising asymmetry: on the one hand optimal strategies may be chosen among deterministic ones in maximisation problems, while it is not the case for minimisation. On the other hand, for the questions addressed here, more minimisation problems than maximisation ones are decidable.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Parameter and Insertion Function Co-synthesis for Opacity Enhancement in Parametric Stochastic Discrete Event Systems</div>
+          <div class="ref-meta">Bo Wu, Zhiyu Liu, Hai Lin · 2018 Annual American Control Conference (ACC), pp. 3032–3037, 2018 · <a href="https://doi.org/10.23919/ACC.2018.8430763" target="_blank" rel="noopener">doi.org/10.23919/ACC.2018.8430763</a></div>
+          <div class="ref-tags">enforcement · mdp · opacity · stochastic</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Opacity is a property that characterizes the system's capability to keep its “secret” from being inferred by an intruder that partially observes the system's behavior. In this paper, we are concerned with enhancing the opacity using insertion functions, while at the same time, enforcing the task specification in a parametric stochastic discrete event system. We first obtain the parametric Markov decision process that encodes all the possible insertions. Based on which, we convert this parameter and insertion function co-synthesis problem into a nonlinear program such that the security and the task specification can be simultaneously guaranteed.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Privacy-Preserving POMDP Planning via Belief Manipulation</div>
+          <div class="ref-meta">Wei Zheng, Taeho Jung, Hai Lin · IEEE Control Systems Letters, 6, pp. 3415–3420, 2022 · <a href="https://doi.org/10.1109/LCSYS.2022.3185186" target="_blank" rel="noopener">doi.org/10.1109/LCSYS.2022.3185186</a></div>
+          <div class="ref-tags">enforcement · mdp · opacity · stochastic</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">The privacy issue has become one of the most critical concerns in cyber-physical systems (CPSs) as CPSs are vulnerable to information leakage. In particular, a passive intruder could infer the secret information of the system through observations, and the system may be critically compromised or damaged once the intruder has high confidence on certain secret states. In this letter, we investigate the planning problem of a stochastic system in the presence of a passive eavesdropping intruder. In this system, the planner is modeled as a Markov decision process (MDP) who can access the state information and control the system transition. The intruder, who has a partial observation of the system state, is modeled as a hidden Markov model. The goal of the intruder is to infer the secrets of the system in terms of whether the current system is in some sensitive states, and the goal of the defender is to maximize the reward while preventing the intruder from inferring the secret. Distinct from existing work that embedded privacy as a part of the reward or utility function, we quantify privacy as a constraint for the planning. The problem is formulated as a constrained partially observable MDP (POMDP) planning problem and a belief state partition approach is proposed to solve the privacy-preserving planning problem via value iteration. Our observation is that the defender could prevent the intruder from inferring sensitive information via belief manipulation. However, the introduction of the privacy concern may sacrifice the system performance or even cause the problem to be infeasible. A necessary and sufficient condition is given to check the feasibility of the planning problem and examples are shown to illustrate our proposed algorithm.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Opacity-Enforcing Active Perception and Control Against Eavesdropping Attacks</div>
+          <div class="ref-meta">Sumukha Udupa, Hazhar Rahmani, Jie Fu · 14th Conference on Decision and Game Theory for Security (GameSec 2023), Springer, pp. 329–348 · <a href="https://doi.org/10.1007/978-3-031-50670-3_17" target="_blank" rel="noopener">doi.org/10.1007/978-3-031-50670-3_17</a></div>
+          <div class="ref-tags">enforcement · mdp · opacity · stochastic</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">In this paper, we consider opacity-enforcing planning with temporally-extended goals in partially observable stochastic environment. We consider a probabilistic environment modeled as partially observable Markov decision process (POMDP) in which the observation function is actively controlled as the agent decides which sensors to query at each decision step. The agent’s objective is to achieve a temporal objective, expressed using linear temporal logic for finite traces (LTL), while making achieving its goal opaque to a passive observer who can access the sensor readings of a subset of sensors that are unsecured. Opacity, as a security property, means that when from the observer’s perspective, the execution that satisfied the temporal goal is observational-equivalent to an execution that does not satisfy the temporal goal. When both secured and unsecured sensors are available upon query, the agent must be selective in its sensor query to prevent information leaking to the observer and to ensure task completion. We propose an algorithm that synthesizes a strategy that decides jointly the control actions and sensor queries to guarantee that the temporal goal is achieved and made opaque with probability 1. Our approach is based on planning with augmented belief state space. Further, we show how to employ properties in the temporal logic formula to reduce the size of the planning state space and improve scalability. We show the applicability of our algorithm on a case study with robotic planning in a stochastic gridworld with partial observations.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Security-Aware Reinforcement Learning Under Linear Temporal Logic Specifications</div>
+          <div class="ref-meta">Bohan Cui, Keyi Zhu, Shaoyuan Li, Xiang Yin · 2023 IEEE International Conference on Robotics and Automation (ICRA), pp. 12367–12373 · <a href="https://doi.org/10.1109/ICRA48891.2023.10160753" target="_blank" rel="noopener">doi.org/10.1109/ICRA48891.2023.10160753</a></div>
+          <div class="ref-tags">enforcement · mdp · opacity · stochastic</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">In this paper, we investigate the problem of reinforcement learning under linear temporal logic (LTL) specifications for Markov decision processes (MDPs) with security constraints. We consider an outside passive intruder (observer) that can observe the external output behavior of the system through an output projection. We assume that the secret of the system is a subset of the initial states. The security constraint requires that the observer can never infer for sure that the agent was initiated from a secret state. Our objective is to learn a control policy that achieves the LTL task while ensuring security. To solve the problem of shaping the reward for reinforcement learning, we propose an approach based on the initial-state estimator and the limit deterministic Büchi automata. We illustrate the proposed approach by a case study of mobile robot example.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Information-Theoretic Opacity-Enforcement in Markov Decision Processes</div>
+          <div class="ref-meta">Chongyang Shi, Yuheng Bu, Jie Fu · Proceedings of the 33rd International Joint Conference on Artificial Intelligence (IJCAI 2024), pp. 6779–6787 · <a href="https://doi.org/10.24963/ijcai.2024/749 " target="_blank" rel="noopener">doi.org/10.24963/ijcai.2024/749</a></div>
+          <div class="ref-tags">enforcement · mdp · opacity · stochastic</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">The paper studies information-theoretic opacity, an information-flow privacy property, in a setting involving two agents: A planning agent who controls a stochastic system and an observer who partially observes the system states. The goal of the observer is to infer some secret, represented by a random variable, from its partial observations, while the goal of the planning agent is to make the secret maximally opaque to the observer while achieving a satisfactory total return. Modeling the stochastic system using a Markov decision process, two classes of opacity properties are considered---Last-state opacity is to ensure that the observer is uncertain if the last state is in a specific set and initial-state opacity is to ensure that the observer is unsure of the realization of the initial state. As the measure of opacity, we employ the Shannon conditional entropy capturing the information about the secret revealed by the observable. Then, we develop primal-dual policy gradient methods for opacity-enforcement planning subject to constraints on total returns. We propose novel algorithms to compute the policy gradient of entropy for each observation, leveraging message passing within the hidden Markov models. This gradient computation enables us to have stable and fast convergence. We demonstrate our solution of opacity-enforcement control through a grid world example. </div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Planning with Probabilistic Opacity and Transparency: A Computational Model of Opaque/Transparent Observations</div>
+          <div class="ref-meta">Sumukha Udupa, Jie Fu · 2024 IEEE 63rd Conference on Decision and Control (CDC), pp. 477–484, 2024 · <a href="https://doi.org/10.1109/CDC56724.2024.10886248" target="_blank" rel="noopener">doi.org/10.1109/CDC56724.2024.10886248</a></div>
+          <div class="ref-tags">enforcement · mdp · opacity · stochastic</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">The qualitative opacity of a secret is a security property, which means that a system trajectory satisfying the secret is observation-equivalent to a trajectory violating the secret. In this paper, we study how to synthesize a control policy that maximizes the probability of a secret being made opaque against an eavesdropping attacker/observer, while subject to other task performance constraints. In contrast to the existing belief-based approach for opacity-enforcement, we develop an approach that uses the observation function, the secret, and the model of the dynamical systems to construct a so-called opaqueobservations automaton that accepts the exact set of observations that enforce opacity. Leveraging this opaque-observations automaton, we can reduce the optimal planning in Markov decision processes(MDPs) for maximizing probabilistic opacity or its dual notion, transparency, subject to task constraints into a constrained planning problem over an augmented-state MDP. Finally, we illustrate the effectiveness of the developed methods in robot motion planning problems with opacity or transparency requirements.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Policy Gradient Methods for Information-Theoretic Opacity in Markov Decision Processes</div>
+          <div class="ref-meta">Chongyang Shi, Sumukha Udupa, Michael R. Dorothy, Shuo Han, Jie Fu · arXiv:2511.02704, 2025 · <a href="https://arxiv.org/abs/2511.02704" target="_blank" rel="noopener">arXiv:2511.02704</a></div>
+          <div class="ref-tags">enforcement · mdp · opacity · stochastic</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Opacity, or non-interference, is a property ensuring that an external observer cannot infer confidential information (the "secret") from system observations. We introduce an information-theoretic measure of opacity, which quantifies information leakage using the conditional entropy of the secret given the observer's partial observations in a system modeled as a Markov decision process (MDP). Our objective is to find a control policy that maximizes opacity while satisfying task performance constraints, assuming that an informed observer is aware of the control policy and system dynamics. Specifically, we consider a class of opacity called state-based opacity, where the secret is a propositional formula about the past or current state of the system, and a special case of state-based opacity called language-based opacity, where the secret is defined by a temporal logic formula (LTL) or a regular language recognized by a finite-state automaton. First, we prove that finite-memory policies can outperform Markov policies in optimizing information-theoretic opacity. Second, we develop an algorithm to compute a maximally opaque Markov policy using a primal-dual gradient-based algorithm, and prove its convergence. Since opacity cannot be expressed as a cumulative cost, we develop a novel method to compute the gradient of conditional entropy with respect to policy parameters using observable operators in hidden Markov models. The experimental results validate the effectiveness and optimality of our proposed methods. </div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Synthesis of Dynamic Masks for Information-Theoretic Opacity in Stochastic Systems</div>
+          <div class="ref-meta">Sumukha Udupa, Chongyang Shi, Jie Fu · ACM/IEEE 16th International Conference on Cyber-Physical Systems (ICCPS 2025), pp. 1–12 · <a href="https://doi.org/10.1145/3716550.3722036" target="_blank" rel="noopener">doi.org/10.1145/3716550.3722036</a></div>
+          <div class="ref-tags">enforcement · mdp · opacity · stochastic</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">In this work, we investigate the synthesis of dynamic information releasing mechanisms, referred to as "masks", to minimize information leakage from a stochastic system to an external observer. Specifically, for a stochastic system, an observer aims to infer whether the final state of the system trajectory belongs to a set of secret states. The dynamic mask seeks to regulate sensor information in order to maximize the observer's uncertainty about the final state, a property known as final-state opacity. While existing supervisory control literature on dynamic masks primarily addresses qualitative opacity, we propose quantifying opacity in stochastic systems by conditional entropy, which is a measure of information leakage in information security. We then formulate a constrained optimization problem to synthesize a dynamic mask that maximizes final-state opacity under a total cost constraint on masking. To solve this constrained optimal dynamic mask synthesis problem, we develop a novel primal-dual policy gradient method. Additionally, we present a technique for computing the gradient of conditional entropy with respect to the masking policy parameters, leveraging observable operators in hidden Markov models. To demonstrate the effectiveness of our approach, we apply our method to an illustrative example and a stochastic grid world scenario, showing how our algorithm optimally enforces final-state opacity under cost constraints.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Almost k-Step Opacity Enforcement in Stochastic Discrete-Event Systems via Differential Privacy</div>
+          <div class="ref-meta">Rong Zhao, Murat Uzam, Zhiwu Li · Mathematics, 13(8), article 1255, 2025 · <a href="https://doi.org/10.3390/math13081255" target="_blank" rel="noopener">doi.org/10.3390/math13081255</a></div>
+          <div class="ref-tags">enforcement · mdp · opacity · stochastic</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">This paper delves into current-state opacity enforcement in partially observed discrete event systems through an innovative application of differential privacy, which is fundamental for security-critical cyber–physical systems. An opaque system implies that an external agent cannot infer the predefined system secret via its observational output, such that the important system information flow cannot be leaked out. Differential privacy emerges as a robust framework that is pivotal for the protection of individual data integrity within these systems. Motivated by the differential privacy mechanism for information protection, this research proposes the secret string adjacency relation as a novel concept, assessing the similarity between potentially compromised strings and system-generated alternatives, thereby shielding the system’s confidential data from external observation. The development of secret string differential privacy is achieved by substituting sensitive strings. These substitution strings are generated by a modified Levenshtein automaton, following exponentially distributed generation probabilities. The verification and illustrative examples of the proposed mechanism are provided.</div>
+          </details>
+        </li>
+    </ul>
+  </section>
+
+  <!-- ===================== D. APPLICATIONS & CASE STUDIES ===================== -->
+  <section class="category" id="cat-d" style="border-bottom:none;">
+    <div class="cat-head"><div class="cat-letter">D</div><h2 class="cat-title">Applications &amp; Case Studies</h2></div>
+    <p class="cat-blurb">Where probabilistic opacity gets applied to a concrete domain, beyond toy or illustrative examples.</p>
+
+    <ul class="refs">
+        <li>
+          <div class="ref-title">Probabilistic Opacity for a Passive Adversary and Its Application to Chaum's Voting Scheme</div>
+          <div class="ref-meta">Yassine Lakhnech, Laurent Mazaré · IACR Cryptology ePrint Archive, 2005, article 98 · <a href="https://eprint.iacr.org/2005/098" target="_blank" rel="noopener">IACR ePrint 2005/098</a></div>
+          <div class="ref-tags">applications · opacity · stochastic</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">A predicate is opaque for a given system, if an adversary will never be able to establish truth or falsehood of the predicate for any observed computation. This notion has been essentially introduced and studied in the context of transition systems whether describing the semantics of programs, security protocols or other systems. In this paper, we are interested in studying opacity in the probabilistic computational world. Indeed, in other settings, as in the Dolev-Yao model for instance, even if an adversary is 99% sure of the truth of the predicate, it remains opaque as the adversary cannot conclude for sure. In this paper, we introduce a computational version of opacity in the case of passive adversaries called cryptographic opacity. Our main result is a composition theorem: if a system is secure in an abstract formalism and the cryptographic primitives used to implement it are secure, then this system is secure in a computational formalism. Security of the abstract system is the usual opacity and security of the cryptographic primitives is IND-CPA security. To illustrate our result, we give two applications: a short and elegant proof of the classical Abadi-Rogaway result and the first computational proof of Chaum’s visual electronic voting scheme.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Quantitative Analysis of Opacity in Cloud Computing Systems</div>
+          <div class="ref-meta">Wen Zeng, Maciej Koutny · IEEE Transactions on Cloud Computing, 9(3), pp. 1210–1219, 2019 · <a href="https://doi.org/10.1109/TCC.2019.2894768" target="_blank" rel="noopener">doi.org/10.1109/TCC.2019.2894768</a></div>
+          <div class="ref-tags">applications · opacity · stochastic</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Federated cloud systems increase the reliability and reduce the cost of the computational support. The resulting combination of secure private clouds and less secure public clouds, together with the fact that resources need to be located within different clouds, strongly affects the information flow security of the entire system. In this paper, the clouds as well as entities of a federated cloud system are assigned security levels, and a probabilistic flow sensitive security model for a federated cloud system is proposed. Then the notion of opacity—a notion capturing the security of information flow—of a cloud computing systems is introduced, and different variants of quantitative analysis of opacity are presented. As a result, one can track the information flow in a cloud system, and analyze the impact of different resource allocation strategies by quantifying the corresponding opacity characteristics.</div>
+          </details>
+        </li>
+    </ul>
+  </section>
+
+
+  <footer>
+    <p><strong>Maintained by</strong> <a href="https://elefauch.github.io/" target="_blank" rel="noopener">Engel Lefaucheux</a>. This bibliography is almost certainly incomplete. If you know of a relevant paper that's missing, please get in touch so it can be added.</p>
+  </footer>
+</div>
+</body>
+</html>

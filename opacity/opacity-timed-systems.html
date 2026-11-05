@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Opacity of Timed Systems</title>
+<meta name="description" content="Opacity for timed systems, where the observer also sees when events happen: decidability, verification, parametric analysis and control.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Opacity of Timed Systems">
+<meta property="og:description" content="Opacity for timed systems, where the observer also sees when events happen: decidability, verification, parametric analysis and control.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* Rules shared by the topic pages and the tag search page. */
+  :root{
+    --paper:#F1EDE4;
+    --card:#E8E1D2;
+    --ink:#2A2620;
+    --ink-soft:#5C5648;
+    --ink-faint:#6A6456;
+    --line:#D2C9B4;
+    --observable:#177A72;
+    --observable-soft:#DCEAE7;
+    --secret:#B04E2D;
+    --secret-soft:#F1DDD3;
+    --display: 'Fraunces', serif;
+    --body: 'Source Serif 4', serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--body);
+    line-height:1.65;
+  }
+  a{color:var(--secret); word-break:break-word;}
+  .wrap{max-width:1100px; margin:0 auto; padding:0 32px;}
+  /* ---------- HEADER / HERO ---------- */
+  header.hero{padding:60px 0 32px;}
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:11.5px;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:20px;
+  }
+  .eyebrow .tick{color:var(--secret); font-weight:600;}
+  .hub-link{
+    font-family:var(--mono); font-size:12px; color:var(--ink-faint);
+    text-decoration:none; display:inline-flex; align-items:center; gap:6px; margin-bottom:16px;
+  }
+  .hub-link:hover{color:var(--secret);}
+  h1.title{
+    font-family:var(--display);
+    font-weight:600;
+    font-size:clamp(38px, 6vw, 62px);
+    line-height:1.02;
+    margin:0 0 20px;
+    letter-spacing:-0.015em;
+  }
+  h1.title .secret-word{color:var(--secret); font-style:italic; font-weight:500;}
+  p.lede{
+    font-size:18px;
+    color:var(--ink-soft);
+    max-width:64ch;
+    margin:0 0 32px;
+  }
+  ul.refs li{border-left:2px solid var(--line); padding:10px 0 10px 16px; margin-bottom:2px; transition:border-color 0.15s ease;}
+  ul.refs li:hover{border-left-color:var(--secret);}
+  .ref-title{font-size:15.5px; color:var(--ink); font-weight:600;}
+  .verify-flag{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    background:#F3E3B8;
+    border:1px solid #B8863B;
+    color:#6B4A1E;
+    font-family:var(--mono);
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:0.03em;
+    text-transform:uppercase;
+    padding:2px 8px 2px 6px;
+    border-radius:3px;
+    margin-right:8px;
+    vertical-align:middle;
+  }
+  .ref-meta{font-family:var(--mono); font-size:11.5px; color:var(--ink-faint); margin-top:4px; line-height:1.5;}
+  .ref-meta a{color:var(--ink-faint);}
+  .ref-meta a:hover{color:var(--secret);}
+  .ref-note{font-size:13.5px; color:var(--ink-soft); margin-top:5px; max-width:100ch;}
+  .ref-caveat{font-size:13px; color:#6B4A1E; margin-top:5px; max-width:100ch; padding-left:8px; border-left:2px solid #B8863B;}
+  .ref-tags{font-family:var(--mono); font-size:11px; color:var(--ink-faint); margin-top:6px; letter-spacing:0.02em;}
+  /* "Show abstract" toggle: a native <details>, so the browser's find-in-page also searches the abstracts */
+  .abstract-toggle{display:inline-block; list-style:none; font-family:var(--mono); font-size:11px; line-height:normal; color:var(--secret); background:none; border:1px solid var(--ink-faint); border-radius:3px; padding:2px 8px; margin-top:6px; cursor:pointer;}
+  .abstract-toggle::-webkit-details-marker{display:none;}
+  .abstract-toggle:hover{border-color:var(--secret);}
+  .abstract-toggle:focus-visible{outline:2px solid var(--secret); outline-offset:2px;}
+  details.ref-abs .abs-hide{display:none;}
+  details.ref-abs[open] .abs-show{display:none;}
+  details.ref-abs[open] .abs-hide{display:inline;}
+  .ref-abstract{font-size:13.5px; color:var(--ink-soft); margin-top:6px; max-width:100ch; padding:8px 10px; background:rgba(0,0,0,0.03); border-radius:4px;}
+  footer p{font-size:12.5px; color:var(--ink-faint); max-width:104ch; margin:0 0 8px; line-height:1.55;}
+  /* Rules shared by the topic pages only (hero diagram, intro, table of contents, categories). */
+  /* ---------- TIMING DIAGRAM ---------- */
+  .diagram-card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:2px;
+    padding:22px 24px 16px;
+  }
+  .diagram-caption{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--ink-faint);
+    margin-top:12px;
+    line-height:1.6;
+  }
+  .diagram-caption b{color:var(--ink-soft); font-weight:600;}
+  /* ---------- DESCRIPTION SECTION ---------- */
+  section.intro{padding:44px 0 6px;}
+  section.intro p{margin:0 0 20px; max-width:72ch; color:var(--ink); font-size:17px;}
+  section.intro p:last-child{margin-bottom:0;}
+  /* ---------- CATEGORY SECTIONS ---------- */
+  section.category{padding:48px 0; border-bottom:1px solid var(--line);}
+  section.category:last-of-type{border-bottom:none;}
+  .cat-head{display:flex; gap:16px; align-items:baseline; margin-bottom:10px;}
+  .cat-letter{
+    font-family:var(--display); font-weight:600; font-size:16px; color:var(--ink-faint);
+    border:1px solid var(--line); border-radius:50%;
+    width:32px; height:32px; min-width:32px;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  h2.cat-title{font-family:var(--display); font-weight:600; font-size:26px; margin:0; letter-spacing:-0.01em;}
+  .cat-blurb{color:var(--ink-soft); font-size:15px; max-width:100ch; margin:0 0 26px; padding-left:48px;}
+  li:has(.verify-flag){border-left-color:#B8863B;}
+  footer{padding:32px 0 60px; border-top:1px solid var(--line); margin-top:12px;}
+  footer p:last-child{margin-bottom:0;}
+  footer strong{color:var(--ink-soft); font-weight:600;}
+  footer a{color:var(--ink-faint); text-decoration:none; border-bottom:1px dotted var(--ink-faint);}
+  footer a:hover{color:var(--secret); border-bottom-color:var(--secret);}
+
+  /* ---------- TOC ---------- */
+  nav.toc{margin:44px 0 0; padding:24px 0; border-top:2px solid var(--ink); border-bottom:1px solid var(--line);}
+  nav.toc ol{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:1fr 1fr; gap:8px 28px;}
+  nav.toc li a{
+    display:flex; justify-content:space-between; gap:10px; text-decoration:none; color:var(--ink);
+    font-family:var(--display); font-size:16px; font-weight:600; padding:6px 0;
+  }
+  nav.toc li a:hover{color:var(--secret);}
+  nav.toc li a .num{font-family:var(--mono); color:var(--ink-faint); font-weight:400; font-size:12.5px;}
+  nav.toc ol{align-items:start;}
+  nav.toc ul.toc-sub{list-style:none; margin:0 0 10px; padding:0 0 0 14px; border-left:1px solid var(--line);}
+  nav.toc ul.toc-sub li a{display:block; font-family:var(--body); font-size:14.5px; font-weight:400; color:var(--ink-soft); padding:2px 0;}
+  nav.toc ul.toc-sub li a:hover{color:var(--secret);}
+  @media (max-width:640px){
+    nav.toc ol{grid-template-columns:1fr;}
+  }
+
+  .subcat{padding-left:48px; margin-bottom:28px;}
+  .subcat:last-child{margin-bottom:0;}
+  h3.sub-title{
+    font-family:var(--mono); font-weight:600; font-size:12.5px; text-transform:uppercase; letter-spacing:0.07em;
+    color:var(--ink); margin:0 0 4px; display:flex; align-items:center; gap:8px;
+  }
+  h3.sub-title::before{content:"§"; color:var(--ink-faint); font-weight:400;}
+  .sub-note{font-size:13.5px; color:var(--ink-faint); margin:0 0 12px; max-width:100ch;}
+  ul.refs{list-style:none; margin:0; padding:0;}
+  .stub{
+    padding-left:48px;
+    font-family:var(--mono); font-size:13px; color:var(--ink-faint); font-style:normal;
+  }
+  .stub-list{padding-left:48px; margin:10px 0 0; font-size:13.5px; color:var(--ink-soft);}
+  .stub-list li{margin-bottom:4px;}
+  /* ---------- UNCLASSIFIED ---------- */
+  section.unclassified{padding:48px 0 70px;}
+  .unclass-note{color:var(--ink-soft); font-size:15px; max-width:100ch; margin:0 0 26px;}
+  @media (max-width:640px){
+    .wrap{padding:0 18px;}
+    .cat-blurb, .subcat, .stub, .stub-list{padding-left:0;}
+    .cat-head{gap:10px;}
+  }
+</style>
+<link rel="canonical" href="https://elefauch.github.io/opacity/opacity-timed-systems.html">
+<meta property="og:url" content="https://elefauch.github.io/opacity/opacity-timed-systems.html">
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="hero">
+    <a class="hub-link" href="opacity-index.html">← All opacity pages</a>
+    <a class="hub-link" href="opacity-tag-search.html" style="margin-left:16px;">Search by tag →</a>
+    <h1 class="title">Opacity of <span class="secret-word">Timed</span> Systems</h1>
+
+    <div class="diagram-card">
+      <svg viewBox="0 0 860 230" width="100%" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Two runs of a timed system, one with a hidden secret event, agreeing not just on which events occur but on the exact real-valued instant each one occurs">
+        <defs>
+          <linearGradient id="timeFlow" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="var(--observable)" stop-opacity="0.05"/>
+            <stop offset="100%" stop-color="var(--observable)" stop-opacity="0.22"/>
+          </linearGradient>
+        </defs>
+
+        <rect x="140" y="47" width="620" height="103" fill="url(#timeFlow)"/>
+
+        <text x="40" y="45" font-family="JetBrains Mono" font-size="11" fill="#5C5648" text-anchor="start">Run A</text>
+        <text x="40" y="63" font-family="JetBrains Mono" font-size="10" fill="#6A6456" text-anchor="start">secret occurs</text>
+        <text x="40" y="125" font-family="JetBrains Mono" font-size="11" fill="#5C5648" text-anchor="start">Run B</text>
+        <text x="40" y="143" font-family="JetBrains Mono" font-size="10" fill="#6A6456" text-anchor="start">secret doesn't occur</text>
+
+        <line x1="140" y1="60" x2="760" y2="60" stroke="#D2C9B4" stroke-width="0.75"/>
+        <line x1="140" y1="140" x2="760" y2="140" stroke="#D2C9B4" stroke-width="0.75"/>
+
+        <line x1="180" y1="66" x2="180" y2="134" stroke="#D2C9B4" stroke-width="0.5" stroke-dasharray="2 3"/>
+        <line x1="700" y1="66" x2="700" y2="134" stroke="#D2C9B4" stroke-width="0.5" stroke-dasharray="2 3"/>
+
+        <circle cx="180" cy="60" r="6" fill="var(--observable-soft)" stroke="var(--observable)" stroke-width="1.2"/>
+        <circle cx="700" cy="60" r="6" fill="var(--observable-soft)" stroke="var(--observable)" stroke-width="1.2"/>
+        <circle cx="180" cy="140" r="6" fill="var(--observable-soft)" stroke="var(--observable)" stroke-width="1.2"/>
+        <circle cx="700" cy="140" r="6" fill="var(--observable-soft)" stroke="var(--observable)" stroke-width="1.2"/>
+
+        <rect x="415" y="47" width="30" height="26" rx="4" fill="var(--secret-soft)" stroke="var(--secret)" stroke-width="1.2"/>
+        <text x="430" y="35" font-family="JetBrains Mono" font-size="10.5" fill="var(--secret)" text-anchor="middle">secret</text>
+
+        <text x="180" y="180" font-family="JetBrains Mono" font-size="11" fill="#5C5648" text-anchor="middle">t = 1.37</text>
+        <text x="700" y="180" font-family="JetBrains Mono" font-size="11" fill="#5C5648" text-anchor="middle">t = 3.82</text>
+        <path d="M180,190 Q440,208 700,190" fill="none" stroke="#D2C9B4" stroke-width="0.5"/>
+        <text x="440" y="215" font-family="JetBrains Mono" font-size="10.5" fill="#6A6456" text-anchor="middle">exact instants match, not just the order</text>
+
+        <path d="M760,60 L800,100" fill="none" stroke="#D2C9B4" stroke-width="0.75"/>
+        <path d="M760,140 L800,100" fill="none" stroke="#D2C9B4" stroke-width="0.75"/>
+        <path d="M780,95 Q800,81 820,95 Q800,109 780,95 Z" fill="none" stroke="#5C5648" stroke-width="1"/>
+        <circle cx="800" cy="95" r="4" fill="#5C5648"/>
+      </svg>
+      <div class="diagram-caption">Two runs, one with a hidden <b style="color:var(--secret);">secret</b> event, the other without. What makes this the timed case: it's not enough for both runs to produce the same events in the same order, they have to occur at the exact same real-valued instant, down to the decimal, for every clock reading an observer could take. Match the timestamps and the secret stays safe; drift by even a fraction of a time unit and it's exposed.</div>
+    </div>
+
+  </header>
+
+  <section class="intro">
+    <p>This page focuses on the timed case: systems where the observer also detects when events happen, not just their order. Two runs that are step-by-step identical can still be told apart purely by their timestamps. Timing becomes a side channel in its own right, the same mechanism behind cache-timing and other side-channel attacks.</p>
+    <p>This makes verification considerably harder than in the untimed case: opacity is undecidable for general timed automata, and remains so even for several natural restricted subclasses. A large share of the literature is organized around two questions: which model restrictions or which redefinitions of the problem bring decidability back, and, separately, how to control or enforce opacity once it doesn't hold by default.</p>
+  </section>
+
+  <nav class="toc" aria-label="Table of contents">
+    <div class="eyebrow"><span class="tick">●</span> Categories</div>
+    <ol>
+      <li><a href="#cat-a"><span>Decidability &amp; Complexity</span><span class="num">A</span></a>
+        <ul class="toc-sub">
+          <li><a href="#cat-a-by-model-class">A.1 — By model class</a></li>
+          <li><a href="#cat-a-by-problem-variant">A.2 — By problem variant</a></li>
+        </ul>
+      </li>
+      <li><a href="#cat-b"><span>Verification Methods &amp; Tools</span><span class="num">B</span></a>
+        <ul class="toc-sub">
+          <li><a href="#cat-b-heuristic-approximate-methods">B.1 — Heuristic / approximate methods</a></li>
+          <li><a href="#cat-b-tool-implementations-and-benchmarks">B.2 — Tool implementations &amp; benchmarks</a></li>
+        </ul>
+      </li>
+      <li><a href="#cat-c"><span>Parametric Analysis</span><span class="num">C</span></a></li>
+      <li><a href="#cat-d"><span>Control &amp; Enforcement</span><span class="num">D</span></a>
+        <ul class="toc-sub">
+          <li><a href="#cat-d-execution-time-timing-leak-control">D.1 — Execution-time / timing-leak control</a></li>
+          <li><a href="#cat-d-buffered-imprecise-observation-control">D.2 — Buffered / imprecise-observation control</a></li>
+          <li><a href="#cat-d-supervisory-control-and-obfuscation-mechanisms">D.3 — Supervisory control &amp; obfuscation mechanisms</a></li>
+        </ul>
+      </li>
+      <li><a href="#cat-e"><span>Applications &amp; Case Studies</span><span class="num">E</span></a>
+        <ul class="toc-sub">
+          <li><a href="#cat-e-cryptographic-and-side-channel-attacks">E.1 — Cryptographic &amp; side-channel attacks</a></li>
+          <li><a href="#cat-e-cyber-physical-industrial-control-systems">E.2 — Cyber-physical / industrial control systems</a></li>
+          <li><a href="#cat-e-other-domains">E.3 — Other domains</a></li>
+        </ul>
+      </li>
+      <li><a href="#cat-f"><span>Surveys &amp; Overviews</span><span class="num">F</span></a></li>
+    </ol>
+  </nav>
+
+  <!-- ===================== A. DECIDABILITY & COMPLEXITY ===================== -->
+  
+
+  <!-- ===================== A. DECIDABILITY & COMPLEXITY ===================== -->
+  <section class="category" id="cat-a">
+    <div class="cat-head"><div class="cat-letter">A</div><h2 class="cat-title">Decidability &amp; Complexity</h2></div>
+    <p class="cat-blurb">Papers that prove a (un)decidability result or complexity bound for timed opacity, either for a given automaton model as-is (A.1) or by changing the opacity notion itself to chase decidability (A.2).</p>
+
+    <div class="subcat" id="cat-a-by-model-class">
+      <h3 class="sub-title">A.1 — By model class</h3>
+
+      <h3 class="sub-title" style="margin-top:18px; padding-left:0; font-size:11.5px; opacity:0.85;">Dense-time (general) timed automata</h3>
+      <ul class="refs">
+        <li>
+          <div class="ref-title">The Dark Side of Timed Opacity</div>
+          <div class="ref-meta">Franck Cassez · ISA 2009 (Advances in Information Security and Assurance), LNCS vol. 5576, pp. 21–30, Springer, 2009 · <a href="https://doi.org/10.1007/978-3-642-02617-1_3" target="_blank" rel="noopener">doi.org/10.1007/978-3-642-02617-1_3</a></div>
+          <div class="ref-tags">opacity · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">In this paper we extend the notion of opacity, defined for discrete-event systems, to dense-time systems. We define the timed opacity problem for timed automata and study its algorithmic status. We show that for the very restrictive class of Event Recording Timed Automata, the opacity problem is already undecidable leaving no hope for an algorithmic solution to the opacity problem in dense-time.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">The Opacity of Timed Automata</div>
+          <div class="ref-meta">Jie An, Qiang Gao, Lingtai Wang, Naijun Zhan, Ichiro Hasuo · FM 2024, LNCS vol. 14933, pp. 620–637, Springer, 2024 · <a href="https://doi.org/10.1007/978-3-031-71162-6_32" target="_blank" rel="noopener">doi.org/10.1007/978-3-031-71162-6_32</a></div>
+          <div class="ref-note">Shows opacity stays undecidable for one-clock timed automata, a class the original undecidability proof did not directly cover.</div>
+          <div class="ref-tags">opacity · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Opacity serves as a critical security and confidentiality property, which concerns whether an intruder can unveil a system’s secret based on structural knowledge and observed behaviors. Opacity in timed systems presents greater complexity compared to untimed systems, and it has been established that opacity for timed automata is undecidable. However, the original proof cannot be applied to decide the opacity of one-clock timed automata directly. In this paper, we explore three types of opacity within timed automata: language-based timed opacity, initial-location timed opacity, and current-location timed opacity. We begin by formalizing these concepts and establishing transformation relations among them. Subsequently, we demonstrate the undecidability of the opacity problem for one-clock timed automata. Furthermore, we offer a constructive proof for the conjecture regarding the decidability of opacity for timed automata in discrete-time semantics. Additionally, we present a sufficient condition and a necessary condition for the decidability of opacity in specific subclasses of timed automata.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Evolution-Based Timed Opacity under a Universal Observation Model</div>
+          <div class="ref-meta">Zhe Zhang, Martijn Goorden, Michel Reniers · arXiv:2603.26573, 2026 (full version of a CDC 2026 submission) · <a href="https://arxiv.org/abs/2603.26573" target="_blank" rel="noopener">arxiv.org/abs/2603.26573</a></div>
+          <div class="ref-note">Contributes no new decidability result: it sets up a common observation model so that the existing timed-opacity variants can be compared.</div>
+          <div class="ref-tags">opacity · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Existing literature on timed opacity uses specific definitions for restricted subclasses of timed automata or limited observation models. This lack of a unified definition makes it difficult to establish formal relationships and compare the expressiveness of different opacity variants. This paper establishes a unified framework for timed opacity by introducing a universal observation model for timed automata. First, we introduce an observation model with full observation of time delay and partial observation of locations, clocks, and events. Second, based on this model, we define the notion of evolution-based timed opacity. Third, we mathematically prove that evolution-based timed opacity strictly implies language-based timed opacity and establish a formal equivalence with execution-time opacity under constrained observations. This framework establishes a unified semantic hierarchy for characterizing the landscape of timed opacity. </div>
+          </details>
+        </li>
+      </ul>
+      <h3 class="sub-title" style="margin-top:22px; padding-left:0; font-size:11.5px; opacity:0.85;">Discrete-time timed automata</h3>
+      <ul class="refs">
+        <li>
+          <div class="ref-title">The Opacity of Timed Automata</div>
+          <div class="ref-meta">Jie An, Qiang Gao, Lingtai Wang, Naijun Zhan, Ichiro Hasuo · FM 2024, LNCS vol. 14933, pp. 620–637, Springer, 2024 · <a href="https://doi.org/10.1007/978-3-031-71162-6_32" target="_blank" rel="noopener">doi.org/10.1007/978-3-031-71162-6_32</a></div>
+          <div class="ref-note">Gives a constructive proof of the conjecture that opacity is decidable for timed automata under discrete-time semantics.</div>
+          <div class="ref-tags">opacity · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Opacity serves as a critical security and confidentiality property, which concerns whether an intruder can unveil a system’s secret based on structural knowledge and observed behaviors. Opacity in timed systems presents greater complexity compared to untimed systems, and it has been established that opacity for timed automata is undecidable. However, the original proof cannot be applied to decide the opacity of one-clock timed automata directly. In this paper, we explore three types of opacity within timed automata: language-based timed opacity, initial-location timed opacity, and current-location timed opacity. We begin by formalizing these concepts and establishing transformation relations among them. Subsequently, we demonstrate the undecidability of the opacity problem for one-clock timed automata. Furthermore, we offer a constructive proof for the conjecture regarding the decidability of opacity for timed automata in discrete-time semantics. Additionally, we present a sufficient condition and a necessary condition for the decidability of opacity in specific subclasses of timed automata.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Verifying Opacity of Discrete-Timed Automata</div>
+          <div class="ref-meta">Julian Klein, Paul Kogel, Sabine Glesner · FormaliSE 2024, pp. 55–65, ACM, 2024 · <a href="https://doi.org/10.1145/3644033.3644376" target="_blank" rel="noopener">doi.org/10.1145/3644033.3644376</a></div>
+          <div class="ref-tags">opacity · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Opacity is a powerful confidentiality property that holds if a system cannot leak secret information through observable behavior. In recent years, time has become an increasingly popular attack vector. The notion of opacity has therefore been extended to timed automata (TA). However, the verification of opacity of TA has been proven to be undecidable for the commonly used dense time model. To make the problem decidable, state of the art approaches consider weaker notions of opacity or heavily restrict the class of considered TA, resulting in unrealistic threat models. In this paper, we address the problem of verifying opacity of TA without restrictions. For this purpose, we consider a discrete time setting. We present a novel algorithm to transform TA to equivalent finite automata (FA) and then use known methods to verify opacity of the resulting FA. To improve the efficiency of our algorithm, we use a novel time abstraction that significantly reduces the state space of the resulting FA, improving the scalability of our approach. We validate our method using randomized systems, as well as four case studies from the literature showing that our approach is applicable in practice.</div>
+          </details>
+        </li>
+      </ul>
+      <h3 class="sub-title" style="margin-top:22px; padding-left:0; font-size:11.5px; opacity:0.85;">Real-time &amp; integer-reset automata</h3>
+      <ul class="refs">
+        <li>
+          <div class="ref-title">The Opacity of Real-Time Automata</div>
+          <div class="ref-meta">Lingtai Wang, Naijun Zhan, Jie An · IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems, 37(11), pp. 2845–2856, 2018 · <a href="https://doi.org/10.1109/TCAD.2018.2857363" target="_blank" rel="noopener">doi.org/10.1109/TCAD.2018.2857363</a> · earlier version: &ldquo;Decidability of the Initial-State Opacity of Real-Time Automata&rdquo;, Symposium on Real-Time and Hybrid Systems — Essays Dedicated to Chaochen Zhou on the Occasion of His 80th Birthday (2018), LNCS vol. 11180, Springer · <a href="https://doi.org/10.1007/978-3-030-01461-2_3" target="_blank" rel="noopener">doi.org/10.1007/978-3-030-01461-2_3</a></div>
+          <div class="ref-note">Language-based opacity, and likewise initial-state opacity, is decidable for real-time automata, by translation to finite automata with timed alphabets.</div>
+          <div class="ref-tags">opacity · timed · verification-tools</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Opacity is an important property on information flow to guarantee that a system under attack keeps its “secrets”, possibly subsets of traces (language-based opacity) or subsets of states (state-based opacity), opaque to the outside intruder with partial observability. In this paper, we investigate the opacity problems of real-time automata (RTA), which is a popular model for real-time systems. In order to prove that the language-opacity problem of RTA is decidable, we introduce the notion of trace-equivalence and then translate RTA into finite-state automata (FA) with timed alphabets. Besides, we also introduce the notions of partitioned timed alphabet and language to guarantee trace equivalence is preserved by complementation and product operations over FA with timed alphabets. Thus, our decision procedure can be sketched as follows: first, translate the RTA to model a system under attack and the RTA to specify the secret behavior of the system into FA, respectively; then, compute another FA, which accepts all traces accepted by the first FA, but not by the second one; afterwards, project these FA onto the given observable set; finally, unify the alphabets of these FA such that for any two timed actions with the same event, their time parts do not have any overlap. Thus, whether the original system is language-opaque with respect to the secret RTA and the observable set is reduced to the inclusion problem of regular languages. Similarly, we can show decidability of initial-opacity of RTA.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">State-based opacity of labeled real-time automata</div>
+          <div class="ref-meta">Kuize Zhang · Theoretical Computer Science, vol. 987, article 114373, 2024 · <a href="https://doi.org/10.1016/j.tcs.2023.114373" target="_blank" rel="noopener">doi.org/10.1016/j.tcs.2023.114373</a></div>
+          <div class="ref-tags">opacity · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">State-based opacity is a special type of opacity as a confidentiality property, which describes whether an external intruder cannot be sure whether secret states of a system have been visited by observing its generated outputs, given that the intruder knows complete knowledge of the system's structure but can only see generated outputs. When the time of visiting secret states is specified as the initial time, the current time, any past time, and at most K observational steps prior to the current time, the notions of state-based opacity can be formulated as initial-state opacity, current-state opacity, infinite-step opacity, and K-step opacity, respectively. In this paper, we formulate the four versions of opacity for labeled real-time automata which are a widely-used model of real-time systems, and give N2EXPTIME verification algorithms for the four notions by defining appropriate notions of observer and reverse observer for labeled real-time automata that are proven to be computable in N2EXPTIME.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Initial-Location Opacity and Infinite-Step Opacity of Timed Automata with Integer Resets</div>
+          <div class="ref-meta">Weilin Deng, Daowen Qiu, Jingkai Yang · IEEE Control Systems Letters, 9, pp. 2031–2036, 2025 · <a href="https://doi.org/10.1109/LCSYS.2025.3590422" target="_blank" rel="noopener">doi.org/10.1109/LCSYS.2025.3590422</a></div>
+          <div class="ref-tags">opacity · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Our prior work established the decidability of current-location timed opacity (CLTO) in timed automata with integer resets (IRTA). This letter considers initial-location timed opacity (ILTO) and infinite-step timed opacity (ISTO) in timed automata (TA). These properties are shown undecidable in general TA. However, their decidability in IRTA is demonstrated by providing the corresponding verification algorithms. Specifically, ILTO verification in IRTA is shown to be reducible to the language inclusion problem of finite automata (FA), a well-known decidable problem. To mitigate the state-space explosion effect, a state-reduction method is proposed, which reduces the state space via bisimilar state merging and reverse-automata-based strategies for ILTO verification. An analogous algorithm extends these state-reduction techniques for ISTO verification. Experiments evaluate the proposed algorithms, showing their effectiveness in verifying moderate-scale IRTA.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">New Insights into Opacity Verification in Timed Discrete-Event Systems</div>
+          <div class="ref-meta">Weilin Deng, Daowen Qiu, Jingkai Yang · Automatica, vol. 186, article 112869, 2026 · <a href="https://doi.org/10.1016/j.automatica.2026.112869" target="_blank" rel="noopener">doi.org/10.1016/j.automatica.2026.112869</a> (journal version; preprint: <a href="https://arxiv.org/abs/2504.00625" target="_blank" rel="noopener">arXiv:2504.00625</a>, "New Insights into the Decidability of Opacity in Timed Automata")</div>
+          <div class="ref-note">Gives necessary and sufficient conditions for decidability of current-location timed opacity in timed automata, and shows it is decidable for integer-reset timed automata.</div>
+          <div class="ref-tags">opacity · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">This paper investigates the verification of opacity in timed discrete-event systems (DESs) modeled as timed automata (TA), a problem known to be undecidable in general. We first address a theoretical gap left by recent work of An et al. (FM 2024) by establishing necessary and sufficient conditions for the decidability of current-location timed opacity (CLTO) in TA. As an instantiation of these conditions combined with known results on language inclusion, we show that CLTO is decidable for a subclass of TA, namely timed automata with integer resets (IRTA), and we also provide a corresponding verification algorithm. To enable decidability for general TA, we explore how to reduce the observational power of the intruder model in a way that remains realistic while ensuring decidability. Under the assumption that the intruder can only observe time in discrete units, we introduce the notion of current-location timed opacity against intruders with discrete-time precision (CLTO-IDTP) and develop a corresponding verification algorithm. These results provide a theoretical foundation for the security analysis of timed systems, offering a balance between modeling expressiveness and computational tractability.</div>
+          </details>
+        </li>
+      </ul>
+      <h3 class="sub-title" style="margin-top:22px; padding-left:0; font-size:11.5px; opacity:0.85;">Constant-time labeled automata</h3>
+      <ul class="refs">
+        <li>
+          <div class="ref-title">Observers for a Class of Timed Automata Based on Elapsed Time Graphs</div>
+          <div class="ref-meta">Jun Li, Dimitri Lefebvre, Christoforos N. Hadjicostis, Zhiwu Li · IEEE Transactions on Automatic Control, 67(2), pp. 767–779, 2022 · <a href="https://doi.org/10.1109/TAC.2021.3064542" target="_blank" rel="noopener">doi.org/10.1109/TAC.2021.3064542</a></div>
+          <div class="ref-tags">opacity · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">This article develops a novel design principle for the observer of timed discrete event systems behaving under specific time semantics. Observers devoted to discrete event systems usually ignore the timing aspects of underlying systems but this can have implications to many applications, in particular, for refinement of estimation and inference tasks. The techniques of this article use the time stamps of observations to refine the state estimation process for a class of labeled and timed automata where events occur based on constant time values. The resulting timed observer is beneficial for refining privacy and security issues. Current-state opacity is discussed as a promising application of the timed observer.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">State Estimation for Constant-Time Labeled Automata under Dense Time</div>
+          <div class="ref-meta">Jun Li, Dimitri Lefebvre, Christoforos N. Hadjicostis, Zhiwu Li · Automatica, vol. 170, article 111874, 2024 · <a href="https://doi.org/10.1016/j.automatica.2024.111874" target="_blank" rel="noopener">doi.org/10.1016/j.automatica.2024.111874</a></div>
+          <div class="ref-note">State estimation paper, with opacity as a direct application.</div>
+          <div class="ref-tags">opacity · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">In this paper, we focus on state estimation for constant-time labeled automata in a dense time context, i.e., the time constraints of the automata can be given according to real numbers. Given a sequence of timed observations (i.e., pairs of logical observations with their time stamps) collected from a system within a finite time window, a state estimation method is proposed to find the set of states in which the system might reside by the end of the time window. By using both labeling and timing information as well as the structure of the system, we can express any finite time evolution from one state to another into constraint satisfaction problems (CSPs). This structural analysis is independent of all collected sequences of timed observations and can be achieved offline, although its cost is exponential with respect to the number of states in the system. Consequently, two algorithms are designed to perform state estimation under a single observation and no observation, respectively, by solving a finite number of CSPs generated according to the system’s structural information. Both algorithms can be jointly used in an iterative approach to perform state estimation for any sequence of timed observations. In such a case, the number of generated CSPs in the algorithms increases linearly with respect to the length of the observed sequence.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Verification of State-Based Timed Opacity for Constant-Time Labeled Automata</div>
+          <div class="ref-meta">Jun Li, Dimitri Lefebvre, Christoforos N. Hadjicostis, Zhiwu Li · IEEE Transactions on Automatic Control, 70(1), pp. 503–509, 2025 · <a href="https://doi.org/10.1109/TAC.2024.3432788" target="_blank" rel="noopener">doi.org/10.1109/TAC.2024.3432788</a></div>
+          <div class="ref-tags">opacity · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">This article proposes and verifies two types of state-based timed opacity notions for constant-time labeled automata (a class of timed models with partially observable transitions), called [T<sub>l</sub>,T<sub>u</sub>]-opacity and [T<sub>l</sub>,+&infin;)-opacity. A system is said to be [T<sub>l</sub>,T<sub>u</sub>]-opaque (respectively, [T<sub>l</sub>,+&infin;)-opaque) if no timed observation can lead to the exposure of specified states (called secret states) within a finite time window (respectively, an infinite time window) starting at the time instant T<sub>l</sub>. Based on the design principle of a timed observer developed in our previous work, we show that the timed observer of a system can be used to estimate the set of states in which the system may stay within certain (finite or infinite) time windows. The key of this approach is to determine whether a given time value is a possible elapsed time value from one observer state to another according to the structural information of the timed observer. From this methodology, we present two algorithms to verify the proposed opacity notions. The complexities of the algorithms are O(2<sup>|X|</sup>) and O(2<sup>3&sdot;|X|</sup>), respectively, and the complexity of the structural analysis of the observer is O((|Q|+2)&sdot;2<sup>2&sdot;|X|</sup>), where |X| and |Q| are the numbers of states and labels in a plant.</div>
+          </details>
+        </li>
+      </ul>
+      <h3 class="sub-title" style="margin-top:22px; padding-left:0; font-size:11.5px; opacity:0.85;">Time-interval automata</h3>
+      <ul class="refs">
+        <li>
+          <div class="ref-title">Opacity of Discrete Event Systems Modeled by Time-Interval Automata</div>
+          <div class="ref-meta">Mariana Guimarães Marques, Raphael Julio Barcelos, João Carlos Basilio · IEEE Transactions on Automatic Control, 2026, pp. 1–16 (early access; volume and issue not yet assigned) · <a href="https://doi.org/10.1109/TAC.2026.3746530" target="_blank" rel="noopener">doi.org/10.1109/TAC.2026.3746530</a> · conference precursor: &ldquo;The Use of Time-Interval Automata in the Modeling of Timed Discrete Event Systems and its Application to Opacity&rdquo;, IFAC-PapersOnLine, 56(2), pp. 8654–8659, 2023 · <a href="https://doi.org/10.1016/j.ifacol.2023.10.042" target="_blank" rel="noopener">doi.org/10.1016/j.ifacol.2023.10.042</a></div>
+          <div class="ref-note">The observer construction is exponential, against the doubly exponential one reported for labeled real-time automata. The IFAC 2023 conference version introduced TIA; the graded notions, their conditions and the complexity analysis are new here.</div>
+          <div class="ref-tags">opacity · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">This paper addresses the problem of language opacity for a class of timed discrete-event systems whose transitions must occur within some known time interval after the system reaches a state. For this purpose, a new class of timed automata is proposed, time-interval automata (TIA), in which the time elapsed is associated with a unique clock, allowing each transition to be associated with a time interval of occurrence. We present new procedures to compute complement, projection, and intersection of time-interval regular languages using TIA, which, differently from existing approaches, do not require refinement by partition of the intervals when performed by using the automata that represent the considered languages. We extend the well-known language-based definition of opacity to time-interval language opacity and, to this end, we introduce new notions of language opacity: time independent(I)/dependent(D) strong(S)/weak(W) opacity(O): TISO, TIWO, TDSO and TDWO. We propose necessary and sufficient conditions for each one of the above notions of opacity and an algorithm for their verification.</div>
+          </details>
+        </li>
+      </ul>
+      <h3 class="sub-title" style="margin-top:22px; padding-left:0; font-size:11.5px; opacity:0.85;">Event-recording automata</h3>
+      <ul class="refs">
+        <li>
+          <div class="ref-title">Robust opacity in timed automata: notions and verification</div>
+          <div class="ref-meta">Sjood Ammen Daje, Tareq Ahmad Al-Sarayrah, Ding Liu, Zhiwu Li · Reliability Engineering &amp; System Safety, 270, article 112093, 2026 · <a href="https://doi.org/10.1016/j.ress.2025.112093" target="_blank" rel="noopener">doi.org/10.1016/j.ress.2025.112093</a></div>
+          <div class="ref-note">The notions are defined for general timed automata; the verification procedures are developed for the non-punctual, event-recording subclass.</div>
+          <div class="ref-tags">cyber-physical · opacity · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">This paper explores the role of opacity in enhancing security within partially observed discrete event systems modeled as timed automata. Robust notions of opacity are introduced, extending traditional concepts by incorporating quantitative assessments of information leakage based on observable behaviors and precise timing. These notions aim to prevent inadvertent revelation of system secrets under both limited and unlimited observational capabilities of intruders, ensuring comprehensive security across varying timing scopes. A theoretical framework is developed, establishing necessary and sufficient conditions for achieving robust opacity, grounded in strong analytical foundations. Illustrative examples demonstrate the application and effectiveness of the proposed notions. Verification is enhanced through a novel strategy employing verifier and filter automata, adept at addressing complexities from diverse observational scopes and stringent timing constraints. Furthermore, a cutoff phenomenon is observed, revealing scalability limits in verification, where beyond certain thresholds, opacity properties remain stable despite additional observations. Theoretical proofs support the proposed techniques, ensuring rigorous validation of the robustness and applicability of the security measures. Case studies on secure airport terminal operations and confidential job handling in a smart manufacturing cell demonstrate the practical effectiveness of the proposed framework. Overall, the study advances opacity theory by providing practical verification tools and strengthening security insights in partially observed, time-sensitive systems.</div>
+          </details>
+        </li>
+      </ul>
+      <h3 class="sub-title" style="margin-top:22px; padding-left:0; font-size:11.5px; opacity:0.85;">Switching output automata</h3>
+      <ul class="refs">
+        <li>
+          <div class="ref-title">Timed Opacity Verification for Switching Output Automata</div>
+          <div class="ref-meta">Tianyu Liu, Carla Seatzu, Alessandro Giua · 17th IFAC Workshop on Discrete Event Systems (WODES 2024), p. 24 · <a href="https://doi.org/10.1016/j.ifacol.2024.07.005" target="_blank" rel="noopener">doi.org/10.1016/j.ifacol.2024.07.005</a></div>
+          <div class="ref-tags">opacity · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">In this paper, we consider timed opacity verification for switching output automata (SOA). We define a subset of global states of the SOA as vulnerable and associate to each of them a secret dwell interval. A SOA is opaque if an intruder, based on the observation of the outputs over time, cannot determine whether the current global state is vulnerable and the corresponding dwell time belongs to the secret dwell interval. We define a secret-dependent evolution automaton as the logical abstraction of the SOA's evolution when incorporating timed secrets. We show how an observer, i.e., the deterministic finite automaton equivalent to the secret-dependent evolution automaton, can be used to verify timed opacity.</div>
+          </details>
+        </li>
+      </ul>
+      <h3 class="sub-title" style="margin-top:22px; padding-left:0; font-size:11.5px; opacity:0.85;">Resource-extended (multi-energy) timed automata</h3>
+      <ul class="refs">
+        <li>
+          <div class="ref-title">Opacity Problems in Multi-Energy Timed Automata</div>
+          <div class="ref-meta">Étienne André, Lydia Bakiri · Proceedings of the 41st ACM/SIGAPP Symposium on Applied Computing (SAC 2026), pp. 317–324 · <a href="https://doi.org/10.1145/3748522.3779881" target="_blank" rel="noopener">doi.org/10.1145/3748522.3779881</a> · preprint: <a href="https://arxiv.org/abs/2512.04950" target="_blank" rel="noopener">arXiv:2512.04950</a></div>
+          <div class="ref-tags">opacity · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Cyber-physical systems can be subject to information leakage; in the presence of continuous variables such as time and energy, these leaks can be subtle to detect. We study here the verification of opacity problems over systems with observation over both timing and energy information. We introduce guarded multi-energy timed automata as an extension of timed automata with multiple energy variables and guards over such variables. Despite undecidability of this general formalism, we establish positive results over a number of subclasses, notably when the attacker observes the final energy and/or the execution time, but also when they have access to the value of the energy variables every time unit.</div>
+          </details>
+        </li>
+      </ul>
+      <h3 class="sub-title" style="margin-top:22px; padding-left:0; font-size:11.5px; opacity:0.85;">Timed process algebras</h3>
+      <p class="sub-note" style="margin-top:0;">A genuinely different formalism from timed automata: systems are specified compositionally as process terms (in the style of CCS/CSP) extended with a discrete "tick" action or explicit timed prefixes, rather than as automata with real-valued clocks. This entire line is the work of Damas Gruska (Comenius University) and collaborators, largely independent of the Cassez/André lineage above, which is worth noting since it means the two research threads use different vocabulary for closely related ideas.</p>
+      <ul class="refs">
+        <li>
+          <div class="ref-title">Process Opacity for Timed Process Algebra</div>
+          <div class="ref-meta">Damas P. Gruska · PSI 2014 (Perspectives of System Informatics), LNCS vol. 8974, pp. 151–160, Springer, 2015 · <a href="https://doi.org/10.1007/978-3-662-46823-4_13" target="_blank" rel="noopener">doi.org/10.1007/978-3-662-46823-4_13</a></div>
+          <div class="ref-tags">opacity · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">A new security concept called process opacity is formalized and studied. For processes which are process opaque with respect to a given predicate over processes, an intruder cannot learn validity of this predicate for any subsequent state of computation. We discuss different extensions of this concept as well as its properties. We put some restrictions on predicates in such a way that we obtain decidable security properties.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Dynamics Security Policies and Process Opacity for Timed Process Algebras</div>
+          <div class="ref-meta">Damas P. Gruska · PSI 2015 (Perspectives of System Informatics), LNCS vol. 9609, pp. 149–157, Springer, 2016 · <a href="https://doi.org/10.1007/978-3-319-41579-6_12" target="_blank" rel="noopener">doi.org/10.1007/978-3-319-41579-6_12</a></div>
+          <div class="ref-tags">opacity · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Process opacity for dynamic security policies is formalized and studied. The dynamic security policies influence what an intruder can observe as well as which part of system’s behaviour is classified at a given moment. The resulting security properties are undecidable but under some realistic restrictions we obtain decidable ones.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Process Environment Opacity</div>
+          <div class="ref-meta">Damas P. Gruska · CS&amp;P 2016 (Concurrency, Specification and Programming), CEUR Workshop Proceedings vol. 1698 · <a href="https://ceur-ws.org/Vol-1698/CS&amp;P2016_20_Gruska_Process-Environment-Opacity.pdf" target="_blank" rel="noopener">ceur-ws.org/Vol-1698/...</a></div>
+          <div class="ref-tags">opacity · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">A security property called process environment opacity is formalized and studied. Properties of process’s inputs (environments) are expressed by predicate and it is required that an intruder cannot learn their validity by observing process’s behavior. This basic idea can be formulated in various ways. The resulting security properties are compared.</div>
+          </details>
+        </li>
+      </ul>
+      <h3 class="sub-title" style="margin-top:22px; padding-left:0; font-size:11.5px; opacity:0.85;">Timed Petri nets</h3>
+      <ul class="refs">
+        <li>
+          <div class="ref-title">Verifying Timed Properties of Programs in IoT Nodes using Parametric Time Petri Nets</div>
+          <div class="ref-meta">Étienne André, Jean-Luc Béchennec, Sudipta Chattopadhyay, Sébastien Faucou, Didier Lime, Dylan Marinho, Olivier H. Roux, Jun Sun · 40th ACM/SIGAPP Symposium on Applied Computing (SAC 2025), Catania, Italy, pp. 1998–2006 · <a href="https://doi.org/10.1145/3672608.3707861" target="_blank" rel="noopener">doi.org/10.1145/3672608.3707861</a> · <a href="https://hal.science/hal-05408909" target="_blank" rel="noopener">hal-05408909</a></div>
+          <div class="ref-note">Opacity appears only as a proof-of-concept use of a framework that translates binary code on IoT microcontrollers into parametric time Petri nets.</div>
+          <div class="ref-tags">opacity · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">The analysis of timed properties of programs is a complex task, as it is highly dependent on both the software and the hardware. In this work, we propose a framework for modeling with timed formal models the execution of programs, taking into account the micro-architecture of the machine on which it executes. We model both the program, at the instruction set architecture level, and the hardware, including the processor micro-architecture, using time Petri nets. Our implementation uses the ARM Cortex-M instruction set architecture and a hardware architecture representative of microcontrollers used in IoT nodes. The whole translation is fully automated and allows, starting from binary code, to automatically produce the models usable by the state-of-the-art time Petri net model checker Roméo. In addition, and as a proof of concept, we show how we can check, and enforce to some extent, opacity properties on programs, leveraging the ability of Roméo to verify a parametric timed extension of the classical computation tree logic.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Strong Current-State Opacity Verification of Discrete-Event Systems Modeled with Time Labeled Petri Nets</div>
+          <div class="ref-meta">Tao Qin, Li Yin, Gaiyun Liu, Naiqi Wu, Zhiwu Li · IEEE/CAA Journal of Automatica Sinica, 12(1), pp. 54–68, Jan 2025 · <a href="https://doi.org/10.1109/JAS.2024.124560" target="_blank" rel="noopener">doi.org/10.1109/JAS.2024.124560</a></div>
+          <div class="ref-tags">opacity · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">This paper addresses the verification of strong current-state opacity with respect to real-time observations generated from a discrete-event system that is modeled with time labeled Petri nets. The standard current-state opacity cannot completely characterize higher-level security. To ensure the higher-level security requirements of a time-dependent system, we propose a strong version of opacity known as strong current-state opacity. For any path (state-event sequence with time information) π derived from a real-time observation that ends at a secret state, the strong current-state opacity of the real-time observation signifies that there is a non-secret path with the same real-time observation as π. We propose general and non-secret state class graphs, which characterize the general and non-secret states of time-dependent systems, respectively. To capture the observable behavior of non-secret states, a non-secret observer is proposed. Finally, we develop a structure called a real-time concurrent verifier to verify the strong current-state opacity of time labeled Petri nets. This approach is efficient since the real-time concurrent verifier can be constructed by solving a certain number of linear programming problems.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Verification of Current-State Opacity and Opaque Time for Labeled Time Petri Net Systems</div>
+          <div class="ref-meta">Yuting Wang, Liang Li, Zhiwu Li · Automatica, 176, article 112241, 2025 · <a href="https://doi.org/10.1016/j.automatica.2025.112241" target="_blank" rel="noopener">doi.org/10.1016/j.automatica.2025.112241</a></div>
+          <div class="ref-tags">opacity · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">This paper investigates the verification of current-state opacity and opaque time in timed discrete event systems modeled with labeled time Petri nets (LTPNs). First, we formally conceptualize current-state opacity and opaque time for LTPN systems. Based on the solution of a set of linear programming problems (LPPs) associated with the transitions-related timing constraints in the modified state class graph (MSCG) of an LTPN system, an approach is proposed to find all the state classes and logic transition sequences that the system may generate at a given time instant. By utilizing such state classes and logic transition sequences, a method for verifying the current-state opacity of an LTPN system is presented, avoiding an exhaustive enumeration of the state classes that are consistent with all the observable label sequences at the time instant. To further acquire the current-state opaque time of the LTPN system, we propose a method for calculating the length of opaque time based on the solution of LPPs that are associated with the paths in the MSCG. Particularly, an algorithm is reported to compute the opaque time of an LTPN system with respect to a given secret. Finally, a case study is provided to illustrate the proposed algorithms to determine the current-state opacity and opaque time for an LTPN system.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">K-Step Opacity Verification and Enforcement of Time Labeled Petri Net Systems</div>
+          <div class="ref-meta">Yifan Dong, Dimitri Lefebvre, Zhiwu Li · IEEE Transactions on Automatic Control, 70(9), pp. 5848–5863, 2025 · <a href="https://doi.org/10.1109/TAC.2025.3552020" target="_blank" rel="noopener">doi.org/10.1109/TAC.2025.3552020</a></div>
+          <div class="ref-tags">opacity · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">This article presents a procedure for K-step opacity verification and enforcement of timed observations generated from discrete event systems modeled by time labeled Petri nets. Within the framework of a timed discrete event system that is partially observed by an intruder, a K-step opaque timed observation means that an intruder has observed the system with time stamps but is not able to deduce the secret information within the knowledge derived from the last K steps of the timed observation. We propose an information structure called a partial modified state class graph with respect to a timed observation. Then, based on the particular graph, an algorithm is designed to construct a delayed marking estimator that is used for the verification of K-step opacity of a timed observation by solving a number of linear programming problems. Finally, when the timed observation is not K-step opaque, a strategy by adjusting the time horizons of transitions with soft time intervals is proposed for the opacity enforcement purpose.</div>
+          </details>
+        </li>
+      </ul>
+      <h3 class="sub-title" style="margin-top:22px; padding-left:0; font-size:11.5px; opacity:0.85;">Bounded-resource</h3>
+      <ul class="refs">
+        <li>
+          <div class="ref-title">The Bright Side of Timed Opacity</div>
+          <div class="ref-meta">Étienne André, Sarah Dépernet, Engel Lefaucheux · Logical Methods in Computer Science, 22(2), article 31, 2026 · <a href="https://doi.org/10.46298/lmcs-22(2:31)2026" target="_blank" rel="noopener">doi.org/10.46298/lmcs-22(2:31)2026</a> · conference version: <a href="https://doi.org/10.1007/978-981-96-0617-7_4" target="_blank" rel="noopener">ICFEM 2024</a> · preprint: <a href="https://arxiv.org/abs/2408.12240" target="_blank" rel="noopener">arXiv:2408.12240</a></div>
+          <div class="ref-note">Restricts the automaton in several ways (clocks, actions, time domain, or the new observable event-recording automata) and finds opacity mostly decidable, except for one-action automata and one-clock automata with ε-transitions.</div>
+          <div class="ref-tags">opacity · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Timed automata (TAs) are an extension of finite automata that can measure and react to the passage of time, providing the ability to handle real-time constraints using clocks. In 2009, Franck Cassez showed that the timed opacity problem, where an attacker can observe some actions with their timestamps and attempts to deduce information, is undecidable for TAs. Moreover, he showed that the undecidability holds even for subclasses such as event-recording automata. In this article, we consider the same definition of opacity, by restricting either the system or the attacker. Our first contribution is to prove the inter-reducibility of two variants of opacity: full opacity (for which the observations should be the same regardless of the visit of a private location) and weak opacity (for which it suffices that the attacker cannot deduce whether the private location was visited, but for which it is harmless to deduce that it was not visited); we also prove further results including a connection with timed language inclusion. Our second contribution is to study opacity for several subclasses of TAs: with restrictions on the number of clocks, the number of actions, the nature of time, or a new subclass called observable event-recording automata. We show that opacity is mostly decidable in these cases, except for one-action TAs and for one-clock TAs with &epsilon;-transitions, for which undecidability remains. Our third (and arguably main) contribution is to propose a new definition of opacity in which the number of observations made by the attacker is limited to the first N observations, or to a set of N timestamps after which the attacker observes the first action that follows immediately. This set can be defined either a priori or at runtime; all three versions yield decidability for the whole TA class. </div>
+          </details>
+        </li>
+      </ul>
+    </div>
+
+    <div class="subcat" id="cat-a-by-problem-variant">
+      <h3 class="sub-title">A.2 — By problem variant</h3>
+
+      <h3 class="sub-title" style="margin-top:18px; padding-left:0; font-size:11.5px; opacity:0.85;">Execution-time opacity</h3>
+      <p class="sub-note" style="margin-top:0;">The attacker is weakened to observe only the total execution time of a run, not the full timed sequence of actions, asking whether that duration alone can betray whether a private location was visited.</p>
+      <ul class="refs">
+        <li>
+          <div class="ref-title">Guaranteeing Timed Opacity using Parametric Timed Model Checking</div>
+          <div class="ref-meta">Étienne André, Didier Lime, Dylan Marinho, Jun Sun · ACM Transactions on Software Engineering and Methodology, 31(4), pp. 1–36, 2022 · <a href="https://doi.org/10.1145/3502851" target="_blank" rel="noopener">doi.org/10.1145/3502851</a> · extended version: <a href="https://arxiv.org/abs/2206.05438" target="_blank" rel="noopener">arXiv:2206.05438</a> · conference precursor: Étienne André, Jun Sun, "Parametric Timed Model Checking for Guaranteeing Timed Opacity," ATVA 2019, LNCS vol. 11781, pp. 115–130 · <a href="https://doi.org/10.1007/978-3-030-31784-3_7" target="_blank" rel="noopener">doi.org/10.1007/978-3-030-31784-3_7</a></div>
+          <div class="ref-note">Studies execution-time opacity, where the attacker only sees the total duration; the existential and the full variant are decidable for plain timed automata.</div>
+          <div class="ref-tags">opacity · parametric · timed · verification-tools</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Information leakage can have dramatic consequences on systems security. Among harmful information leaks, the timing information leakage occurs whenever an attacker successfully deduces confidential internal information. In this work, we consider that the attacker has access (only) to the system execution time. We address the following timed opacity problem: given a timed system, a private location and a final location, synthesize the execution times from the initial location to the final location for which one cannot deduce whether the system went through the private location. We also consider the full timed opacity problem, asking whether the system is opaque for all execution times. We show that these problems are decidable for timed automata (TAs) but become undecidable when one adds parameters, yielding parametric timed automata (PTAs). We identify a subclass with some decidability results. We then devise an algorithm for synthesizing PTAs parameter valuations guaranteeing that the resulting TA is opaque. We finally show that our method can also apply to program analysis.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Configuring Timing Parameters to Ensure Execution-Time Opacity in Timed Automata</div>
+          <div class="ref-meta">Étienne André, Engel Lefaucheux, Didier Lime, Dylan Marinho, Jun Sun · TiCSA 2023 (invited paper), EPTCS vol. 392, pp. 1–26 · <a href="https://doi.org/10.4204/EPTCS.392.1" target="_blank" rel="noopener">doi.org/10.4204/EPTCS.392.1</a></div>
+          <div class="ref-note">Summarizes a line of work on execution-time opacity in timed automata: synthesizing the opaque execution times, plus the full and weak variants.</div>
+          <div class="ref-tags">opacity · parametric · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Timing information leakage occurs whenever an attacker successfully deduces confidential internal information by observing some timed information such as events with timestamps. Timed automata are an extension of finite-state automata with a set of clocks evolving linearly and that can be tested or reset, making this formalism able to reason on systems involving concurrency and timing constraints. In this paper, we summarize a recent line of works using timed automata as the input formalism, in which we assume that the attacker has access (only) to the system execution time. First, we address the following execution-time opacity problem: given a timed system modeled by a timed automaton, given a secret location and a final location, synthesize the execution times from the initial location to the final location for which one cannot deduce whether the secret location was visited. This means that for any such execution time, the system is opaque: either the final location is not reachable, or it is reachable with that execution time for both a run visiting and a run not visiting the secret location. We also address the full execution-time opacity problem, asking whether the system is opaque for all execution times; we also study a weak counterpart. Second, we add timing parameters, which are a way to configure a system: we identify a subclass of parametric timed automata with some decidability results. In addition, we devise a semi-algorithm for synthesizing timing parameter valuations guaranteeing that the resulting system is opaque. Third, we report on problems when the secret has itself an expiration date, thus defining expiring execution-time opacity problems. We finally show that our method can also apply to program analysis with configurable internal timings. </div>
+          </details>
+        </li>
+      </ul>
+      <h3 class="sub-title" style="margin-top:22px; padding-left:0; font-size:11.5px; opacity:0.85;">Time-bounded &amp; expiring opacity</h3>
+      <p class="sub-note" style="margin-top:0;">The secret only needs to stay hidden up to a deadline: opacity "with an expiration date" rather than forever.</p>
+      <ul class="refs">
+        <li>
+          <div class="ref-title">Bounded Opacity for Timed Systems</div>
+          <div class="ref-meta">Ikhlass Ammar, Yamen El Touati, Moez Yeddes, John Mullins · Journal of Information Security and Applications, 61, pp. 1–13, 2021 · <a href="https://doi.org/10.1016/j.jisa.2021.102926" target="_blank" rel="noopener">doi.org/10.1016/j.jisa.2021.102926</a></div>
+          <div class="ref-tags">opacity · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">In many security applications, system behaviors must be kept secret (opaque) to outside observers (intruders). Opacity was first studied for discrete event systems, and then it was extended to real-time systems. One of the challenges of real-time systems is the difficulty to guarantee their opacity against a potential attacker. In general, this property is undecidable for systems modeled by timed automata. A secret location, S, of a system is timed opaque to an intruder having partial observability of the system, if the intruder can never infer from the observation of any execution that the system has reached any secret location. In the present study, the static partial observability for systems modeled by nondeterministic timed automata is investigated. Thus, it focuses on systems where the timing of secret state reachability is bounded. The first contribution of this study is to define the bounded timed opacity property wherein, its complexity is proved. The second contribution is to consider systems where the secret should be kept hidden for a certain period referred to as the &Delta;-duration bounded opacity property. Also, a formal definition is proposed and its complexity is proved. In addition, the proposed properties are verified using timed bounded model checking. A case study ”Exchange in the Cloud system” is modeled by timed automaton to verify the proposed properties using SpaceEx tool.</div>
+          </details>
+        </li>
+      </ul>
+      <h3 class="sub-title" style="margin-top:22px; padding-left:0; font-size:11.5px; opacity:0.85;">Unifying frameworks</h3>
+      <ul class="refs">
+        <li>
+          <div class="ref-title">Evolution-Based Timed Opacity under a Universal Observation Model</div>
+          <div class="ref-meta">Zhe Zhang, Martijn Goorden, Michel Reniers · arXiv:2603.26573, 2026 (full version of a CDC 2026 submission) · <a href="https://arxiv.org/abs/2603.26573" target="_blank" rel="noopener">arxiv.org/abs/2603.26573</a></div>
+          <div class="ref-note">Proposes evolution-based timed opacity as a notion subsuming the others: it strictly implies language-based timed opacity and coincides with execution-time opacity under constrained observation.</div>
+          <div class="ref-tags">opacity · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Existing literature on timed opacity uses specific definitions for restricted subclasses of timed automata or limited observation models. This lack of a unified definition makes it difficult to establish formal relationships and compare the expressiveness of different opacity variants. This paper establishes a unified framework for timed opacity by introducing a universal observation model for timed automata. First, we introduce an observation model with full observation of time delay and partial observation of locations, clocks, and events. Second, based on this model, we define the notion of evolution-based timed opacity. Third, we mathematically prove that evolution-based timed opacity strictly implies language-based timed opacity and establish a formal equivalence with execution-time opacity under constrained observations. This framework establishes a unified semantic hierarchy for characterizing the landscape of timed opacity. </div>
+          </details>
+        </li>
+      </ul>
+      <h3 class="sub-title" style="margin-top:22px; padding-left:0; font-size:11.5px; opacity:0.85;">Restricted-observer opacity</h3>
+      <p class="sub-note" style="margin-top:0;">A third way to weaken the problem, distinct from changing what the attacker observes (execution-time opacity) or adding a deadline (time-bounded opacity): keep Cassez's original observation model, but weaken the attacker's precision instead, for example by restricting them to discrete-time readings even though the system itself runs in dense time, or by capping how much of the automaton the attacker gets to see.</p>
+      <ul class="refs">
+        <li>
+          <div class="ref-title">New Insights into Opacity Verification in Timed Discrete-Event Systems</div>
+          <div class="ref-meta">Weilin Deng, Daowen Qiu, Jingkai Yang · Automatica, vol. 186, article 112869, 2026 · <a href="https://doi.org/10.1016/j.automatica.2026.112869" target="_blank" rel="noopener">doi.org/10.1016/j.automatica.2026.112869</a> (journal version; preprint: <a href="https://arxiv.org/abs/2504.00625" target="_blank" rel="noopener">arXiv:2504.00625</a>, "New Insights into the Decidability of Opacity in Timed Automata")</div>
+          <div class="ref-note">Recovers decidability for general timed automata by limiting the intruder to discrete-time precision (CLTO-IDTP) rather than by restricting the automaton.</div>
+          <div class="ref-tags">opacity · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">This paper investigates the verification of opacity in timed discrete-event systems (DESs) modeled as timed automata (TA), a problem known to be undecidable in general. We first address a theoretical gap left by recent work of An et al. (FM 2024) by establishing necessary and sufficient conditions for the decidability of current-location timed opacity (CLTO) in TA. As an instantiation of these conditions combined with known results on language inclusion, we show that CLTO is decidable for a subclass of TA, namely timed automata with integer resets (IRTA), and we also provide a corresponding verification algorithm. To enable decidability for general TA, we explore how to reduce the observational power of the intruder model in a way that remains realistic while ensuring decidability. Under the assumption that the intruder can only observe time in discrete units, we introduce the notion of current-location timed opacity against intruders with discrete-time precision (CLTO-IDTP) and develop a corresponding verification algorithm. These results provide a theoretical foundation for the security analysis of timed systems, offering a balance between modeling expressiveness and computational tractability.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">The Bright Side of Timed Opacity</div>
+          <div class="ref-meta">Étienne André, Sarah Dépernet, Engel Lefaucheux · Logical Methods in Computer Science, 22(2), article 31, 2026 · <a href="https://doi.org/10.46298/lmcs-22(2:31)2026" target="_blank" rel="noopener">doi.org/10.46298/lmcs-22(2:31)2026</a> · conference version: <a href="https://doi.org/10.1007/978-981-96-0617-7_4" target="_blank" rel="noopener">ICFEM 2024</a> · preprint: <a href="https://arxiv.org/abs/2408.12240" target="_blank" rel="noopener">arXiv:2408.12240</a></div>
+          <div class="ref-note">Introduces a definition where the attacker only makes the first N observations, fixed a priori or chosen at runtime, which is decidable for the whole timed-automata class.</div>
+          <div class="ref-tags">opacity · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Timed automata (TAs) are an extension of finite automata that can measure and react to the passage of time, providing the ability to handle real-time constraints using clocks. In 2009, Franck Cassez showed that the timed opacity problem, where an attacker can observe some actions with their timestamps and attempts to deduce information, is undecidable for TAs. Moreover, he showed that the undecidability holds even for subclasses such as event-recording automata. In this article, we consider the same definition of opacity, by restricting either the system or the attacker. Our first contribution is to prove the inter-reducibility of two variants of opacity: full opacity (for which the observations should be the same regardless of the visit of a private location) and weak opacity (for which it suffices that the attacker cannot deduce whether the private location was visited, but for which it is harmless to deduce that it was not visited); we also prove further results including a connection with timed language inclusion. Our second contribution is to study opacity for several subclasses of TAs: with restrictions on the number of clocks, the number of actions, the nature of time, or a new subclass called observable event-recording automata. We show that opacity is mostly decidable in these cases, except for one-action TAs and for one-clock TAs with &epsilon;-transitions, for which undecidability remains. Our third (and arguably main) contribution is to propose a new definition of opacity in which the number of observations made by the attacker is limited to the first N observations, or to a set of N timestamps after which the attacker observes the first action that follows immediately. This set can be defined either a priori or at runtime; all three versions yield decidability for the whole TA class. </div>
+          </details>
+        </li>
+      </ul>
+    </div>
+
+  </section>
+
+  <!-- ===================== B. VERIFICATION METHODS & TOOLS ===================== -->
+  <section class="category" id="cat-b">
+    <div class="cat-head"><div class="cat-letter">B</div><h2 class="cat-title">Verification Methods &amp; Tools</h2></div>
+    <p class="cat-blurb">Algorithms, heuristics, and implementations for checking timed opacity, as opposed to pure decidability proofs.</p>
+
+    <div class="subcat" id="cat-b-heuristic-approximate-methods">
+      <h3 class="sub-title">B.1 — Heuristic / approximate methods</h3>
+
+      <h4 style="font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:0.06em; color:var(--ink-faint); margin:0 0 10px;">Compact state estimators</h4>
+      <ul class="refs">
+        <li>
+          <div class="ref-title">Efficient State Estimation of Discrete-Timed Automata</div>
+          <div class="ref-meta">Julian Klein, Paul Kogel, Sabine Glesner · ICFEM 2024, LNCS vol. 15394, pp. 85–105, Springer, 2024 · <a href="https://doi.org/10.1007/978-981-96-0617-7_6" target="_blank" rel="noopener">doi.org/10.1007/978-981-96-0617-7_6</a></div>
+          <div class="ref-tags">opacity · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">State estimation is a fundamental method in control theory that has applications in privacy, fault diagnosis, and the verification of other state inference properties. State estimation methods for timed automata rely on discretizing time into atomic steps. These discrete time steps are enumerated in separate states, significantly limiting scalability for large, realistic systems. In this paper, we propose a more efficient state estimation method for discrete-timed automata. The key idea of our approach is to avoid the enumeration of single time steps when possible. We provide a formal definition of a new state estimator model and an efficient algorithmic approach to derive it from discrete-timed automata. We validate our method on 11 realistic case studies and show a significant decrease in computational costs. </div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">A Unified Method to Efficiently Verify Opacity of Discrete-Timed Automata</div>
+          <div class="ref-meta">Julian Klein, Kuize Zhang, Sabine Glesner · in <em>Formal Methods and Software Engineering</em> (eds. Étienne André, Jingyi Wang, Naijun Zhan), pp. 285–304, Springer Nature Singapore, November 2025 · <a href="https://doi.org/10.1007/978-981-95-4213-0_16" target="_blank" rel="noopener">doi.org/10.1007/978-981-95-4213-0_16</a></div>
+          <div class="ref-tags">opacity · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Opacity is a powerful confidentiality property which guarantees that secret information of a system cannot be inferred from its observable behavior. To account for timing attacks, opacity has been extended to continuous-time systems, but the verification problem was proven to be generally undecidable. As a result, multiple recent works study the opacity verification problem of discrete-timed automata. The advantage of a discrete time setting is that it can discretize any timed automaton as a discrete-state system, where opacity can be verified. However, such verification methods usually rely on separating time steps into distinct hybrid states. This results in state explosion and limited scalability for real-world problems.
+
+In this paper, we present a new, more efficient verification method for opacity in a discrete time setting that avoids the state explosion problem. Our verification method groups multiple time steps to intervals, instead of evaluating each time step individually. We define four timed opacity notions and show that our method is capable of verifying all of them in a unified manner. We analyze the efficiency of our method on a case study of a wireless sensor network and randomized systems.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">State Estimation of Timed Automata Under Partial Observation</div>
+          <div class="ref-meta">Chao Gao, Dimitri Lefebvre, Carla Seatzu, Zhiwu Li, Alessandro Giua · IEEE Transactions on Automatic Control, 70(3), pp. 1981–1987, 2025 · <a href="https://doi.org/10.1109/TAC.2024.3492955" target="_blank" rel="noopener">doi.org/10.1109/TAC.2024.3492955</a> · draft: <a href="https://arxiv.org/abs/2409.05810" target="_blank" rel="noopener">arXiv:2409.05810</a></div>
+          <div class="ref-note">State estimation paper, with opacity as a direct application.</div>
+          <div class="ref-tags">opacity · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">In this article, we consider partially observable timed automata endowed with a single clock. A time interval is associated with each transition specifying at which clock values it may occur. In addition, a resetting condition associated to a transition specifies how the clock value is updated upon its occurrence. This work deals with the estimation of the current state given a timed observation, i.e., a succession of pairs of an observable event and the time instant at which the event has occurred. The problem of state estimation for a timed automaton is reduced to the reachability analysis of an associated zone automaton, which provides a purely discrete event description of the behavior of the timed automaton. An algorithm is formulated to provide an approach for state estimation of a timed automaton based on the assumption that the clock is reset upon the occurrence of each observable transition.</div>
+          </details>
+        </li>
+      </ul>
+      <h4 style="font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:0.06em; color:var(--ink-faint); margin:18px 0 10px;">Testing-based approximation (timed process algebra)</h4>
+      <ul class="refs">
+        <li>
+          <div class="ref-title">Simulation Opacity</div>
+          <div class="ref-meta">Damas P. Gruska · <em>Fundamenta Informaticae</em>, 133(2–3), pp. 165–179, 2014 · <a href="https://journals.sagepub.com/doi/10.3233/FI-2014-1069" target="_blank" rel="noopener">doi.org/10.3233/FI-2014-1069</a> · conference precursor: <a href="https://ceur-ws.org/Vol-1032/paper-15.pdf" target="_blank" rel="noopener">Opacity Testing, CS&amp;P 2013</a></div>
+          <div class="ref-tags">opacity · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Opacity testing is formalized and studied. We specify opacity testers as well as tested systems by (timed) process algebras. We model various testers according to how sophisticated observations of tested system they can make and which kind of conclusions they can obtain. We use this technique to define several realistic security properties. The properties are studied and compared with other security concepts.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Security Testing for Multi-Agent Systems</div>
+          <div class="ref-meta">Damas P. Gruska, M. Carmen Ruiz · 10th International Work-Conference on Artificial Neural Networks (IWANN 2019), LNCS vol. 11506, pp. 703–715, Springer, 2019 · <a href="https://doi.org/10.1007/978-3-030-20521-8_58" target="_blank" rel="noopener">doi.org/10.1007/978-3-030-20521-8_58</a></div>
+          <div class="ref-tags">opacity · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">A combination of formal methods and security testing for communication layer of multi-agent systems is proposed and studied. We start with security property called bisimulation process opacity. Unfortunately, this property is undecidable in general so we propose its more realistic variant based on simulation and tests and testing. A test represents an attacker’s (i.e. possibly one of the agents) scenario to obtain some confidential information on systems. Here we consider system to be secure if it cannot be compromised by a given test or set of tests. By test we can express also capabilities of an attacker related to time properties such as time measurement accuracy, duration of tests (attacks), complete lack of attacker’s time information and so on. At the end we state a decidability result for testing.</div>
+          </details>
+        </li>
+      </ul>
+    </div>
+
+    <div class="subcat" id="cat-b-tool-implementations-and-benchmarks">
+      <h3 class="sub-title">B.2 — Tool implementations &amp; benchmarks</h3>
+
+      <ul class="refs">
+        <li>
+          <div class="ref-title">Guaranteeing Timed Opacity using Parametric Timed Model Checking</div>
+          <div class="ref-meta">Étienne André, Didier Lime, Dylan Marinho, Jun Sun · ACM Transactions on Software Engineering and Methodology, 31(4), pp. 1–36, 2022 · <a href="https://doi.org/10.1145/3502851" target="_blank" rel="noopener">doi.org/10.1145/3502851</a> · extended version: <a href="https://arxiv.org/abs/2206.05438" target="_blank" rel="noopener">arXiv:2206.05438</a> · conference precursor: Étienne André, Jun Sun, "Parametric Timed Model Checking for Guaranteeing Timed Opacity," ATVA 2019, LNCS vol. 11781, pp. 115–130 · <a href="https://doi.org/10.1007/978-3-030-31784-3_7" target="_blank" rel="noopener">doi.org/10.1007/978-3-030-31784-3_7</a></div>
+          <div class="ref-note">Implemented in the parametric timed automata tool IMITATOR and evaluated on benchmarks that include Java programs from the STAC library.</div>
+          <div class="ref-tags">opacity · parametric · timed · verification-tools</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Information leakage can have dramatic consequences on systems security. Among harmful information leaks, the timing information leakage occurs whenever an attacker successfully deduces confidential internal information. In this work, we consider that the attacker has access (only) to the system execution time. We address the following timed opacity problem: given a timed system, a private location and a final location, synthesize the execution times from the initial location to the final location for which one cannot deduce whether the system went through the private location. We also consider the full timed opacity problem, asking whether the system is opaque for all execution times. We show that these problems are decidable for timed automata (TAs) but become undecidable when one adds parameters, yielding parametric timed automata (PTAs). We identify a subclass with some decidability results. We then devise an algorithm for synthesizing PTAs parameter valuations guaranteeing that the resulting TA is opaque. We finally show that our method can also apply to program analysis.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">strategFTO: Untimed Control for Timed Opacity</div>
+          <div class="ref-meta">Étienne André, Shapagat Bolat, Engel Lefaucheux, Dylan Marinho · FTSCS 2022, pp. 27–33, ACM · <a href="https://doi.org/10.1145/3563822.3568013" target="_blank" rel="noopener">doi.org/10.1145/3563822.3568013</a> · extended version: <a href="https://arxiv.org/abs/2211.14233" target="_blank" rel="noopener">arXiv:2211.14233</a></div>
+          <div class="ref-note">Introduces the prototype tool strategFTO, which implements the untimed-control algorithm.</div>
+          <div class="ref-tags">enforcement · opacity · timed · verification-tools</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">We introduce a prototype tool strategFTO addressing the verification of a security property in critical software. We consider a recent definition of timed opacity where an attacker aims to deduce some secret while having access only to the total execution time. The system, here modelled by timed automata, is deemed opaque if for any execution time, there are either no corresponding runs, or both public and private corresponding runs. We focus on the untimed control problem: exhibiting a controller, ie a set of allowed actions, such that the system restricted to those actions is fully timed-opaque. We first show that this problem is not more complex than the full timed opacity problem, and then we propose an algorithm, implemented and evaluated in practice.</div>
+          </details>
+        </li>
+      </ul>
+    </div>
+
+  </section>
+
+  <!-- ===================== C. PARAMETRIC ANALYSIS ===================== -->
+  <section class="category" id="cat-c">
+    <div class="cat-head"><div class="cat-letter">C</div><h2 class="cat-title">Parametric Analysis</h2></div>
+    <p class="cat-blurb">Given a parametric timed model (or a bound/deadline treated as a free parameter), synthesize or characterize the parameter valuations for which opacity holds.</p>
+
+    <ul class="refs">
+        <li>
+          <div class="ref-title">Guaranteeing Timed Opacity using Parametric Timed Model Checking</div>
+          <div class="ref-meta">Étienne André, Didier Lime, Dylan Marinho, Jun Sun · ACM Transactions on Software Engineering and Methodology, 31(4), pp. 1–36, 2022 · <a href="https://doi.org/10.1145/3502851" target="_blank" rel="noopener">doi.org/10.1145/3502851</a> · extended version: <a href="https://arxiv.org/abs/2206.05438" target="_blank" rel="noopener">arXiv:2206.05438</a> · conference precursor: Étienne André, Jun Sun, "Parametric Timed Model Checking for Guaranteeing Timed Opacity," ATVA 2019, LNCS vol. 11781, pp. 115–130 · <a href="https://doi.org/10.1007/978-3-030-31784-3_7" target="_blank" rel="noopener">doi.org/10.1007/978-3-030-31784-3_7</a></div>
+          <div class="ref-note">Extends execution-time opacity to parametric timed automata: synthesize the timing-parameter valuations for which the system is opaque. The general problem is undecidable; the paper identifies a subclass with partial decidability.</div>
+          <div class="ref-tags">opacity · parametric · timed · verification-tools</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Information leakage can have dramatic consequences on systems security. Among harmful information leaks, the timing information leakage occurs whenever an attacker successfully deduces confidential internal information. In this work, we consider that the attacker has access (only) to the system execution time. We address the following timed opacity problem: given a timed system, a private location and a final location, synthesize the execution times from the initial location to the final location for which one cannot deduce whether the system went through the private location. We also consider the full timed opacity problem, asking whether the system is opaque for all execution times. We show that these problems are decidable for timed automata (TAs) but become undecidable when one adds parameters, yielding parametric timed automata (PTAs). We identify a subclass with some decidability results. We then devise an algorithm for synthesizing PTAs parameter valuations guaranteeing that the resulting TA is opaque. We finally show that our method can also apply to program analysis.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Configuring Timing Parameters to Ensure Execution-Time Opacity in Timed Automata</div>
+          <div class="ref-meta">Étienne André, Engel Lefaucheux, Didier Lime, Dylan Marinho, Jun Sun · TiCSA 2023 (invited paper), EPTCS vol. 392, pp. 1–26 · <a href="https://doi.org/10.4204/EPTCS.392.1" target="_blank" rel="noopener">doi.org/10.4204/EPTCS.392.1</a></div>
+          <div class="ref-note">Adds timing parameters as a way to configure the system: a subclass of parametric timed automata with partial decidability and a semi-algorithm that synthesizes parameter valuations guaranteeing opacity. It also covers secrets with an expiration date.</div>
+          <div class="ref-tags">opacity · parametric · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Timing information leakage occurs whenever an attacker successfully deduces confidential internal information by observing some timed information such as events with timestamps. Timed automata are an extension of finite-state automata with a set of clocks evolving linearly and that can be tested or reset, making this formalism able to reason on systems involving concurrency and timing constraints. In this paper, we summarize a recent line of works using timed automata as the input formalism, in which we assume that the attacker has access (only) to the system execution time. First, we address the following execution-time opacity problem: given a timed system modeled by a timed automaton, given a secret location and a final location, synthesize the execution times from the initial location to the final location for which one cannot deduce whether the secret location was visited. This means that for any such execution time, the system is opaque: either the final location is not reachable, or it is reachable with that execution time for both a run visiting and a run not visiting the secret location. We also address the full execution-time opacity problem, asking whether the system is opaque for all execution times; we also study a weak counterpart. Second, we add timing parameters, which are a way to configure a system: we identify a subclass of parametric timed automata with some decidability results. In addition, we devise a semi-algorithm for synthesizing timing parameter valuations guaranteeing that the resulting system is opaque. Third, we report on problems when the secret has itself an expiration date, thus defining expiring execution-time opacity problems. We finally show that our method can also apply to program analysis with configurable internal timings. </div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Expiring Opacity Problems in Parametric Timed Automata</div>
+          <div class="ref-meta">Étienne André, Engel Lefaucheux, Dylan Marinho · ICECCS 2023, pp. 89–98 · <a href="https://doi.org/10.1109/ICECCS59891.2023.00020" target="_blank" rel="noopener">doi.org/10.1109/ICECCS59891.2023.00020</a> · extended version: <a href="https://arxiv.org/abs/2403.07647" target="_blank" rel="noopener">arXiv:2403.07647</a></div>
+          <div class="ref-tags">opacity · parametric · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Information leakage can have dramatic consequences on the security of real-time systems. Timing leaks occur when an attacker is able to infer private behavior depending on timing information. In this work, we propose a definition of expiring timed opacity w.r.t. execution time, where a system is opaque whenever the attacker is unable to deduce the reachability of some private state solely based on the execution time; in addition, the secrecy is violated only when the private state was entered "recently", i.e., within a given time bound (or expiration date) prior to system completion. This has an interesting parallel with concrete applications, notably cache deducibility: it may be useless for the attacker to know the cache content too late after its observance. We study here expiring timed opacity problems in timed automata. We consider the set of time bounds (or expiration dates) for which a system is opaque and show when they can be effectively computed for timed automata. We then study the decidability of several parameterized problems, when not only the bounds, but also some internal timing constants become timing parameters of unknown constant values.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Execution-Time Opacity Problems in One-Clock Parametric Timed Automata</div>
+          <div class="ref-meta">Étienne André, Johan Arcile, Engel Lefaucheux · 44th IARCS Annual Conference on Foundations of Software Technology and Theoretical Computer Science (FSTTCS 2024), LIPIcs vol. 323, pp. 3:1–3:22 · <a href="https://doi.org/10.4230/LIPIcs.FSTTCS.2024.3" target="_blank" rel="noopener">doi.org/10.4230/LIPIcs.FSTTCS.2024.3</a> · extended version: <a href="https://arxiv.org/abs/2410.01659" target="_blank" rel="noopener">arXiv:2410.01659</a></div>
+          <div class="ref-tags">opacity · parametric · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Parametric timed automata (PTAs) extend the concept of timed automata, by allowing timing delays not only specified by concrete values but also by parameters, allowing the analysis of systems with uncertainty regarding timing behaviors. The full execution-time opacity is defined as the problem in which an attacker must never be able to deduce whether some private location was visited, by only observing the execution time. The problem of full ET-opacity emptiness (i.e., the emptiness over the parameter valuations for which full execution-time opacity is satisfied) is known to be undecidable for general PTAs. We therefore focus here on one-clock PTAs with integer-valued parameters over dense time. We show that the full ET-opacity emptiness is undecidable for a sufficiently large number of parameters, but is decidable for a single parameter, and exact synthesis can be effectively achieved. Our proofs rely on a novel construction as well as on variants of Presburger arithmetics. We finally prove an additional decidability result on an existential variant of execution-time opacity.</div>
+          </details>
+        </li>
+    </ul>
+  </section>
+
+  <!-- ===================== D. CONTROL & ENFORCEMENT ===================== -->
+  <section class="category" id="cat-d">
+    <div class="cat-head"><div class="cat-letter">D</div><h2 class="cat-title">Control &amp; Enforcement</h2></div>
+    <p class="cat-blurb">Making a system opaque, or fixing one that isn't. Two flavors of mechanism show up here: control strategies that steer which controllable actions are allowed to occur, so that opacity holds no matter how the rest of the system behaves, and enforcement mechanisms that instead alter what the observer perceives, without touching the underlying system's behavior at all. On the timed side, control strategies dominate; output-altering enforcement so far only has representatives in the timed process algebra literature.</p>
+
+    <div class="subcat" id="cat-d-execution-time-timing-leak-control">
+      <h3 class="sub-title">D.1 — Execution-time / timing-leak control</h3>
+
+      <ul class="refs">
+        <li>
+          <div class="ref-title">strategFTO: Untimed Control for Timed Opacity</div>
+          <div class="ref-meta">Étienne André, Shapagat Bolat, Engel Lefaucheux, Dylan Marinho · FTSCS 2022, pp. 27–33, ACM · <a href="https://doi.org/10.1145/3563822.3568013" target="_blank" rel="noopener">doi.org/10.1145/3563822.3568013</a> · extended version: <a href="https://arxiv.org/abs/2211.14233" target="_blank" rel="noopener">arXiv:2211.14233</a></div>
+          <div class="ref-tags">enforcement · opacity · timed · verification-tools</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">We introduce a prototype tool strategFTO addressing the verification of a security property in critical software. We consider a recent definition of timed opacity where an attacker aims to deduce some secret while having access only to the total execution time. The system, here modelled by timed automata, is deemed opaque if for any execution time, there are either no corresponding runs, or both public and private corresponding runs. We focus on the untimed control problem: exhibiting a controller, ie a set of allowed actions, such that the system restricted to those actions is fully timed-opaque. We first show that this problem is not more complex than the full timed opacity problem, and then we propose an algorithm, implemented and evaluated in practice.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Execution-Time Opacity Control for Timed Automata</div>
+          <div class="ref-meta">Étienne André, Marie Duflot, Laetitia Laversa, Engel Lefaucheux · Software and Systems Modeling, 2026 (to appear) · <a href="https://doi.org/10.1007/s10270-026-01395-5" target="_blank" rel="noopener">doi.org/10.1007/s10270-026-01395-5</a> · conference version: SEFM 2024, LNCS vol. 15280, pp. 347–365 · <a href="https://doi.org/10.1007/978-3-031-77382-2_20" target="_blank" rel="noopener">doi.org/10.1007/978-3-031-77382-2_20</a> · extended preprint: <a href="https://arxiv.org/abs/2409.10336" target="_blank" rel="noopener">arXiv:2409.10336</a></div>
+          <div class="ref-note">The conference version (SEFM 2024) contains an important mistake and should be ignored; the journal version is the correct one.</div>
+          <div class="ref-tags">enforcement · opacity · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Timing leaks in timed automata (TA) can occur whenever an attacker is able to deduce a secret by observing some timed behaviour. In execution-time opacity, the attacker aims at deducing whether a private location was visited, by observing only the execution time. In earlier work, it was shown that it can be decided whether a TA is opaque in this setting. In this work, we address control, and investigate whether a TA can be controlled by a strategy at runtime to ensure opacity, by enabling or disabling some controllable actions over time. We first show that, in general, it is undecidable to determine whether such a strategy exists. Second, we show that deciding whether a meta-strategy ensuring opacity exists can be done in EXPSPACE. Such a meta-strategy is a set of strategies allowing an arbitrarily large&mdash;yet finite&mdash;number of strategy changes per time unit, and with only weak ordering relations between such changes. Our method is constructive, in the sense that we can exhibit such a meta-strategy. We also extend our method to the case of weak opacity, when it is harmless that the attacker deduces that the private location was <i>not</i> visited. Finally, we consider a variant where the attacker cannot have an infinite precision in its observations.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Execution-Time Opacity in (Controllable) Timed Automata is Hard</div>
+          <div class="ref-meta">Sarah Dépernet, Engel Lefaucheux · 17th International Symposium on Games, Automata, Logics, and Formal Verification (GandALF 2026), Sept. 2026 (proceedings not yet published) · <a href="https://inria.hal.science/hal-05737030v2" target="_blank" rel="noopener">HAL: hal-05737030</a></div>
+          <div class="ref-note">Not to be confused with "Buffered Control for Opacity in Timed Automata": this paper stays in the standard setting where only the total run duration is observed and tightens the complexity bounds instead of extending the observation model.</div>
+          <div class="ref-tags">opacity · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Timing information leakage occurs whenever an attacker successfully deduces confidential internal information by observing some timed information such as the total duration of a run. Timed automata (TAs) are an extension of finite-state automata with a set of clocks evolving at the same rate and that can be tested or reset. Hence, this formalism is able to represent systems involving timing constraints reacting to the passage of time. Some of the transitions in a timed automaton may be controlled, i.e., enabled or disabled, to limit the runs that are allowed.
+
+Execution-time opacity (ET-opacity) aims at studying timing information leakage through the analysis of timed automata. More precisely, the ET-opacity problem consists in deciding whether an attacker can deduce whether some secret locations were visited by a run, solely from the run's duration. When control is allowed, the goal becomes to find a strategy that blocks the runs leaking information. This problem has been shown decidable for TAs, with and without control. However, these existing results only provide upper bounds on the complexity of the ET-opacity problem, sometimes largely above the tight bound. Our main contribution is to provide tight lower bounds for those two results. Our proofs rely on novel constructions.
+
+Moreover, for controllable TAs, two variants of ET-opacity (depending on whether detecting if a run did not visit a secret location represents an information leakage or not, and named full and weak ET-opacity respectively) had been separately studied; we prove here that these two notions are inter-reducible.</div>
+          </details>
+        </li>
+      </ul>
+    </div>
+
+    <div class="subcat" id="cat-d-buffered-imprecise-observation-control">
+      <h3 class="sub-title">D.2 — Buffered / imprecise-observation control</h3>
+
+      <ul class="refs">
+        <li>
+          <div class="ref-title">Buffered Control for Opacity in Timed Automata</div>
+          <div class="ref-meta">Étienne André, Sarah Dépernet, Engel Lefaucheux · 37th International Conference on Concurrency Theory (CONCUR 2026), LIPIcs vol. 391, pp. 11:1–11:21 · <a href="https://doi.org/10.4230/LIPIcs.CONCUR.2026.11" target="_blank" rel="noopener">doi.org/10.4230/LIPIcs.CONCUR.2026.11</a> · extended version: <a href="https://arxiv.org/abs/2606.28170" target="_blank" rel="noopener">arXiv:2606.28170</a></div>
+          <div class="ref-note">Not to be confused with "Execution-Time Opacity in (Controllable) Timed Automata is Hard" (GandALF 2026), which keeps the plain execution-time observation and tightens complexity bounds.</div>
+          <div class="ref-tags">enforcement · opacity · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Timed automata are an extension of finite automata that can measure and react to the passage of time, handling real-time constraints by using clocks. The timed opacity problem, where an attacker attempts to infer from observed actions and timestamps whether a secret location was visited, was shown undecidable for timed automata. Execution-time opacity is a decidable though limited setting in which the attacker attempts to detect whether the secret location was visited, by only relying on the run duration. Here, we significantly extend this setting, by allowing the attacker to observe all observable actions, in the right order though with only the integral parts of their timestamps, which we call buffered observations. We consider the controlled setting, in which we aim at dynamically defining a sequence of sets of enabled actions ensuring opacity with buffered observations. We first prove the inter-reducibility of full opacity (observations must not leak the visit of the secret location) and weak opacity (the attacker might prove that the location was not visited, but not that it was visited) in this new controlled setting. Then, we prove the undecidability of the problem of existence of a sequential control strategy ensuring opacity under buffered observations. Finally and most importantly, we prove that decidability is retrieved in two independent cases, with their theoretical complexities, with and without control. These two assumptions express realistic limitations of the controller. The first case is when the strategy of the controller changes at most an a priori fixed number of times per time unit, which is not a strong practical assumption. The second case is when all controllable actions are observable and distinguishable by an attacker.</div>
+          </details>
+        </li>
+      </ul>
+    </div>
+
+    <div class="subcat" id="cat-d-supervisory-control-and-obfuscation-mechanisms">
+      <h3 class="sub-title">D.3 — Supervisory control &amp; obfuscation mechanisms</h3>
+
+      <ul class="refs">
+        <li>
+          <div class="ref-title">Security Enforcing</div>
+          <div class="ref-meta">Damas P. Gruska · in <em>Concurrency, Specification and Programming</em>, Studies in Computational Intelligence vol. 1091, Springer, 2023 · <a href="https://doi.org/10.1007/978-3-031-26651-5_6" target="_blank" rel="noopener">doi.org/10.1007/978-3-031-26651-5_6</a></div>
+          <div class="ref-tags">opacity · supervisory-control · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Formal definitions of state-based and language-based security with respect to timing attacks are proposed and studied. Then various ways how to secure systems with respect to such attacks are discussed. First, we investigate time insertion functions. Conditions, when such functions exist and could protect systems, are investigated. Then we discuss the concept of supervisor control which can be used if there is no appropriate time insertion function to protect the systems.</div>
+          </details>
+        </li>
+        <li>
+          <div class="ref-title">Language-based Security and Time-inserting Supervisor</div>
+          <div class="ref-meta">Damas P. Gruska · arXiv:2505.16503, 2025 · <a href="https://arxiv.org/abs/2505.16503" target="_blank" rel="noopener">arXiv:2505.16503</a></div>
+          <div class="ref-tags">opacity · supervisory-control · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Algebraic methods are employed in order to define language-based security properties of processes. A supervisor is introduced that can disable unwanted behavior of an insecure process by controlling some of its actions or by inserting timed actions to make an insecure process secure. We assume a situation where neither the supervisor nor the attacker has complete information about the ongoing systems behavior. We study the conditions under which such a supervisor exists, as well as its properties and limitations. </div>
+          </details>
+        </li>
+      </ul>
+    </div>
+
+  </section>
+
+  <!-- ===================== E. APPLICATIONS & CASE STUDIES ===================== -->
+  <section class="category" id="cat-e">
+    <div class="cat-head"><div class="cat-letter">E</div><h2 class="cat-title">Applications &amp; Case Studies</h2></div>
+    <p class="cat-blurb">Where timed opacity gets applied to a concrete domain, beyond toy/illustrative examples. This section is the least developed so far. Most decidability and control papers use small illustrative models (coffee machines, Fischer's protocol) rather than real case studies, so genuine applications are comparatively rare in what's been found.</p>
+
+    <div class="subcat" id="cat-e-cryptographic-and-side-channel-attacks">
+      <h3 class="sub-title">E.1 — Cryptographic &amp; side-channel attacks</h3>
+
+      <p class="sub-note" style="margin-top:0;">The motivation for timed opacity is consistently traced back to timing side-channel attacks (e.g. cache-timing attacks, and a cited timing attack against a Chinese public-key cryptography standard that leaked key bits via measured runtimes), but these are invoked as <em>motivation</em> in related-work sections rather than being papers that apply timed-automata opacity machinery to an actual cryptographic system.</p>
+    </div>
+
+    <div class="subcat" id="cat-e-cyber-physical-industrial-control-systems">
+      <h3 class="sub-title">E.2 — Cyber-physical / industrial control systems</h3>
+
+      <ul class="refs">
+        <li>
+          <div class="ref-title">Robust opacity in timed automata: notions and verification</div>
+          <div class="ref-meta">Sjood Ammen Daje, Tareq Ahmad Al-Sarayrah, Ding Liu, Zhiwu Li · Reliability Engineering &amp; System Safety, 270, article 112093, 2026 · <a href="https://doi.org/10.1016/j.ress.2025.112093" target="_blank" rel="noopener">doi.org/10.1016/j.ress.2025.112093</a></div>
+          <div class="ref-note">Illustrated on an airport-terminal security scenario and on confidential job handling in a smart manufacturing cell.</div>
+          <div class="ref-tags">cyber-physical · opacity · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">This paper explores the role of opacity in enhancing security within partially observed discrete event systems modeled as timed automata. Robust notions of opacity are introduced, extending traditional concepts by incorporating quantitative assessments of information leakage based on observable behaviors and precise timing. These notions aim to prevent inadvertent revelation of system secrets under both limited and unlimited observational capabilities of intruders, ensuring comprehensive security across varying timing scopes. A theoretical framework is developed, establishing necessary and sufficient conditions for achieving robust opacity, grounded in strong analytical foundations. Illustrative examples demonstrate the application and effectiveness of the proposed notions. Verification is enhanced through a novel strategy employing verifier and filter automata, adept at addressing complexities from diverse observational scopes and stringent timing constraints. Furthermore, a cutoff phenomenon is observed, revealing scalability limits in verification, where beyond certain thresholds, opacity properties remain stable despite additional observations. Theoretical proofs support the proposed techniques, ensuring rigorous validation of the robustness and applicability of the security measures. Case studies on secure airport terminal operations and confidential job handling in a smart manufacturing cell demonstrate the practical effectiveness of the proposed framework. Overall, the study advances opacity theory by providing practical verification tools and strengthening security insights in partially observed, time-sensitive systems.</div>
+          </details>
+        </li>
+      </ul>
+    </div>
+
+    <div class="subcat" id="cat-e-other-domains">
+      <h3 class="sub-title">E.3 — Other domains</h3>
+
+      <ul class="refs">
+        <li>
+          <div class="ref-title">Security of Low Level IoT Protocols</div>
+          <div class="ref-meta">Damas P. Gruska, M. Carmen Ruiz · 19th International Conference on Computational Science (ICCS 2019), LNCS vol. 11538, pp. 621–633, Springer, 2019 · <a href="https://doi.org/10.1007/978-3-030-22744-9_48" target="_blank" rel="noopener">doi.org/10.1007/978-3-030-22744-9_48</a></div>
+          <div class="ref-tags">applications · opacity · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Application of formal methods in security is demonstrated. Formalism for description of security properties of low level IoT protocols is proposed. It is based on security property called infinite step opacity. We prove some of its basic properties as well as we show its relation to other security notions. Finally, complexity issues of verification and security enforcement are discussed. As a working formalism timed process algebra is used.</div>
+          </details>
+        </li>
+      </ul>
+    </div>
+
+  </section>
+
+  <!-- ===================== F. SURVEYS & OVERVIEWS ===================== -->
+  <section class="category" id="cat-f" style="border-bottom:none;">
+    <div class="cat-head"><div class="cat-letter">F</div><h2 class="cat-title">Surveys &amp; Overviews</h2></div>
+    <ul class="refs">
+        <li>
+          <div class="ref-title">Timed Automata as a Formalism for Expressing Security: A Survey on Theory and Practice</div>
+          <div class="ref-meta">Johan Arcile, Étienne André · ACM Computing Surveys, 55(6), 2023 · extended version: <a href="https://arxiv.org/abs/2206.03445" target="_blank" rel="noopener">arXiv:2206.03445</a></div>
+          <div class="ref-tags">opacity · survey · timed</div>
+          <details class="ref-abs">
+            <summary class="abstract-toggle"><span class="abs-show">Show abstract</span><span class="abs-hide">Hide abstract</span></summary>
+            <div class="ref-abstract">Timed automata are a common formalism for the verification of concurrent systems subject to timing constraints. They extend finite-state automata with clocks, that constrain the system behavior in locations, and to take transitions. While timed automata were originally designed for safety (in the wide sense of correctness w.r.t. a formal property), they were progressively used in a number of works to guarantee security properties. In this work, we review works studying security properties for timed automata over the past two decades. We notably review theoretical works, with a particular focus on opacity, as well as more practical works, with a particular focus on attack trees and their extensions. We derive main conclusions concerning open perspectives, as well as tool support.</div>
+          </details>
+        </li>
+    </ul>
+  </section>
+
+
+  <footer>
+    <p><strong>Maintained by</strong> <a href="https://elefauch.github.io/" target="_blank" rel="noopener">Engel Lefaucheux</a>. This bibliography is almost certainly incomplete. If you know of a relevant paper that's missing, please get in touch so it can be added.</p>
+  </footer>
+</div>
+</body>
+</html>
